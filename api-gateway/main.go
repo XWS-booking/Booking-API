@@ -1,16 +1,18 @@
 package main
 
 import (
+	"gateway/proto/gateway"
+
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+
 	"context"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -27,8 +29,8 @@ func main() {
 
 	gwmux := runtime.NewServeMux()
 	// Register Greeter
-	client := greeter.NewGreeterServiceClient(conn)
-	err = greeter.RegisterGreeterServiceHandlerClient(
+	client := gateway.NewAuthServiceClient(conn)
+	err = gateway.RegisterAuthServiceHandlerClient(
 		context.Background(),
 		gwmux,
 		client,
@@ -38,7 +40,7 @@ func main() {
 	}
 
 	gwServer := &http.Server{
-		Addr:    os.Getenv("GATEWAY_ADDRESS"),
+		Addr:    ":" + os.Getenv("GATEWAY_ADDRESS"),
 		Handler: gwmux,
 	}
 

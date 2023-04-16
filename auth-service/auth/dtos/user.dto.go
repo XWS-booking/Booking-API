@@ -14,7 +14,7 @@ type UserDto struct {
 	Role    UserRole           `json:"role"`
 }
 
-func NewUserDto(user User) *UserDto {
+func NewUserDto(user UserModel) *UserDto {
 	return &UserDto{
 		Id:      user.Id,
 		Name:    user.Name,

@@ -7,26 +7,20 @@ service AuthService {
     rpc Register(RegisterRequest) returns (RegisterResponse) {}
 }
 
-enum Role {
-    GUEST = 0;
-    HOST = 1;
-    NOT_AUTHENTICATED = 2;
-};
-
 message User {
     string id = 1;
     string name = 2;
     string surname = 3;
     string email = 4;
     string password = 5;
-    Role Role = 6;
+    int32 role = 6;
 }
 message UserDto {
     string id = 1;
     string name = 2;
     string surname = 3;
     string email = 4;
-    Role Role = 5;
+    int32 role = 5;
 }
 message Token {
     string access_token = 1;

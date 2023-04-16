@@ -27,13 +27,13 @@ services:
     restart: always
     environment:
       AUTH_SERVICE_ADDRESS: auth_service:9000
-      GATEWAY_ADDRESS: 8090
+      GATEWAY_ADDRESS: 8085
     depends_on:
       - auth_service
     networks:
       - network
     ports:
-      - "8090:8090"
+      - "8085:8085"
 
 networks:
   network:

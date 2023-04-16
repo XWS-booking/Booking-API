@@ -6,6 +6,7 @@ import (
 	authGrpc "auth_service/proto/auth"
 	"context"
 	. "context"
+	"fmt"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -22,11 +23,12 @@ type AuthController struct {
 }
 
 func (authController *AuthController) SignIn(ctx Context, req *SignInRequest) (*SignInResponse, error) {
-	userProto := req.User
+	userProto := req.GetUser()
+	fmt.Println(req.User)
 	if userProto == nil {
-		return nil, status.Error(codes.Aborted, "Something wront with user data")
+		return nil, status.Error(codes.Aborted, "Something wrong with user data")
 	}
-	var user User
+	var user UserModel
 	user.MapFromProto(userProto)
 
 	token, e := authController.AuthService.SignIn(user.Email, user.Password)
@@ -42,23 +44,23 @@ func (authController *AuthController) SignIn(ctx Context, req *SignInRequest) (*
 }
 
 func (authController *AuthController) Register(ctx context.Context, req *RegisterRequest) (*RegisterResponse, error) {
-	userProto := req.User
+	userProto := req.GetUser()
 	if userProto == nil {
-		return nil, status.Error(codes.Aborted, "Something wront with user data")
+		return nil, status.Error(codes.Aborted, "Something wrong with user data")
 	}
-	var user User
+	var user UserModel
 	user.MapFromProto(userProto)
-	user, e := authController.AuthService.Register(user)
+	userReturn, e := authController.AuthService.Register(user)
 	if e != nil {
 		return nil, status.Error(codes.Aborted, e.Message)
 	}
 
 	var userResp authGrpc.UserDto
-	userResp.Id = string(user.Id.Hex())
-	userResp.Name = user.Name
-	userResp.Surname = user.Surname
-	userResp.Email = user.Email
-	userResp.Role = authGrpc.Role(user.Role)
+	userResp.Id = string(userReturn.Id.Hex())
+	userResp.Name = userReturn.Name
+	userResp.Surname = userReturn.Surname
+	userResp.Email = userReturn.Email
+	userResp.Role = int32(userReturn.Role)
 
 	response := &RegisterResponse{
 		UserDto: &userResp,

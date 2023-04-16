@@ -14,7 +14,7 @@ const (
 	NOT_AUTHENTICATED UserRole = 2
 )
 
-type User struct {
+type UserModel struct {
 	Id       primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	Name     string             `bson:"name" json:"name"`
 	Surname  string             `bson:"surname" json:"surname"`
@@ -23,7 +23,7 @@ type User struct {
 	Role     UserRole           `bson:"role" json:"role"`
 }
 
-func (user *User) MapFromProto(protoUser *authGrpc.User) {
+func (user *UserModel) MapFromProto(protoUser *authGrpc.User) {
 	user.Name = protoUser.Name
 	user.Surname = protoUser.Surname
 	user.Email = protoUser.Email
