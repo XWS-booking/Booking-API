@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+option go_package = "proto/authGrpc";
+
+service AuthService {
+    rpc SignIn(SignInRequest) returns (SignInResponse) {}
+    rpc Register(RegisterRequest) returns (RegisterResponse) {}
+}
+
+enum Role {
+    GUEST = 0;
+    HOST = 1;
+    NOT_AUTHENTICATED = 2;
+};
+
+message User {
+    string id = 1;
+    string name = 2;
+    string surname = 3;
+    string email = 4;
+    string password = 5;
+    Role Role = 6;
+}
+message UserDto {
+    string id = 1;
+    string name = 2;
+    string surname = 3;
+    string email = 4;
+    Role Role = 5;
+}
+message Token {
+    string access_token = 1;
+}
+
+message RegisterRequest {
+    User user = 1;
+}
+
+message RegisterResponse {
+    UserDto userDto = 1;
+}
+
+message SignInRequest {
+    User user = 1;
+}
+
+message SignInResponse {
+    Token access_token = 1;
+}

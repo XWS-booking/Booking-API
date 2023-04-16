@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  auth_service:
+    image: auth_service
+    container_name: auth_service
+    hostname: auth_service
+    build:
+      context: ./auth-service/
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      PORT: 9000
+      DATABASE_NAME: BOOKING_AUTH
+      JWT_SECRET: secret
+      DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+    networks:
+      - network
+
+  api_gateway:
+    image: api_gateway
+    container_name: api_gateway
+    hostname: api_gateway
+    build:
+      context: ./api-gateway/
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      AUTH_SERVICE_ADDRESS: auth_service:9000
+      GATEWAY_ADDRESS: 8090
+    depends_on:
+      - auth_service
+    networks:
+      - network
+    ports:
+      - "8090:8090"
+
+networks:
+  network:
+    driver: bridge
