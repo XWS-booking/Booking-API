@@ -15,21 +15,23 @@ type AuthService struct {
 	UserRepository IUserRepository
 }
 
-func (authService *AuthService) Register(user UserModel) (UserModel, *Error) {
+func (authService *AuthService) Register(user User) (User, *Error) {
 	hashedPassword, err := HashPassword(user.Password)
 	if err != nil {
-		return UserModel{}, RegistrationFailed()
+		return User{}, RegistrationFailed()
 	}
 	user.Password = hashedPassword
 
+	fmt.Println("Hit")
+
 	id, err := authService.UserRepository.Create(user)
 	if err != nil {
-		return UserModel{}, RegistrationFailed()
+		return User{}, RegistrationFailed()
 	}
 
 	created, err := authService.UserRepository.FindById(id)
 	if err != nil {
-		return UserModel{}, UserDoesntExist()
+		return User{}, UserDoesntExist()
 	}
 	return created, nil
 }
@@ -46,7 +48,7 @@ func (authService *AuthService) SignIn(email string, password string) (string, *
 	return generateToken(user)
 }
 
-func (authService *AuthService) GetCurrentUser(userId string) (UserModel, *Error) {
+func (authService *AuthService) GetCurrentUser(userId string) (User, *Error) {
 	user, err := authService.UserRepository.FindById(StringToObjectId(userId))
 	if err != nil {
 		return user, InvalidCredentials()
@@ -64,7 +66,7 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func generateToken(user UserModel) (string, *Error) {
+func generateToken(user User) (string, *Error) {
 	var secretKey = []byte(os.Getenv("JWT_SECRET"))
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)

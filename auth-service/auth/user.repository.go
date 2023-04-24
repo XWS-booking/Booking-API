@@ -16,7 +16,7 @@ type UserRepository struct {
 	Logger *log.Logger
 }
 
-func (userRepository *UserRepository) Create(user UserModel) (primitive.ObjectID, error) {
+func (userRepository *UserRepository) Create(user User) (primitive.ObjectID, error) {
 	collection := userRepository.getCollection("users")
 	res, err := collection.InsertOne(context.TODO(), user)
 	if err != nil {
@@ -26,21 +26,21 @@ func (userRepository *UserRepository) Create(user UserModel) (primitive.ObjectID
 	return res.InsertedID.(primitive.ObjectID), nil
 }
 
-func (userRepository *UserRepository) FindById(id primitive.ObjectID) (UserModel, error) {
+func (userRepository *UserRepository) FindById(id primitive.ObjectID) (User, error) {
 	collection := userRepository.getCollection("users")
-	var user UserModel
+	var user User
 	filter := bson.M{"_id": id}
 	err := collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err != nil {
 		userRepository.Logger.Println(err)
-		return UserModel{}, err
+		return User{}, err
 	}
 	return user, nil
 }
 
-func (userRepository *UserRepository) FindByEmail(email string) (UserModel, error) {
+func (userRepository *UserRepository) FindByEmail(email string) (User, error) {
 	collection := userRepository.getCollection("users")
-	var user UserModel
+	var user User
 	filter := bson.M{"email": email}
 	err := collection.FindOne(context.TODO(), filter).Decode(&user)
 	if err != nil {

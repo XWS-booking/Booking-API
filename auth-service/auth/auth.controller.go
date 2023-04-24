@@ -3,11 +3,9 @@ package auth
 import (
 	. "auth_service/auth/model"
 	. "auth_service/proto/auth"
-	authGrpc "auth_service/proto/auth"
 	"context"
 	. "context"
 	"fmt"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -23,47 +21,44 @@ type AuthController struct {
 }
 
 func (authController *AuthController) SignIn(ctx Context, req *SignInRequest) (*SignInResponse, error) {
-	userProto := req.GetUser()
-	fmt.Println(req.User)
-	if userProto == nil {
+	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with user data")
 	}
-	var user UserModel
-	user.MapFromProto(userProto)
 
+	user := UserFromSignInDto(req)
 	token, e := authController.AuthService.SignIn(user.Email, user.Password)
+
 	if e != nil {
-		return nil, status.Error(codes.Aborted, e.Message)
+		return nil, status.Error(codes.Unauthenticated, e.Message)
 	}
-	var tokenResp Token
-	tokenResp.AccessToken = token
+
+	fmt.Println(token)
 	response := &SignInResponse{
-		AccessToken: &tokenResp,
+		AccessToken: token,
 	}
+
 	return response, nil
 }
 
-func (authController *AuthController) Register(ctx context.Context, req *RegisterRequest) (*RegisterResponse, error) {
-	userProto := req.GetUser()
-	if userProto == nil {
+func (authController *AuthController) Register(ctx context.Context, req *RegistrationRequest) (*RegistrationResponse, error) {
+	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with user data")
 	}
-	var user UserModel
-	user.MapFromProto(userProto)
-	userReturn, e := authController.AuthService.Register(user)
+
+	user := UserFromRegistrationDto(req)
+	user.Role = HOST
+	registered, e := authController.AuthService.Register(*user)
 	if e != nil {
 		return nil, status.Error(codes.Aborted, e.Message)
 	}
 
-	var userResp authGrpc.UserDto
-	userResp.Id = string(userReturn.Id.Hex())
-	userResp.Name = userReturn.Name
-	userResp.Surname = userReturn.Surname
-	userResp.Email = userReturn.Email
-	userResp.Role = int32(userReturn.Role)
-
-	response := &RegisterResponse{
-		UserDto: &userResp,
+	response := &RegistrationResponse{
+		Id:      registered.Id.String(),
+		Email:   registered.Email,
+		Name:    registered.Name,
+		Surname: registered.Surname,
+		Role:    string(registered.Role),
 	}
+
 	return response, nil
 }
