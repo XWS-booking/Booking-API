@@ -4,40 +4,30 @@ option go_package = "proto/authGrpc";
 
 service AuthService {
     rpc SignIn(SignInRequest) returns (SignInResponse) {}
-    rpc Register(RegisterRequest) returns (RegisterResponse) {}
+    rpc Register(RegistrationRequest) returns (RegistrationResponse) {}
 }
 
-message User {
-    string id = 1;
-    string name = 2;
-    string surname = 3;
-    string email = 4;
-    string password = 5;
-    int32 role = 6;
-}
-message UserDto {
-    string id = 1;
-    string name = 2;
-    string surname = 3;
-    string email = 4;
-    int32 role = 5;
-}
-message Token {
-    string access_token = 1;
-}
 
-message RegisterRequest {
-    User user = 1;
+//Requests
+message RegistrationRequest {
+    string name = 1;
+    string surname = 2;
+    string email = 3;
+    string password = 4;
 }
-
-message RegisterResponse {
-    UserDto userDto = 1;
-}
-
 message SignInRequest {
-    User user = 1;
+    string email = 1;
+    string password = 2;
 }
 
+//Responses
+message RegistrationResponse {
+    string id = 1;
+    string name = 2;
+    string surname = 3;
+    string email = 4;
+    string role = 5;
+}
 message SignInResponse {
-    Token access_token = 1;
+    string access_token = 1;
 }
