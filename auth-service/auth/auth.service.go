@@ -56,6 +56,24 @@ func (authService *AuthService) GetCurrentUser(userId string) (User, *Error) {
 	return user, nil
 }
 
+func (authService *AuthService) UpdatePersonalInfo(user User) (User, *Error) {
+	foundUser, err := authService.UserRepository.FindById(StringToObjectId(user.Id))
+	foundUser.Name = user.Name
+	foundUser.Surname = user.Surname
+	foundUser.Email = user.Email
+	foundUser.Password = user.Password
+	foundUser.Street = user.Street
+	foundUser.StreetNumber = user.StreetNumber
+	foundUser.City = user.City
+	foundUser.ZipCode = user.ZipCode
+	foundUser.Country = user.Country
+	user, err := authService.userRepository.UpdatePersonalInfo(user)
+	if(err != nil) {
+		return user, PersonalInfoUpdateFailed()
+	}
+	return user, nil
+}
+
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err

@@ -51,3 +51,7 @@ func NotEnoughSeats() *Error {
 func TicketServiceUnavailable() *Error {
 	return &Error{Message: "Ticket service unavailable!"}
 }
+
+func PersonalInfoUpdateFailed() *Error {
+	return &Error{Message: "Update not successful!"}
+}

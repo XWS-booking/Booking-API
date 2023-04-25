@@ -62,3 +62,28 @@ func (authController *AuthController) Register(ctx context.Context, req *Registr
 
 	return response, nil
 }
+
+func (authController *AuthController) UpdatePersonalInfo(ctx context.Context, req *UpdatePersonalInfoRequest) (*UpdatePersonalInfoResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with user data")
+	}
+	user := UserFromUpdatePersonalInfoDto(req)
+	updatedUser, e := authController.AuthService.UpdatePersonalInfo(*user)
+	if e != nil {
+		return nil, status.Error(codes.Aborted, e.Message)
+	}
+
+	response := &UpdatePersonalInfoResponse{
+		Id:      updatedUser.Id.String(),
+		Email:   updatedUser.Email,
+		Name:    updatedUser.Name,
+		Surname: updatedUser.Surname,
+		Role:    string(registered.Role),
+		Street: updatedUser.Street,
+		StreetNumber: updatedUser.StreetNumber,
+		City: updatedUser.City,
+		ZipCode: updatedUser.ZipCode,
+		Country: updatedUser.Country
+	}
+	return response, nil
+}

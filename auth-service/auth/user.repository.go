@@ -53,3 +53,14 @@ func (userRepository *UserRepository) FindByEmail(email string) (User, error) {
 func (userRepository *UserRepository) getCollection(key string) *mongo.Collection {
 	return userRepository.DB.Database(os.Getenv("DATABASE_NAME")).Collection(key)
 }
+
+func (userRepository *UserRepository) UpdatePersonalInfo(user User) (User, error) {
+	collection := userRepository.getCollection("users")
+	filter := bson.M*("_id": user.Id)
+	err := collection.UpdateOne(context.TODO(), filter, user)
+	if err != nil {
+		userRepository.Logger.Println(err)
+		return user, err
+	}
+	return user, nil
+}

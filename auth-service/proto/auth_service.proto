@@ -5,7 +5,9 @@ option go_package = "proto/authGrpc";
 service AuthService {
     rpc SignIn(SignInRequest) returns (SignInResponse) {}
     rpc Register(RegistrationRequest) returns (RegistrationResponse) {}
+    rpc UpdatePersonalInfo(UpdatePersonalInfoRequest) returns (UpdatePersonalInfoResponse) {}
 }
+
 
 
 //Requests
@@ -14,10 +16,27 @@ message RegistrationRequest {
     string surname = 2;
     string email = 3;
     string password = 4;
+    string street = 5;
+    string streetNumber = 6;
+    string city = 7;
+    string zipCode = 8;
+    string country = 9;
 }
 message SignInRequest {
     string email = 1;
     string password = 2;
+}
+message UpdatePersonalInfoRequest {
+    string id = 1;
+    string name = 2;
+    string surname = 3;
+    string email = 4;
+    string password = 5;
+    string street = 6;
+    string streetNumber = 7;
+    string city = 8;
+    string zipCode = 9;
+    string country = 10;
 }
 
 //Responses
@@ -30,4 +49,16 @@ message RegistrationResponse {
 }
 message SignInResponse {
     string access_token = 1;
+}
+message UpdatePersonalInfoResponse{
+    string id = 1;
+    string name = 2;
+    string surname = 3;
+    string email = 4;
+    string password = 5;
+    string street = 6;
+    string streetNumber = 7;
+    string city = 8;
+    string zipCode = 9;
+    string country = 10;
 }
