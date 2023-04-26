@@ -36,6 +36,8 @@ message RegistrationRequest {
     string city = 7;
     string zipCode = 8;
     string country = 9;
+    int32 role = 10;
+    string username = 11;
 }
 message SignInRequest {
     string email = 1;
@@ -61,6 +63,7 @@ message RegistrationResponse {
     string surname = 3;
     string email = 4;
     string role = 5;
+    string username = 6;
 }
 message SignInResponse {
     string access_token = 1;
@@ -76,4 +79,5 @@ message UpdatePersonalInfoResponse{
     string city = 8;
     string zipCode = 9;
     string country = 10;
+    string role = 11;
 }
