@@ -3,6 +3,7 @@ package auth
 import (
 	. "auth_service/auth/model"
 	. "auth_service/proto/auth"
+	. "auth_service/shared"
 )
 
 func UserFromRegistrationDto(dto *RegistrationRequest) *User {
@@ -23,15 +24,15 @@ func UserFromSignInDto(dto *SignInRequest) *User {
 
 func UserFromUpdatePersonalInfoDto(dto *UpdatePersonalInfoRequest) *User {
 	return &User{
-		Id: dto.Id,
-		Name: dto.Name,
-		Surname: dto.Surname,
-		Password: dto.Password,
-		Email: dto.Email,
-		Street: dto.Street, 	 
+		Id:           StringToObjectId(dto.Id),
+		Name:         dto.Name,
+		Surname:      dto.Surname,
+		Password:     dto.Password,
+		Email:        dto.Email,
+		Street:       dto.Street,
 		StreetNumber: dto.StreetNumber,
-		City: dto.City,
-		ZipCode: dto.ZipCode,
-		Country: dto.Country 
+		City:         dto.City,
+		ZipCode:      dto.ZipCode,
+		Country:      dto.Country,
 	}
 }

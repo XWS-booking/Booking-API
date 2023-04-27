@@ -57,7 +57,7 @@ func (authService *AuthService) GetCurrentUser(userId string) (User, *Error) {
 }
 
 func (authService *AuthService) UpdatePersonalInfo(user User) (User, *Error) {
-	foundUser, err := authService.UserRepository.FindById(StringToObjectId(user.Id))
+	foundUser, err := authService.UserRepository.FindById(user.Id)
 	foundUser.Name = user.Name
 	foundUser.Surname = user.Surname
 	foundUser.Email = user.Email
@@ -67,11 +67,12 @@ func (authService *AuthService) UpdatePersonalInfo(user User) (User, *Error) {
 	foundUser.City = user.City
 	foundUser.ZipCode = user.ZipCode
 	foundUser.Country = user.Country
-	user, err := authService.userRepository.UpdatePersonalInfo(user)
-	if(err != nil) {
+	updatedUser, err := authService.UserRepository.UpdatePersonalInfo(user)
+	fmt.Println(err)
+	if err != nil {
 		return user, PersonalInfoUpdateFailed()
 	}
-	return user, nil
+	return updatedUser, nil
 }
 
 func HashPassword(password string) (string, error) {

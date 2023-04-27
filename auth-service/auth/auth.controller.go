@@ -74,16 +74,15 @@ func (authController *AuthController) UpdatePersonalInfo(ctx context.Context, re
 	}
 
 	response := &UpdatePersonalInfoResponse{
-		Id:      updatedUser.Id.String(),
-		Email:   updatedUser.Email,
-		Name:    updatedUser.Name,
-		Surname: updatedUser.Surname,
-		Role:    string(registered.Role),
-		Street: updatedUser.Street,
+		Id:           updatedUser.Id.Hex(),
+		Email:        updatedUser.Email,
+		Name:         updatedUser.Name,
+		Surname:      updatedUser.Surname,
+		Street:       updatedUser.Street,
 		StreetNumber: updatedUser.StreetNumber,
-		City: updatedUser.City,
-		ZipCode: updatedUser.ZipCode,
-		Country: updatedUser.Country
+		City:         updatedUser.City,
+		ZipCode:      updatedUser.ZipCode,
+		Country:      updatedUser.Country,
 	}
 	return response, nil
 }
