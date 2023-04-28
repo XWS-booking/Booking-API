@@ -14,12 +14,22 @@ import (
 )
 
 func main() {
-	conn, err := grpc.DialContext(
-		context.Background(),
-		os.Getenv("AUTH_SERVICE_ADDRESS"),
-		grpc.WithBlock(),
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	)
+	authConn, err := ConnectToService("AUTH_SERVICE_ADDRESS")
+	accomodationConn, err := ConnectToService("ACCOMODATION_SERVICE_ADDRESS")
+
+	//conn, err := grpc.DialContext(
+	//	context.Background(),
+	//	os.Getenv(),
+	//	grpc.WithBlock(),
+	//	grpc.WithTransportCredentials(insecure.NewCredentials()),
+	//)
+
+	//conn1, err1 := grpc.DialContext(
+	//	context.Background(),
+	//	os.Getenv("ACCOMODATION_SERVICE_ADDRESS"),
+	//	grpc.WithBlock(),
+	//	grpc.WithTransportCredentials(insecure.NewCredentials()),
+	//)
 
 	if err != nil {
 		log.Fatalln("Failed to dial server:", err)
@@ -27,11 +37,21 @@ func main() {
 
 	gwmux := runtime.NewServeMux()
 	// Register Greeter
-	client := gateway.NewAuthServiceClient(conn)
+	client := gateway.NewAuthServiceClient(authConn)
 	err = gateway.RegisterAuthServiceHandlerClient(
 		context.Background(),
 		gwmux,
 		client,
+	)
+	if err != nil {
+		log.Fatalln("Failed to register gateway:", err)
+	}
+
+	client1 := gateway.NewAccomodationServiceClient(accomodationConn)
+	err = gateway.RegisterAccomodationServiceHandlerClient(
+		context.Background(),
+		gwmux,
+		client1,
 	)
 	if err != nil {
 		log.Fatalln("Failed to register gateway:", err)
@@ -56,4 +76,14 @@ func main() {
 	if err = gwServer.Close(); err != nil {
 		log.Fatalln("error while stopping server: ", err)
 	}
+}
+
+func ConnectToService(address string) (*grpc.ClientConn, error) {
+	conn, err := grpc.DialContext(
+		context.Background(),
+		os.Getenv(address),
+		grpc.WithBlock(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	return conn, err
 }

@@ -19,6 +19,15 @@ service AuthService {
     }
 }
 
+service AccomodationService {
+    rpc Create(CreateAccomodationRequest) returns (CreateAccomodationResponse) {
+        option (google.api.http) = {
+            post: "/api/accomodation"
+            body: "*"
+        };
+    }
+}
+
 //Requests
 message RegistrationRequest {
     string name = 1;
@@ -41,4 +50,38 @@ message RegistrationResponse {
 }
 message SignInResponse {
     string access_token = 1;
+}
+//Requests
+message CreateAccomodationRequest {
+    string name = 1;
+    string street = 2;
+    string streetNumber = 3;
+    string city = 4;
+    string zipCode = 5;
+    string country = 6;
+    bool wifi = 7;
+    bool kitchen = 8;
+    bool airConditioner = 9;
+    bool freeParking = 10;
+    int32 minGuests = 11;
+    int32 maxGuests = 12;
+    bytes picture = 13;
+}
+
+//Responses
+message CreateAccomodationResponse {
+    string id = 14;
+    string name = 1;
+    string street = 2;
+    string streetNumber = 3;
+    string city = 4;
+    string zipCode = 5;
+    string country = 6;
+    bool wifi = 7;
+    bool kitchen = 8;
+    bool airConditioner = 9;
+    bool freeParking = 10;
+    int32 minGuests = 11;
+    int32 maxGuests = 12;
+    repeated bytes pictures = 13;
 }
