@@ -36,7 +36,7 @@ service AccomodationService {
 }
 
 service ReservationService {
-    rpc Create(CreateReservationRequest) returns (ReservationId){
+    rpc Create(CreateReservationRequest) returns (ReservationId) {
         option (google.api.http) = {
             post: "/api/reservation"
             body: "*"
@@ -140,6 +140,7 @@ message AccomodationResponse {
 
 //Requests
 message CreateReservationRequest {
+    string buyerId = 5;
     string accommodationId = 1;
     google.protobuf.Timestamp startDate = 2;
     google.protobuf.Timestamp endDate = 3;

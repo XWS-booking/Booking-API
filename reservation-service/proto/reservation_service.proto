@@ -13,6 +13,7 @@ service ReservationService {
 
 //Requests
 message CreateReservationRequest {
+  string buyerId = 5;
   string accommodationId = 1;
   google.protobuf.Timestamp startDate = 2;
   google.protobuf.Timestamp endDate = 3;

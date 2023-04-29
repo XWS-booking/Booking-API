@@ -18,6 +18,7 @@ const (
 type Reservation struct {
 	Id              primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	AccommodationId primitive.ObjectID `bson:"accommodation_id" json:"accommodationId"`
+	BuyerId         primitive.ObjectID `bson:"buyer_id" json:"buyerId"`
 	StartDate       time.Time          `bson:"start_date" json:"startDate"`
 	EndDate         time.Time          `bson:"end_date" json:"endDate"`
 	guests          int32              `bson:"guests" json:"guests"`
@@ -26,6 +27,7 @@ type Reservation struct {
 
 func NewReservation(req *CreateReservationRequest) Reservation {
 	accommodationId, _ := primitive.ObjectIDFromHex(req.AccommodationId)
+	buyerId, _ := primitive.ObjectIDFromHex(req.BuyerId)
 	startDate, _ := ptypes.Timestamp(req.StartDate)
 	endDate, _ := ptypes.Timestamp(req.EndDate)
 	return Reservation{
@@ -33,5 +35,6 @@ func NewReservation(req *CreateReservationRequest) Reservation {
 		StartDate:       startDate,
 		EndDate:         endDate,
 		guests:          req.Guests,
+		BuyerId:         buyerId,
 	}
 }
