@@ -3,6 +3,8 @@ syntax = "proto3";
 option go_package = "proto/gateway";
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
 
 service AuthService {
     rpc SignIn(SignInRequest) returns (SignInResponse) {
@@ -36,7 +38,8 @@ service AccomodationService {
 service ReservationService {
     rpc Create(CreateReservationRequest) returns (CreateReservationResponse){
         option (google.api.http) = {
-          post: "/api/reservation"
+            post: "/api/reservation"
+            body: "*"
         };
         }
 }
@@ -127,10 +130,13 @@ message AccomodationResponse {
 
 //Requests
 message CreateReservationRequest {
-
+    string accommodationId = 1;
+    google.protobuf.Timestamp startDate = 2;
+    google.protobuf.Timestamp endDate = 3;
+    int32 guests = 4;
 }
 
 //Responses
 message CreateReservationResponse{
-
+    string Id = 1;
 }

@@ -16,6 +16,7 @@ import (
 func main() {
 	authConn, err := ConnectToService("AUTH_SERVICE_ADDRESS")
 	accomodationConn, err := ConnectToService("ACCOMODATION_SERVICE_ADDRESS")
+	reservationConn, err := ConnectToService("RESERVATION_SERVICE_ADDRESS")
 
 	//conn, err := grpc.DialContext(
 	//	context.Background(),
@@ -52,6 +53,16 @@ func main() {
 		context.Background(),
 		gwmux,
 		client1,
+	)
+	if err != nil {
+		log.Fatalln("Failed to register gateway:", err)
+	}
+
+	client2 := gateway.NewReservationServiceClient(reservationConn)
+	err = gateway.RegisterReservationServiceHandlerClient(
+		context.Background(),
+		gwmux,
+		client2,
 	)
 	if err != nil {
 		log.Fatalln("Failed to register gateway:", err)

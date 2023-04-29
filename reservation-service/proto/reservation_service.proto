@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option go_package = "proto/reservationGrpc";
 
+import "google/protobuf/timestamp.proto";
+
 service ReservationService {
   rpc Create(CreateReservationRequest) returns (CreateReservationResponse) {}
 }
@@ -9,10 +11,13 @@ service ReservationService {
 
 //Requests
 message CreateReservationRequest {
+  string accommodationId = 1;
+  google.protobuf.Timestamp startDate = 2;
+  google.protobuf.Timestamp endDate = 3;
+  int32 guests = 4;
 }
-
 
 //Responses
-message CreateReservationResponse {
+message CreateReservationResponse{
+  string Id = 1;
 }
-
