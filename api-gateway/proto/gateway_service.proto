@@ -26,6 +26,11 @@ service AccomodationService {
             body: "*"
         };
     }
+    rpc FindAll(FindAllAccomodationRequest) returns (FindAllAccomodationResponse) {
+        option (google.api.http) = {
+            get: "/api/accomodation/{city}/{guests}"
+        };
+    }
 }
 
 //Requests
@@ -68,8 +73,34 @@ message CreateAccomodationRequest {
     bytes picture = 13;
 }
 
+message FindAllAccomodationRequest {
+    string city = 1;
+    int32 guests = 2;
+}
+
 //Responses
 message CreateAccomodationResponse {
+    string id = 14;
+    string name = 1;
+    string street = 2;
+    string streetNumber = 3;
+    string city = 4;
+    string zipCode = 5;
+    string country = 6;
+    bool wifi = 7;
+    bool kitchen = 8;
+    bool airConditioner = 9;
+    bool freeParking = 10;
+    int32 minGuests = 11;
+    int32 maxGuests = 12;
+    repeated bytes pictures = 13;
+}
+
+message FindAllAccomodationResponse {
+    repeated AccomodationResponse accomodationResponses = 1;
+}
+
+message AccomodationResponse {
     string id = 14;
     string name = 1;
     string street = 2;

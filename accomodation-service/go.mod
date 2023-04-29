@@ -5,7 +5,9 @@ go 1.20
 require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/sirupsen/logrus v1.4.2
+	github.com/supabase-community/storage-go v0.5.7
 	go.mongodb.org/mongo-driver v1.11.4
+	google.golang.org/protobuf v1.28.1
 )
 
 require (
@@ -15,7 +17,6 @@ require (
 	github.com/konsorten/go-windows-terminal-sequences v1.0.1 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/supabase-community/storage-go v0.5.7 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.1 // indirect
 	github.com/xdg-go/stringprep v1.0.3 // indirect
@@ -25,7 +26,6 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.7.0 // indirect
 	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
 )
 
 require (

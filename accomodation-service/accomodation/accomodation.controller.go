@@ -35,3 +35,15 @@ func (accomodationController *AccomodationController) Create(ctx Context, req *C
 		Id: "123",
 	}, nil
 }
+
+func (accomodationController *AccomodationController) FindAll(ctx Context, req *FindAllAccomodationRequest) (*FindAllAccomodationResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	accomodations := accomodationController.AccomodationService.FindAll(req.GetCity(), req.GetGuests())
+	var accomodationResponses []*AccomodationResponse
+	for _, a := range accomodations {
+		accomodationResponses = append(accomodationResponses, NewAccomodationResponse(a))
+	}
+	return &FindAllAccomodationResponse{AccomodationResponses: accomodationResponses}, nil
+}
