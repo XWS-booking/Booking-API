@@ -18,6 +18,21 @@ services:
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
     networks:
       - network
+  reservation_service:
+    image: reservation_service
+    container_name: reservation_service
+    hostname: reservation_service
+    build:
+      context: ./reservation-service/
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      PORT: 9000
+      DATABASE_NAME: BOOKING_RESERVATION
+      JWT_SECRET: secret
+      DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+    networks:
+      - network
   auth_service:
     image: auth_service
     container_name: auth_service

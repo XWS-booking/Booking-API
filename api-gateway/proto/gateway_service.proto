@@ -33,6 +33,14 @@ service AccomodationService {
     }
 }
 
+service ReservationService {
+    rpc Create(CreateReservationRequest) returns (CreateReservationResponse){
+        option (google.api.http) = {
+          post: "/api/reservation"
+        };
+        }
+}
+
 //Requests
 message RegistrationRequest {
     string name = 1;
@@ -115,4 +123,14 @@ message AccomodationResponse {
     int32 minGuests = 11;
     int32 maxGuests = 12;
     repeated bytes pictures = 13;
+}
+
+//Requests
+message CreateReservationRequest {
+
+}
+
+//Responses
+message CreateReservationResponse{
+
 }

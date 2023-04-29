@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "proto/reservationGrpc";
+
+service ReservationService {
+  rpc Create(CreateReservationRequest) returns (CreateReservationResponse) {}
+}
+
+
+//Requests
+message CreateReservationRequest {
+}
+
+
+//Responses
+message CreateReservationResponse {
+}
+
