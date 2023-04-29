@@ -44,14 +44,16 @@ func (handler *SearchAccommodationHandler) Search(w http.ResponseWriter, r *http
 		return
 	}
 	ids, err := handler.SearchByDateRange(startDate, endDate)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
-	// First, create a map from the ids in listB for faster lookup
 	removeIds := make(map[string]bool)
 	for _, id := range ids {
 		removeIds[id] = true
 	}
 
-	// Then, loop through listA and filter out the objects with ids that appear in removeIds
 	availableAccommodations := []gateway.AccomodationResponse{}
 	for _, obj := range accommodations.AccomodationResponses {
 		if !removeIds[obj.Id] {
