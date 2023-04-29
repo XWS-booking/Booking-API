@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	. "reservation_service/reservation/model"
+	"time"
 )
 
 type ReservationRepository struct {
@@ -43,6 +44,32 @@ func (reservationRepository *ReservationRepository) Delete(id primitive.ObjectID
 		return err
 	}
 	return nil
+}
+
+func (reservationRepository *ReservationRepository) FindAllReservationsByDateRange(startDate time.Time, endDate time.Time) ([]Reservation, error) {
+	collection := reservationRepository.getCollection("reservations")
+	var reservations []Reservation
+	filter := bson.M{
+		"$and": []bson.M{
+			bson.M{"start_date": bson.M{"$lte": endDate}},
+			bson.M{"end_date": bson.M{"$gte": startDate}},
+		},
+	}
+
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return reservations, err
+	}
+
+	for cur.Next(context.TODO()) {
+		var elem Reservation
+		err := cur.Decode(&elem)
+		if err != nil {
+			return reservations, err
+		}
+		reservations = append(reservations, elem)
+	}
+	return reservations, nil
 }
 
 func (reservationRepository *ReservationRepository) getCollection(key string) *mongo.Collection {

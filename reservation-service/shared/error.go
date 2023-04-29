@@ -11,3 +11,7 @@ func ReservationNotDeleted() *Error {
 func ReservationNotFound() *Error {
 	return &Error{Message: "Reservation not found!"}
 }
+
+func ReservationsNotFound() *Error {
+	return &Error{Message: "Error when filtering reservations!"}
+}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"gateway/infrastructure/api"
 	"gateway/proto/gateway"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
@@ -14,59 +15,10 @@ import (
 )
 
 func main() {
-	authConn, err := ConnectToService("AUTH_SERVICE_ADDRESS")
-	accomodationConn, err := ConnectToService("ACCOMODATION_SERVICE_ADDRESS")
-	reservationConn, err := ConnectToService("RESERVATION_SERVICE_ADDRESS")
-
-	//conn, err := grpc.DialContext(
-	//	context.Background(),
-	//	os.Getenv(),
-	//	grpc.WithBlock(),
-	//	grpc.WithTransportCredentials(insecure.NewCredentials()),
-	//)
-
-	//conn1, err1 := grpc.DialContext(
-	//	context.Background(),
-	//	os.Getenv("ACCOMODATION_SERVICE_ADDRESS"),
-	//	grpc.WithBlock(),
-	//	grpc.WithTransportCredentials(insecure.NewCredentials()),
-	//)
-
-	if err != nil {
-		log.Fatalln("Failed to dial server:", err)
-	}
 
 	gwmux := runtime.NewServeMux()
-	// Register Greeter
-	client := gateway.NewAuthServiceClient(authConn)
-	err = gateway.RegisterAuthServiceHandlerClient(
-		context.Background(),
-		gwmux,
-		client,
-	)
-	if err != nil {
-		log.Fatalln("Failed to register gateway:", err)
-	}
 
-	client1 := gateway.NewAccomodationServiceClient(accomodationConn)
-	err = gateway.RegisterAccomodationServiceHandlerClient(
-		context.Background(),
-		gwmux,
-		client1,
-	)
-	if err != nil {
-		log.Fatalln("Failed to register gateway:", err)
-	}
-
-	client2 := gateway.NewReservationServiceClient(reservationConn)
-	err = gateway.RegisterReservationServiceHandlerClient(
-		context.Background(),
-		gwmux,
-		client2,
-	)
-	if err != nil {
-		log.Fatalln("Failed to register gateway:", err)
-	}
+	initHandlers(gwmux)
 
 	gwServer := &http.Server{
 		Addr:    ":" + os.Getenv("GATEWAY_ADDRESS"),
@@ -84,17 +36,32 @@ func main() {
 
 	<-stopCh
 
-	if err = gwServer.Close(); err != nil {
+	if err := gwServer.Close(); err != nil {
 		log.Fatalln("error while stopping server: ", err)
 	}
 }
 
-func ConnectToService(address string) (*grpc.ClientConn, error) {
-	conn, err := grpc.DialContext(
-		context.Background(),
-		os.Getenv(address),
-		grpc.WithBlock(),
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	)
-	return conn, err
+func initHandlers(gwmux *runtime.ServeMux) {
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	authEndpoint := "auth_service:9000"
+	accommodationEndpoint := "accomodation_service:9000"
+	reservationEndpoint := "reservation_service:9000"
+
+	err := gateway.RegisterAuthServiceHandlerFromEndpoint(context.TODO(), gwmux, authEndpoint, opts)
+	if err != nil {
+		panic(err)
+	}
+	err = gateway.RegisterAccomodationServiceHandlerFromEndpoint(context.TODO(), gwmux, accommodationEndpoint, opts)
+	if err != nil {
+		panic(err)
+	}
+	err = gateway.RegisterReservationServiceHandlerFromEndpoint(context.TODO(), gwmux, reservationEndpoint, opts)
+	if err != nil {
+		panic(err)
+	}
+
+	//init custom handlers
+	searchAccommodationsHandler := api.NewSearchAccommodationHandler(accommodationEndpoint, reservationEndpoint)
+	searchAccommodationsHandler.Init(gwmux)
+
 }

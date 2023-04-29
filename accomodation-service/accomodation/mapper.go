@@ -7,7 +7,7 @@ import (
 
 func NewAccomodationResponse(accomodation model.Accomodation) *accomodationGrpc.AccomodationResponse {
 	return &accomodationGrpc.AccomodationResponse{
-		Id:             accomodation.Id.String(),
+		Id:             accomodation.Id.Hex(),
 		Name:           accomodation.Name,
 		Street:         accomodation.Street,
 		StreetNumber:   accomodation.StreetNumber,

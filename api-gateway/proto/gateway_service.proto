@@ -30,7 +30,7 @@ service AccomodationService {
     }
     rpc FindAll(FindAllAccomodationRequest) returns (FindAllAccomodationResponse) {
         option (google.api.http) = {
-            get: "/api/accomodation/{city}/{guests}"
+            get: "/api/accommodation/{city}/{guests}"
         };
     }
 }
@@ -45,6 +45,11 @@ service ReservationService {
     rpc Delete(ReservationId) returns (DeleteReservationResponse){
         option (google.api.http) = {
             delete: "/api/reservation/{id}"
+        };
+    }
+    rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse){
+        option (google.api.http) = {
+            get: "/api/reservedAccommodations/{startDate}/{endDate}"
         };
     }
 }
@@ -141,6 +146,11 @@ message CreateReservationRequest {
     int32 guests = 4;
 }
 
+message FindAllReservedAccommodationsRequest {
+    google.protobuf.Timestamp startDate = 1;
+    google.protobuf.Timestamp endDate = 2;
+}
+
 //Responses
 message ReservationId{
     string id = 1;
@@ -148,4 +158,8 @@ message ReservationId{
 
 message DeleteReservationResponse{
     string message = 1;
+}
+
+message FindAllReservedAccommodationsResponse {
+    repeated string ids = 1;
 }

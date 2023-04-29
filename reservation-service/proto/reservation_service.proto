@@ -7,6 +7,7 @@ import "google/protobuf/timestamp.proto";
 service ReservationService {
   rpc Create(CreateReservationRequest) returns (ReservationId) {}
   rpc Delete(ReservationId) returns (DeleteReservationResponse) {}
+  rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse) {}
 }
 
 
@@ -18,6 +19,11 @@ message CreateReservationRequest {
   int32 guests = 4;
 }
 
+message FindAllReservedAccommodationsRequest {
+  google.protobuf.Timestamp startDate = 1;
+  google.protobuf.Timestamp endDate = 2;
+}
+
 //Responses
 message ReservationId{
   string id = 1;
@@ -25,4 +31,8 @@ message ReservationId{
 
 message DeleteReservationResponse{
   string message = 1;
+}
+
+message FindAllReservedAccommodationsResponse {
+  repeated string ids = 1;
 }
