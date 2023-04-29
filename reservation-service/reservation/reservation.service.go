@@ -3,6 +3,7 @@ package reservation
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	. "reservation_service/reservation/model"
+	"reservation_service/shared"
 )
 
 type ReservationService struct {
@@ -16,4 +17,16 @@ func (reservationService *ReservationService) Create(reservation Reservation) pr
 		return created
 	}
 	return created
+}
+
+func (reservationService *ReservationService) Delete(id primitive.ObjectID) *shared.Error {
+	_, e := reservationService.ReservationRepository.FindById(id)
+	if e != nil {
+		return shared.ReservationNotFound()
+	}
+	error := reservationService.ReservationRepository.Delete(id)
+	if error != nil {
+		return shared.ReservationNotDeleted()
+	}
+	return nil
 }

@@ -7,4 +7,6 @@ import (
 
 type IReservationRepository interface {
 	Create(reservation Reservation) (primitive.ObjectID, error)
+	Delete(id primitive.ObjectID) error
+	FindById(id primitive.ObjectID) (Reservation, error)
 }

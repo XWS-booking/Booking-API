@@ -5,7 +5,8 @@ option go_package = "proto/reservationGrpc";
 import "google/protobuf/timestamp.proto";
 
 service ReservationService {
-  rpc Create(CreateReservationRequest) returns (CreateReservationResponse) {}
+  rpc Create(CreateReservationRequest) returns (ReservationId) {}
+  rpc Delete(ReservationId) returns (DeleteReservationResponse) {}
 }
 
 
@@ -18,6 +19,10 @@ message CreateReservationRequest {
 }
 
 //Responses
-message CreateReservationResponse{
-  string Id = 1;
+message ReservationId{
+  string id = 1;
+}
+
+message DeleteReservationResponse{
+  string message = 1;
 }

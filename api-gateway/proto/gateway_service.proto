@@ -36,12 +36,17 @@ service AccomodationService {
 }
 
 service ReservationService {
-    rpc Create(CreateReservationRequest) returns (CreateReservationResponse){
+    rpc Create(CreateReservationRequest) returns (ReservationId){
         option (google.api.http) = {
             post: "/api/reservation"
             body: "*"
         };
-        }
+    }
+    rpc Delete(ReservationId) returns (DeleteReservationResponse){
+        option (google.api.http) = {
+            delete: "/api/reservation/{id}"
+        };
+    }
 }
 
 //Requests
@@ -137,6 +142,10 @@ message CreateReservationRequest {
 }
 
 //Responses
-message CreateReservationResponse{
-    string Id = 1;
+message ReservationId{
+    string id = 1;
+}
+
+message DeleteReservationResponse{
+    string message = 1;
 }
