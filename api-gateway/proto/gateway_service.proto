@@ -3,6 +3,8 @@ syntax = "proto3";
 option go_package = "proto/gateway";
 
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
 
 service AuthService {
     rpc SignIn(SignInRequest) returns (SignInResponse) {
@@ -16,6 +18,39 @@ service AuthService {
             post: "/api/auth/register"
             body: "*"
           };
+    }
+}
+
+service AccomodationService {
+    rpc Create(CreateAccomodationRequest) returns (CreateAccomodationResponse) {
+        option (google.api.http) = {
+            post: "/api/accomodation"
+            body: "*"
+        };
+    }
+    rpc FindAll(FindAllAccomodationRequest) returns (FindAllAccomodationResponse) {
+        option (google.api.http) = {
+            get: "/api/accommodation/{city}/{guests}"
+        };
+    }
+}
+
+service ReservationService {
+    rpc Create(CreateReservationRequest) returns (ReservationId) {
+        option (google.api.http) = {
+            post: "/api/reservation"
+            body: "*"
+        };
+    }
+    rpc Delete(ReservationId) returns (DeleteReservationResponse){
+        option (google.api.http) = {
+            delete: "/api/reservation/{id}"
+        };
+    }
+    rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse){
+        option (google.api.http) = {
+            get: "/api/reservedAccommodations/{startDate}/{endDate}"
+        };
     }
 }
 
@@ -41,4 +76,91 @@ message RegistrationResponse {
 }
 message SignInResponse {
     string access_token = 1;
+}
+//Requests
+message CreateAccomodationRequest {
+    string name = 1;
+    string street = 2;
+    string streetNumber = 3;
+    string city = 4;
+    string zipCode = 5;
+    string country = 6;
+    bool wifi = 7;
+    bool kitchen = 8;
+    bool airConditioner = 9;
+    bool freeParking = 10;
+    int32 minGuests = 11;
+    int32 maxGuests = 12;
+    bytes picture = 13;
+}
+
+message FindAllAccomodationRequest {
+    string city = 1;
+    int32 guests = 2;
+}
+
+//Responses
+message CreateAccomodationResponse {
+    string id = 14;
+    string name = 1;
+    string street = 2;
+    string streetNumber = 3;
+    string city = 4;
+    string zipCode = 5;
+    string country = 6;
+    bool wifi = 7;
+    bool kitchen = 8;
+    bool airConditioner = 9;
+    bool freeParking = 10;
+    int32 minGuests = 11;
+    int32 maxGuests = 12;
+    repeated bytes pictures = 13;
+}
+
+message FindAllAccomodationResponse {
+    repeated AccomodationResponse accomodationResponses = 1;
+}
+
+message AccomodationResponse {
+    string id = 14;
+    string name = 1;
+    string street = 2;
+    string streetNumber = 3;
+    string city = 4;
+    string zipCode = 5;
+    string country = 6;
+    bool wifi = 7;
+    bool kitchen = 8;
+    bool airConditioner = 9;
+    bool freeParking = 10;
+    int32 minGuests = 11;
+    int32 maxGuests = 12;
+    repeated bytes pictures = 13;
+}
+
+//Requests
+message CreateReservationRequest {
+    string buyerId = 5;
+    string accommodationId = 1;
+    google.protobuf.Timestamp startDate = 2;
+    google.protobuf.Timestamp endDate = 3;
+    int32 guests = 4;
+}
+
+message FindAllReservedAccommodationsRequest {
+    google.protobuf.Timestamp startDate = 1;
+    google.protobuf.Timestamp endDate = 2;
+}
+
+//Responses
+message ReservationId{
+    string id = 1;
+}
+
+message DeleteReservationResponse{
+    string message = 1;
+}
+
+message FindAllReservedAccommodationsResponse {
+    repeated string ids = 1;
 }
