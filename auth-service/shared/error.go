@@ -51,3 +51,7 @@ func NotEnoughSeats() *Error {
 func TicketServiceUnavailable() *Error {
 	return &Error{Message: "Ticket service unavailable!"}
 }
+
+func DeleteProfileError() *Error {
+	return &Error{Message: "Can't delete profile!"}
+}

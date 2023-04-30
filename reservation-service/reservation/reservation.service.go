@@ -33,13 +33,21 @@ func (reservationService *ReservationService) Delete(id primitive.ObjectID) *sha
 }
 
 func (reservationService ReservationService) FindAllReservedAccommodations(startDate time.Time, endDate time.Time) ([]string, *shared.Error) {
-	reservations, err := reservationService.ReservationRepository.FindAllReservationsByDateRange(startDate, endDate)
-	var ids []string
+	accommodationIds, err := reservationService.ReservationRepository.FindAllReservedAccommodations(startDate, endDate)
 	if err != nil {
-		return ids, shared.ReservationsNotFound()
+		return accommodationIds, shared.ReservationsNotFound()
 	}
-	for _, r := range reservations {
-		ids = append(ids, r.AccommodationId.Hex())
+	return accommodationIds, nil
+}
+
+func (reservationService *ReservationService) CheckActiveReservationsForGuest(id primitive.ObjectID) (bool, *shared.Error) {
+	activeReservations, err := reservationService.ReservationRepository.CheckActiveReservationsForGuest(id)
+	if err != nil {
+		return activeReservations, shared.CheckActiveReservationsError()
 	}
-	return ids, nil
+	err = reservationService.ReservationRepository.DeleteReservationsByBuyerId(id)
+	if err != nil {
+		return activeReservations, shared.ReservationNotDeleted()
+	}
+	return activeReservations, nil
 }

@@ -6,6 +6,7 @@ import (
 	"context"
 	. "context"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -61,4 +62,16 @@ func (authController *AuthController) Register(ctx context.Context, req *Registr
 	}
 
 	return response, nil
+}
+
+func (authController *AuthController) DeleteProfile(ctx context.Context, req *DeleteProfileRequest) (*DeleteProfileResponse, error) {
+	id, err := primitive.ObjectIDFromHex(req.GetId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	e := authController.AuthService.Delete(id)
+	if e != nil {
+		return &DeleteProfileResponse{Deleted: false}, status.Error(codes.Internal, e.Message)
+	}
+	return &DeleteProfileResponse{Deleted: true}, nil
 }

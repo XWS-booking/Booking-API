@@ -34,23 +34,35 @@ func (handler *SearchAccommodationHandler) Init(mux *runtime.ServeMux) {
 
 func (handler *SearchAccommodationHandler) Search(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 	city := pathParams["city"]
-	guests, _ := strconv.Atoi(pathParams["guests"])
-	startDate := pathParams["startDate"]
-	endDate := pathParams["endDate"]
+	guests, err := strconv.Atoi(pathParams["guests"])
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	startDate, err := parseTimestamp(pathParams["startDate"])
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	endDate, err := parseTimestamp(pathParams["endDate"])
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	accommodations, err := handler.SearchByCityAndGuests(city, guests)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	ids, err := handler.SearchByDateRange(startDate, endDate)
+	reservedAccommodationIds, err := handler.FindAllReservedAccommodations(startDate, endDate)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	removeIds := make(map[string]bool)
-	for _, id := range ids {
+	for _, id := range reservedAccommodationIds {
 		removeIds[id] = true
 	}
 
@@ -79,23 +91,23 @@ func (handler *SearchAccommodationHandler) SearchByCityAndGuests(city string, gu
 	return accommodations, nil
 }
 
-func (handler *SearchAccommodationHandler) SearchByDateRange(startDate, endDate string) ([]string, error) {
+func (handler *SearchAccommodationHandler) FindAllReservedAccommodations(startDate, endDate *timestamp.Timestamp) ([]string, error) {
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
-	ids, err := reservationClient.FindAllReservedAccommodations(context.TODO(), &gateway.FindAllReservedAccommodationsRequest{StartDate: parseTimestamp(startDate), EndDate: parseTimestamp(endDate)})
+	ids, err := reservationClient.FindAllReservedAccommodations(context.TODO(), &gateway.FindAllReservedAccommodationsRequest{StartDate: startDate, EndDate: endDate})
 	if err != nil {
 		return nil, err
 	}
 	return ids.Ids, nil
 }
 
-func parseTimestamp(str string) *timestamp.Timestamp {
+func parseTimestamp(str string) (*timestamp.Timestamp, error) {
 	t, err := time.Parse(time.RFC3339, str)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	ts, err := ptypes.TimestampProto(t)
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return ts
+	return ts, nil
 }
