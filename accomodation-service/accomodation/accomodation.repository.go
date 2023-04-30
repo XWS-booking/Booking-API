@@ -4,6 +4,7 @@ import (
 	. "accomodation_service/accomodation/model"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"os"
@@ -39,6 +40,37 @@ func (accomodationRepository *AccomodationRepository) FindAll(city string, guest
 		accommodations = append(accommodations, elem)
 	}
 	return accommodations, nil
+}
+
+func (accomodationRepository *AccomodationRepository) FindAllByOwnerId(id primitive.ObjectID) ([]Accomodation, error) {
+	collection := accomodationRepository.getCollection("accomodations")
+	var accommodations []Accomodation
+
+	filter := bson.M{"owner_id": id}
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return accommodations, err
+	}
+
+	for cur.Next(context.TODO()) {
+		var elem Accomodation
+		err := cur.Decode(&elem)
+		if err != nil {
+			return accommodations, err
+		}
+		accommodations = append(accommodations, elem)
+	}
+	return accommodations, nil
+}
+
+func (accommodationRepository *AccomodationRepository) DeleteByOwnerId(id primitive.ObjectID) error {
+	collection := accommodationRepository.getCollection("accomodations")
+	filter := bson.M{"owner_id": id}
+	_, err := collection.DeleteMany(context.TODO(), filter)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (accomodationRepository *AccomodationRepository) getCollection(key string) *mongo.Collection {

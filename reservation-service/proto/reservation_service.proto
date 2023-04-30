@@ -9,6 +9,7 @@ service ReservationService {
   rpc Delete(ReservationId) returns (DeleteReservationResponse) {}
   rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse) {}
   rpc CheckActiveReservationsForGuest(CheckActiveReservationsForGuestRequest) returns (CheckActiveReservationsForGuestResponse) {}
+  rpc CheckActiveReservationsForAccommodations(CheckActiveReservationsForAccommodationsRequest) returns (CheckActiveReservationsForAccommodationsResponse) {}
 }
 
 
@@ -29,6 +30,10 @@ message CheckActiveReservationsForGuestRequest{
   string guestId = 1;
 }
 
+message CheckActiveReservationsForAccommodationsRequest {
+  repeated string ids = 1;
+}
+
 message ReservationId{
   string id = 1;
 }
@@ -42,5 +47,9 @@ message FindAllReservedAccommodationsResponse {
 }
 
 message CheckActiveReservationsForGuestResponse {
+  bool activeReservations = 1;
+}
+
+message CheckActiveReservationsForAccommodationsResponse {
   bool activeReservations = 1;
 }

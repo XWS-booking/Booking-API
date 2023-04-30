@@ -12,5 +12,7 @@ type IReservationRepository interface {
 	FindById(id primitive.ObjectID) (Reservation, error)
 	FindAllReservedAccommodations(startDate time.Time, endDate time.Time) ([]string, error)
 	CheckActiveReservationsForGuest(id primitive.ObjectID) (bool, error)
-	DeleteReservationsByBuyerId(id primitive.ObjectID) error
+	CheckActiveReservationsForAccommodation(id primitive.ObjectID) (bool, error)
+	DeleteByBuyerId(id primitive.ObjectID) error
+	DeleteByAccommodationId(id primitive.ObjectID) error
 }

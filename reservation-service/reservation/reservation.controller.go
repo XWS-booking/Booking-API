@@ -74,3 +74,16 @@ func (reservationController *ReservationController) CheckActiveReservationsForGu
 		ActiveReservations: activeReservations,
 	}, nil
 }
+
+func (reservationController *ReservationController) CheckActiveReservationsForAccommodations(ctx Context, req *CheckActiveReservationsForAccommodationsRequest) (*CheckActiveReservationsForAccommodationsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	activeReservations, e := reservationController.ReservationService.CheckActiveReservationsForAccommodations(req.GetIds())
+	if e != nil {
+		return &CheckActiveReservationsForAccommodationsResponse{}, status.Error(codes.Internal, e.Message)
+	}
+	return &CheckActiveReservationsForAccommodationsResponse{
+		ActiveReservations: activeReservations,
+	}, nil
+}

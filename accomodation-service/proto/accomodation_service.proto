@@ -5,6 +5,8 @@ option go_package = "proto/accomodationGrpc";
 service AccomodationService {
   rpc Create(CreateAccomodationRequest) returns (CreateAccomodationResponse) {}
   rpc FindAll(FindAllAccomodationRequest) returns (FindAllAccomodationResponse) {}
+  rpc FindAllAccommodationIdsByOwnerId(FindAllAccommodationIdsByOwnerIdRequest) returns (FindAllAccommodationIdsByOwnerIdResponse) {}
+  rpc DeleteByOwnerId(DeleteByOwnerIdRequest) returns (DeleteByOwnerIdResponse) {}
 }
 
 
@@ -28,6 +30,14 @@ message CreateAccomodationRequest {
 message FindAllAccomodationRequest {
     string city = 1;
     int32 guests = 2;
+}
+
+message FindAllAccommodationIdsByOwnerIdRequest {
+  string ownerId = 1;
+}
+
+message DeleteByOwnerIdRequest {
+  string ownerId = 1;
 }
 
 //Responses
@@ -67,4 +77,12 @@ message AccomodationResponse {
     int32 minGuests = 11;
     int32 maxGuests = 12;
     repeated bytes pictures = 13;
+}
+
+message FindAllAccommodationIdsByOwnerIdResponse {
+  repeated string ids = 1;
+}
+
+message DeleteByOwnerIdResponse {
+  bool deleted = 1;
 }

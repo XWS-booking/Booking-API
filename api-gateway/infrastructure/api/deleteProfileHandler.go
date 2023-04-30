@@ -38,6 +38,9 @@ func (handler *DeleteProfileHandler) Delete(w http.ResponseWriter, r *http.Reque
 	if role == "GUEST" {
 		canDelete, err = handler.CanDeleteGuestProfile(id)
 	}
+	if role == "HOST" {
+		canDelete, err = handler.CanDeleteHostProfile(id)
+	}
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -69,6 +72,23 @@ func (handler *DeleteProfileHandler) Delete(w http.ResponseWriter, r *http.Reque
 func (handler *DeleteProfileHandler) CanDeleteGuestProfile(id string) (bool, error) {
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
 	activeReservations, err := reservationClient.CheckActiveReservationsForGuest(context.TODO(), &gateway.CheckActiveReservationsForGuestRequest{GuestId: id})
+	return !activeReservations.ActiveReservations, err
+}
+
+func (handler *DeleteProfileHandler) CanDeleteHostProfile(id string) (bool, error) {
+	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
+	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
+	accommodations, err := accommodationClient.FindAllAccommodationIdsByOwnerId(context.TODO(), &gateway.FindAllAccommodationIdsByOwnerIdRequest{OwnerId: id})
+	if err != nil {
+		return false, err
+	}
+	activeReservations, err := reservationClient.CheckActiveReservationsForAccommodations(context.TODO(), &gateway.CheckActiveReservationsForAccommodationsRequest{Ids: accommodations.Ids})
+	if !activeReservations.ActiveReservations {
+		_, err := accommodationClient.DeleteByOwnerId(context.TODO(), &gateway.DeleteByOwnerIdRequest{OwnerId: id})
+		if err != nil {
+			return false, err
+		}
+	}
 	return !activeReservations.ActiveReservations, err
 }
 

@@ -183,8 +183,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	AccomodationService_Create_FullMethodName  = "/AccomodationService/Create"
-	AccomodationService_FindAll_FullMethodName = "/AccomodationService/FindAll"
+	AccomodationService_Create_FullMethodName                           = "/AccomodationService/Create"
+	AccomodationService_FindAll_FullMethodName                          = "/AccomodationService/FindAll"
+	AccomodationService_FindAllAccommodationIdsByOwnerId_FullMethodName = "/AccomodationService/FindAllAccommodationIdsByOwnerId"
+	AccomodationService_DeleteByOwnerId_FullMethodName                  = "/AccomodationService/DeleteByOwnerId"
 )
 
 // AccomodationServiceClient is the client API for AccomodationService service.
@@ -193,6 +195,8 @@ const (
 type AccomodationServiceClient interface {
 	Create(ctx context.Context, in *CreateAccomodationRequest, opts ...grpc.CallOption) (*CreateAccomodationResponse, error)
 	FindAll(ctx context.Context, in *FindAllAccomodationRequest, opts ...grpc.CallOption) (*FindAllAccomodationResponse, error)
+	FindAllAccommodationIdsByOwnerId(ctx context.Context, in *FindAllAccommodationIdsByOwnerIdRequest, opts ...grpc.CallOption) (*FindAllAccommodationIdsByOwnerIdResponse, error)
+	DeleteByOwnerId(ctx context.Context, in *DeleteByOwnerIdRequest, opts ...grpc.CallOption) (*DeleteByOwnerIdResponse, error)
 }
 
 type accomodationServiceClient struct {
@@ -221,12 +225,32 @@ func (c *accomodationServiceClient) FindAll(ctx context.Context, in *FindAllAcco
 	return out, nil
 }
 
+func (c *accomodationServiceClient) FindAllAccommodationIdsByOwnerId(ctx context.Context, in *FindAllAccommodationIdsByOwnerIdRequest, opts ...grpc.CallOption) (*FindAllAccommodationIdsByOwnerIdResponse, error) {
+	out := new(FindAllAccommodationIdsByOwnerIdResponse)
+	err := c.cc.Invoke(ctx, AccomodationService_FindAllAccommodationIdsByOwnerId_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accomodationServiceClient) DeleteByOwnerId(ctx context.Context, in *DeleteByOwnerIdRequest, opts ...grpc.CallOption) (*DeleteByOwnerIdResponse, error) {
+	out := new(DeleteByOwnerIdResponse)
+	err := c.cc.Invoke(ctx, AccomodationService_DeleteByOwnerId_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccomodationServiceServer is the server API for AccomodationService service.
 // All implementations must embed UnimplementedAccomodationServiceServer
 // for forward compatibility
 type AccomodationServiceServer interface {
 	Create(context.Context, *CreateAccomodationRequest) (*CreateAccomodationResponse, error)
 	FindAll(context.Context, *FindAllAccomodationRequest) (*FindAllAccomodationResponse, error)
+	FindAllAccommodationIdsByOwnerId(context.Context, *FindAllAccommodationIdsByOwnerIdRequest) (*FindAllAccommodationIdsByOwnerIdResponse, error)
+	DeleteByOwnerId(context.Context, *DeleteByOwnerIdRequest) (*DeleteByOwnerIdResponse, error)
 	mustEmbedUnimplementedAccomodationServiceServer()
 }
 
@@ -239,6 +263,12 @@ func (UnimplementedAccomodationServiceServer) Create(context.Context, *CreateAcc
 }
 func (UnimplementedAccomodationServiceServer) FindAll(context.Context, *FindAllAccomodationRequest) (*FindAllAccomodationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindAll not implemented")
+}
+func (UnimplementedAccomodationServiceServer) FindAllAccommodationIdsByOwnerId(context.Context, *FindAllAccommodationIdsByOwnerIdRequest) (*FindAllAccommodationIdsByOwnerIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindAllAccommodationIdsByOwnerId not implemented")
+}
+func (UnimplementedAccomodationServiceServer) DeleteByOwnerId(context.Context, *DeleteByOwnerIdRequest) (*DeleteByOwnerIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteByOwnerId not implemented")
 }
 func (UnimplementedAccomodationServiceServer) mustEmbedUnimplementedAccomodationServiceServer() {}
 
@@ -289,6 +319,42 @@ func _AccomodationService_FindAll_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccomodationService_FindAllAccommodationIdsByOwnerId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindAllAccommodationIdsByOwnerIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccomodationServiceServer).FindAllAccommodationIdsByOwnerId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccomodationService_FindAllAccommodationIdsByOwnerId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccomodationServiceServer).FindAllAccommodationIdsByOwnerId(ctx, req.(*FindAllAccommodationIdsByOwnerIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AccomodationService_DeleteByOwnerId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteByOwnerIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccomodationServiceServer).DeleteByOwnerId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccomodationService_DeleteByOwnerId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccomodationServiceServer).DeleteByOwnerId(ctx, req.(*DeleteByOwnerIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AccomodationService_ServiceDesc is the grpc.ServiceDesc for AccomodationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,16 +370,25 @@ var AccomodationService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "FindAll",
 			Handler:    _AccomodationService_FindAll_Handler,
 		},
+		{
+			MethodName: "FindAllAccommodationIdsByOwnerId",
+			Handler:    _AccomodationService_FindAllAccommodationIdsByOwnerId_Handler,
+		},
+		{
+			MethodName: "DeleteByOwnerId",
+			Handler:    _AccomodationService_DeleteByOwnerId_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "gateway_service.proto",
 }
 
 const (
-	ReservationService_Create_FullMethodName                          = "/ReservationService/Create"
-	ReservationService_Delete_FullMethodName                          = "/ReservationService/Delete"
-	ReservationService_FindAllReservedAccommodations_FullMethodName   = "/ReservationService/FindAllReservedAccommodations"
-	ReservationService_CheckActiveReservationsForGuest_FullMethodName = "/ReservationService/CheckActiveReservationsForGuest"
+	ReservationService_Create_FullMethodName                                   = "/ReservationService/Create"
+	ReservationService_Delete_FullMethodName                                   = "/ReservationService/Delete"
+	ReservationService_FindAllReservedAccommodations_FullMethodName            = "/ReservationService/FindAllReservedAccommodations"
+	ReservationService_CheckActiveReservationsForGuest_FullMethodName          = "/ReservationService/CheckActiveReservationsForGuest"
+	ReservationService_CheckActiveReservationsForAccommodations_FullMethodName = "/ReservationService/CheckActiveReservationsForAccommodations"
 )
 
 // ReservationServiceClient is the client API for ReservationService service.
@@ -324,6 +399,7 @@ type ReservationServiceClient interface {
 	Delete(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*DeleteReservationResponse, error)
 	FindAllReservedAccommodations(ctx context.Context, in *FindAllReservedAccommodationsRequest, opts ...grpc.CallOption) (*FindAllReservedAccommodationsResponse, error)
 	CheckActiveReservationsForGuest(ctx context.Context, in *CheckActiveReservationsForGuestRequest, opts ...grpc.CallOption) (*CheckActiveReservationsForGuestResponse, error)
+	CheckActiveReservationsForAccommodations(ctx context.Context, in *CheckActiveReservationsForAccommodationsRequest, opts ...grpc.CallOption) (*CheckActiveReservationsForAccommodationsResponse, error)
 }
 
 type reservationServiceClient struct {
@@ -370,6 +446,15 @@ func (c *reservationServiceClient) CheckActiveReservationsForGuest(ctx context.C
 	return out, nil
 }
 
+func (c *reservationServiceClient) CheckActiveReservationsForAccommodations(ctx context.Context, in *CheckActiveReservationsForAccommodationsRequest, opts ...grpc.CallOption) (*CheckActiveReservationsForAccommodationsResponse, error) {
+	out := new(CheckActiveReservationsForAccommodationsResponse)
+	err := c.cc.Invoke(ctx, ReservationService_CheckActiveReservationsForAccommodations_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReservationServiceServer is the server API for ReservationService service.
 // All implementations must embed UnimplementedReservationServiceServer
 // for forward compatibility
@@ -378,6 +463,7 @@ type ReservationServiceServer interface {
 	Delete(context.Context, *ReservationId) (*DeleteReservationResponse, error)
 	FindAllReservedAccommodations(context.Context, *FindAllReservedAccommodationsRequest) (*FindAllReservedAccommodationsResponse, error)
 	CheckActiveReservationsForGuest(context.Context, *CheckActiveReservationsForGuestRequest) (*CheckActiveReservationsForGuestResponse, error)
+	CheckActiveReservationsForAccommodations(context.Context, *CheckActiveReservationsForAccommodationsRequest) (*CheckActiveReservationsForAccommodationsResponse, error)
 	mustEmbedUnimplementedReservationServiceServer()
 }
 
@@ -396,6 +482,9 @@ func (UnimplementedReservationServiceServer) FindAllReservedAccommodations(conte
 }
 func (UnimplementedReservationServiceServer) CheckActiveReservationsForGuest(context.Context, *CheckActiveReservationsForGuestRequest) (*CheckActiveReservationsForGuestResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckActiveReservationsForGuest not implemented")
+}
+func (UnimplementedReservationServiceServer) CheckActiveReservationsForAccommodations(context.Context, *CheckActiveReservationsForAccommodationsRequest) (*CheckActiveReservationsForAccommodationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckActiveReservationsForAccommodations not implemented")
 }
 func (UnimplementedReservationServiceServer) mustEmbedUnimplementedReservationServiceServer() {}
 
@@ -482,6 +571,24 @@ func _ReservationService_CheckActiveReservationsForGuest_Handler(srv interface{}
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReservationService_CheckActiveReservationsForAccommodations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckActiveReservationsForAccommodationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).CheckActiveReservationsForAccommodations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReservationService_CheckActiveReservationsForAccommodations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).CheckActiveReservationsForAccommodations(ctx, req.(*CheckActiveReservationsForAccommodationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ReservationService_ServiceDesc is the grpc.ServiceDesc for ReservationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -504,6 +611,10 @@ var ReservationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckActiveReservationsForGuest",
 			Handler:    _ReservationService_CheckActiveReservationsForGuest_Handler,
+		},
+		{
+			MethodName: "CheckActiveReservationsForAccommodations",
+			Handler:    _ReservationService_CheckActiveReservationsForAccommodations_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

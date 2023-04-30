@@ -45,9 +45,30 @@ func (reservationService *ReservationService) CheckActiveReservationsForGuest(id
 	if err != nil {
 		return activeReservations, shared.CheckActiveReservationsError()
 	}
-	err = reservationService.ReservationRepository.DeleteReservationsByBuyerId(id)
+	err = reservationService.ReservationRepository.DeleteByBuyerId(id)
 	if err != nil {
 		return activeReservations, shared.ReservationNotDeleted()
 	}
 	return activeReservations, nil
+}
+
+func (reservationService *ReservationService) CheckActiveReservationsForAccommodations(accommodationIds []string) (bool, *shared.Error) {
+	for _, idStr := range accommodationIds {
+		id, _ := primitive.ObjectIDFromHex(idStr)
+		activeReservations, err := reservationService.ReservationRepository.CheckActiveReservationsForAccommodation(id)
+		if err != nil {
+			return false, shared.CheckActiveReservationsError()
+		}
+		if activeReservations {
+			return true, nil
+		}
+	}
+	for _, idStr := range accommodationIds {
+		id, _ := primitive.ObjectIDFromHex(idStr)
+		err := reservationService.ReservationRepository.DeleteByAccommodationId(id)
+		if err != nil {
+			return false, shared.ReservationNotDeleted()
+		}
+	}
+	return false, nil
 }

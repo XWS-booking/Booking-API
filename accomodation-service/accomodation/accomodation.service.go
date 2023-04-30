@@ -2,6 +2,7 @@ package accomodation
 
 import (
 	"accomodation_service/accomodation/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type AccomodationService struct {
@@ -14,4 +15,16 @@ func (accomodationService *AccomodationService) FindAll(city string, guests int3
 		return accomodations
 	}
 	return accomodations
+}
+
+func (accomodationService *AccomodationService) FindAllByOwnerId(id primitive.ObjectID) []model.Accomodation {
+	accomodations, err := accomodationService.AccomodationRepository.FindAllByOwnerId(id)
+	if err != nil {
+		return accomodations
+	}
+	return accomodations
+}
+
+func (accomodationService *AccomodationService) DeleteByOwnerId(id primitive.ObjectID) {
+	accomodationService.AccomodationRepository.DeleteByOwnerId(id)
 }

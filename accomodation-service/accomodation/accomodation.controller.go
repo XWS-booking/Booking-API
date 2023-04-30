@@ -4,6 +4,7 @@ import (
 	"accomodation_service/accomodation/services/storage"
 	. "accomodation_service/proto/accomodation"
 	. "context"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -46,4 +47,32 @@ func (accomodationController *AccomodationController) FindAll(ctx Context, req *
 		accomodationResponses = append(accomodationResponses, NewAccomodationResponse(a))
 	}
 	return &FindAllAccomodationResponse{AccomodationResponses: accomodationResponses}, nil
+}
+
+func (accomodationController *AccomodationController) FindAllAccommodationIdsByOwnerId(ctx Context, req *FindAllAccommodationIdsByOwnerIdRequest) (*FindAllAccommodationIdsByOwnerIdResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	id, err := primitive.ObjectIDFromHex(req.GetOwnerId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	accommodations := accomodationController.AccomodationService.FindAllByOwnerId(id)
+	var accommodationIds []string
+	for _, a := range accommodations {
+		accommodationIds = append(accommodationIds, a.Id.Hex())
+	}
+	return &FindAllAccommodationIdsByOwnerIdResponse{Ids: accommodationIds}, nil
+}
+
+func (accomodationController *AccomodationController) DeleteByOwnerId(ctx Context, req *DeleteByOwnerIdRequest) (*DeleteByOwnerIdResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	id, err := primitive.ObjectIDFromHex(req.GetOwnerId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	accomodationController.AccomodationService.DeleteByOwnerId(id)
+	return &DeleteByOwnerIdResponse{Deleted: true}, nil
 }

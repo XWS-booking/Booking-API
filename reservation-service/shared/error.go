@@ -17,5 +17,5 @@ func ReservationsNotFound() *Error {
 }
 
 func CheckActiveReservationsError() *Error {
-	return &Error{Message: "Error when checking guest's active reservations!"}
+	return &Error{Message: "Error when checking active reservations!"}
 }

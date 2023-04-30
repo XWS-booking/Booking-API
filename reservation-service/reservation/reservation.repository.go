@@ -84,9 +84,35 @@ func (reservationRepository *ReservationRepository) CheckActiveReservationsForGu
 	return count > 0, nil
 }
 
-func (reservationRepository *ReservationRepository) DeleteReservationsByBuyerId(id primitive.ObjectID) error {
+func (reservationRepository *ReservationRepository) CheckActiveReservationsForAccommodation(id primitive.ObjectID) (bool, error) {
+	collection := reservationRepository.getCollection("reservations")
+	filter := bson.M{
+		"accommodation_id": id,
+		"end_date": bson.M{
+			"$gt": time.Now(),
+		},
+	}
+
+	count, err := collection.CountDocuments(context.TODO(), filter)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+func (reservationRepository *ReservationRepository) DeleteByBuyerId(id primitive.ObjectID) error {
 	collection := reservationRepository.getCollection("reservations")
 	filter := bson.M{"buyer_id": id}
+	_, err := collection.DeleteMany(context.TODO(), filter)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (reservationRepository *ReservationRepository) DeleteByAccommodationId(id primitive.ObjectID) error {
+	collection := reservationRepository.getCollection("reservations")
+	filter := bson.M{"accommodation_id": id}
 	_, err := collection.DeleteMany(context.TODO(), filter)
 	if err != nil {
 		return err
