@@ -4,6 +4,7 @@ import (
 	"accomodation_service/accomodation/dtos"
 	"accomodation_service/accomodation/services/storage"
 	. "accomodation_service/proto/accomodation"
+	"accomodation_service/shared"
 	. "context"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -59,7 +60,7 @@ func (accomodationController *AccomodationController) Create(ctx Context, req *C
 		FreeParking:    req.FreeParking,
 		MinGuests:      req.MinGuests,
 		MaxGuests:      req.MaxGuests,
-		OwnerId:        req.OwnerId,
+		OwnerId:        shared.StringToObjectId(req.OwnerId),
 	}
 	fmt.Println("evo me")
 	fmt.Println(accomodationDto.Pictures)

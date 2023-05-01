@@ -72,7 +72,7 @@ func (accommodationRepository *AccomodationRepository) DeleteByOwnerId(id primit
 	return nil
 }
 
-func (accomodationRepository *AccomodationRepository) Create(accomodation model.Accomodation) (*model.Accomodation, error) {
+func (accomodationRepository *AccomodationRepository) Create(accomodation Accomodation) (*Accomodation, error) {
 	collection := accomodationRepository.getCollection("accomodations")
 	res, err := collection.InsertOne(context.TODO(), accomodation)
 	if err != nil {

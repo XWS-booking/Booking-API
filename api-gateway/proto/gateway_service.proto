@@ -19,16 +19,12 @@ service AuthService {
             body: "*"
           };
     }
-<<<<<<< HEAD
 
     rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse) {
         option (google.api.http) = {
             delete: "/api/auth/{id}"
         };
     }
-}
-=======
->>>>>>> 1b2f47e (update)
 
     rpc GetUser(GetUserRequest) returns (GetUserResponse) {
         option(google.api.http) = {
@@ -105,19 +101,15 @@ message RegistrationResponse {
 message SignInResponse {
     string access_token = 1;
 }
-<<<<<<< HEAD
-
 message DeleteProfileResponse {
     bool deleted = 1;
 }
 
-=======
 message GetUserResponse {
     string id = 1;
     string email = 2;
     string role = 3;
 }
->>>>>>> 1b2f47e (update)
 //Requests
 message ImageInfo {
     bytes data = 1;

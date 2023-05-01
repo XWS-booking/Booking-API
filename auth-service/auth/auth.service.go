@@ -97,14 +97,14 @@ func generateToken(user User) (string, *Error) {
 	return tokenString, nil
 }
 
-<<<<<<< HEAD
 func (authService *AuthService) Delete(id primitive.ObjectID) *Error {
 	err := authService.UserRepository.Delete(id)
 	if err != nil {
 		return DeleteProfileError()
 	}
 	return nil
-=======
+}
+
 func validateToken(bearerToken string) (*jwt.Token, *Error) {
 	bearer := strings.Split(bearerToken, " ")
 	token, err := jwt.Parse(bearer[1], func(token *jwt.Token) (interface{}, error) {
@@ -118,5 +118,4 @@ func validateToken(bearerToken string) (*jwt.Token, *Error) {
 		return nil, TokenValidationFailed()
 	}
 	return token, nil
->>>>>>> 1b2f47e (update)
 }
