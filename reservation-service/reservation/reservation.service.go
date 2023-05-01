@@ -45,9 +45,11 @@ func (reservationService *ReservationService) CheckActiveReservationsForGuest(id
 	if err != nil {
 		return activeReservations, shared.CheckActiveReservationsError()
 	}
-	err = reservationService.ReservationRepository.DeleteByBuyerId(id)
-	if err != nil {
-		return activeReservations, shared.ReservationNotDeleted()
+	if !activeReservations {
+		err = reservationService.ReservationRepository.DeleteByBuyerId(id)
+		if err != nil {
+			return activeReservations, shared.ReservationNotDeleted()
+		}
 	}
 	return activeReservations, nil
 }

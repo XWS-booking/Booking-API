@@ -75,6 +75,7 @@ func (reservationRepository *ReservationRepository) CheckActiveReservationsForGu
 		"end_date": bson.M{
 			"$gt": time.Now(),
 		},
+		"status": bson.M{"$in": bson.A{Pending, Approved}},
 	}
 
 	count, err := collection.CountDocuments(context.TODO(), filter)
@@ -91,6 +92,7 @@ func (reservationRepository *ReservationRepository) CheckActiveReservationsForAc
 		"end_date": bson.M{
 			"$gt": time.Now(),
 		},
+		"status": bson.M{"$in": bson.A{Pending, Approved}},
 	}
 
 	count, err := collection.CountDocuments(context.TODO(), filter)
