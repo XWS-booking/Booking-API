@@ -19,15 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-<<<<<<< HEAD
 	AuthService_SignIn_FullMethodName        = "/AuthService/SignIn"
 	AuthService_Register_FullMethodName      = "/AuthService/Register"
 	AuthService_DeleteProfile_FullMethodName = "/AuthService/DeleteProfile"
-=======
-	AuthService_SignIn_FullMethodName   = "/AuthService/SignIn"
-	AuthService_Register_FullMethodName = "/AuthService/Register"
-	AuthService_GetUser_FullMethodName  = "/AuthService/GetUser"
->>>>>>> 1b2f47e (update)
+	AuthService_GetUser_FullMethodName       = "/AuthService/GetUser"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -36,11 +31,8 @@ const (
 type AuthServiceClient interface {
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	Register(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*RegistrationResponse, error)
-<<<<<<< HEAD
 	DeleteProfile(ctx context.Context, in *DeleteProfileRequest, opts ...grpc.CallOption) (*DeleteProfileResponse, error)
-=======
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
->>>>>>> 1b2f47e (update)
 }
 
 type authServiceClient struct {
@@ -69,15 +61,18 @@ func (c *authServiceClient) Register(ctx context.Context, in *RegistrationReques
 	return out, nil
 }
 
-<<<<<<< HEAD
 func (c *authServiceClient) DeleteProfile(ctx context.Context, in *DeleteProfileRequest, opts ...grpc.CallOption) (*DeleteProfileResponse, error) {
 	out := new(DeleteProfileResponse)
 	err := c.cc.Invoke(ctx, AuthService_DeleteProfile_FullMethodName, in, out, opts...)
-=======
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *authServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
 	out := new(GetUserResponse)
 	err := c.cc.Invoke(ctx, AuthService_GetUser_FullMethodName, in, out, opts...)
->>>>>>> 1b2f47e (update)
 	if err != nil {
 		return nil, err
 	}
@@ -90,11 +85,8 @@ func (c *authServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opt
 type AuthServiceServer interface {
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	Register(context.Context, *RegistrationRequest) (*RegistrationResponse, error)
-<<<<<<< HEAD
 	DeleteProfile(context.Context, *DeleteProfileRequest) (*DeleteProfileResponse, error)
-=======
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
->>>>>>> 1b2f47e (update)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -108,13 +100,11 @@ func (UnimplementedAuthServiceServer) SignIn(context.Context, *SignInRequest) (*
 func (UnimplementedAuthServiceServer) Register(context.Context, *RegistrationRequest) (*RegistrationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-<<<<<<< HEAD
 func (UnimplementedAuthServiceServer) DeleteProfile(context.Context, *DeleteProfileRequest) (*DeleteProfileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProfile not implemented")
-=======
+}
 func (UnimplementedAuthServiceServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
->>>>>>> 1b2f47e (update)
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -165,18 +155,12 @@ func _AuthService_Register_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-<<<<<<< HEAD
 func _AuthService_DeleteProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteProfileRequest)
-=======
-func _AuthService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserRequest)
->>>>>>> 1b2f47e (update)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-<<<<<<< HEAD
 		return srv.(AuthServiceServer).DeleteProfile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
@@ -185,7 +169,16 @@ func _AuthService_GetUser_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).DeleteProfile(ctx, req.(*DeleteProfileRequest))
-=======
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
 		return srv.(AuthServiceServer).GetUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
@@ -194,7 +187,6 @@ func _AuthService_GetUser_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).GetUser(ctx, req.(*GetUserRequest))
->>>>>>> 1b2f47e (update)
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -215,13 +207,12 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_Register_Handler,
 		},
 		{
-<<<<<<< HEAD
 			MethodName: "DeleteProfile",
 			Handler:    _AuthService_DeleteProfile_Handler,
-=======
+		},
+		{
 			MethodName: "GetUser",
 			Handler:    _AuthService_GetUser_Handler,
->>>>>>> 1b2f47e (update)
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

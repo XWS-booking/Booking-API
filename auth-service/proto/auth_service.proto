@@ -5,11 +5,9 @@ option go_package = "proto/authGrpc";
 service AuthService {
     rpc SignIn(SignInRequest) returns (SignInResponse) {}
     rpc Register(RegistrationRequest) returns (RegistrationResponse) {}
-<<<<<<< HEAD
     rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse) {}
-=======
     rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
->>>>>>> 1b2f47e (update)
+
 }
 
 
@@ -44,14 +42,14 @@ message RegistrationResponse {
 message SignInResponse {
     string access_token = 1;
 }
-<<<<<<< HEAD
+
 
 message DeleteProfileResponse {
     bool deleted = 1;
-=======
+}
 message GetUserResponse {
     string id = 1;
     string email = 2;
     string role = 3;
->>>>>>> 1b2f47e (update)
+
 }
