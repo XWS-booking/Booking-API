@@ -8,10 +8,11 @@ service ReservationService {
   rpc Create(CreateReservationRequest) returns (ReservationId) {}
   rpc Delete(ReservationId) returns (DeleteReservationResponse) {}
   rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse) {}
+  rpc CheckActiveReservationsForGuest(CheckActiveReservationsForGuestRequest) returns (CheckActiveReservationsForGuestResponse) {}
+  rpc CheckActiveReservationsForAccommodations(CheckActiveReservationsForAccommodationsRequest) returns (CheckActiveReservationsForAccommodationsResponse) {}
 }
 
 
-//Requests
 message CreateReservationRequest {
   string buyerId = 5;
   string accommodationId = 1;
@@ -25,7 +26,14 @@ message FindAllReservedAccommodationsRequest {
   google.protobuf.Timestamp endDate = 2;
 }
 
-//Responses
+message CheckActiveReservationsForGuestRequest{
+  string guestId = 1;
+}
+
+message CheckActiveReservationsForAccommodationsRequest {
+  repeated string ids = 1;
+}
+
 message ReservationId{
   string id = 1;
 }
@@ -36,4 +44,12 @@ message DeleteReservationResponse{
 
 message FindAllReservedAccommodationsResponse {
   repeated string ids = 1;
+}
+
+message CheckActiveReservationsForGuestResponse {
+  bool activeReservations = 1;
+}
+
+message CheckActiveReservationsForAccommodationsResponse {
+  bool activeReservations = 1;
 }

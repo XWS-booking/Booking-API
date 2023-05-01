@@ -4,10 +4,11 @@ import (
 	. "auth_service/auth/model"
 	. "auth_service/shared"
 	"fmt"
+	"github.com/golang-jwt/jwt/v5"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"os"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -80,4 +81,12 @@ func generateToken(user User) (string, *Error) {
 	}
 
 	return tokenString, nil
+}
+
+func (authService *AuthService) Delete(id primitive.ObjectID) *Error {
+	err := authService.UserRepository.Delete(id)
+	if err != nil {
+		return DeleteProfileError()
+	}
+	return nil
 }

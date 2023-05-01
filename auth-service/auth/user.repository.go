@@ -50,6 +50,16 @@ func (userRepository *UserRepository) FindByEmail(email string) (User, error) {
 	return user, nil
 }
 
+func (userRepository *UserRepository) Delete(id primitive.ObjectID) error {
+	collection := userRepository.getCollection("users")
+	filter := bson.M{"_id": id}
+	_, err := collection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (userRepository *UserRepository) getCollection(key string) *mongo.Collection {
 	return userRepository.DB.Database(os.Getenv("DATABASE_NAME")).Collection(key)
 }

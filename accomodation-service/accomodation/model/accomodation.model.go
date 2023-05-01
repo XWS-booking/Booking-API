@@ -17,4 +17,5 @@ type Accomodation struct {
 	MinGuests      int32              `bson:"min_guests" json:"minGuests"`
 	MaxGuests      int32              `bson:"max_guests" json:"maxGuests"`
 	PictureUrls    []string           `bson:"picture_urls" json:"pictureUrls"`
+	OwnerId        primitive.ObjectID `bson:"owner_id" json:"ownerId"`
 }

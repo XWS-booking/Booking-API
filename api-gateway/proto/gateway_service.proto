@@ -19,6 +19,12 @@ service AuthService {
             body: "*"
           };
     }
+
+    rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse) {
+        option (google.api.http) = {
+            delete: "/api/auth/{id}"
+        };
+    }
 }
 
 service AccomodationService {
@@ -31,6 +37,16 @@ service AccomodationService {
     rpc FindAll(FindAllAccomodationRequest) returns (FindAllAccomodationResponse) {
         option (google.api.http) = {
             get: "/api/accommodation/{city}/{guests}"
+        };
+    }
+    rpc FindAllAccommodationIdsByOwnerId(FindAllAccommodationIdsByOwnerIdRequest) returns (FindAllAccommodationIdsByOwnerIdResponse) {
+        option (google.api.http) = {
+            get: "/api/accommodation/getAllByOwnerId/{ownerId}"
+        };
+    }
+    rpc DeleteByOwnerId(DeleteByOwnerIdRequest) returns (DeleteByOwnerIdResponse) {
+        option (google.api.http) = {
+            delete: "/api/accommodation/{ownerId}"
         };
     }
 }
@@ -47,11 +63,9 @@ service ReservationService {
             delete: "/api/reservation/{id}"
         };
     }
-    rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse){
-        option (google.api.http) = {
-            get: "/api/reservedAccommodations/{startDate}/{endDate}"
-        };
-    }
+    rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse){}
+    rpc CheckActiveReservationsForGuest(CheckActiveReservationsForGuestRequest) returns (CheckActiveReservationsForGuestResponse) {}
+    rpc CheckActiveReservationsForAccommodations(CheckActiveReservationsForAccommodationsRequest) returns (CheckActiveReservationsForAccommodationsResponse) {}
 }
 
 //Requests
@@ -66,6 +80,10 @@ message SignInRequest {
     string password = 2;
 }
 
+message DeleteProfileRequest {
+    string id = 1;
+}
+
 //Responses
 message RegistrationResponse {
     string id = 1;
@@ -77,6 +95,11 @@ message RegistrationResponse {
 message SignInResponse {
     string access_token = 1;
 }
+
+message DeleteProfileResponse {
+    bool deleted = 1;
+}
+
 //Requests
 message CreateAccomodationRequest {
     string name = 1;
@@ -97,6 +120,14 @@ message CreateAccomodationRequest {
 message FindAllAccomodationRequest {
     string city = 1;
     int32 guests = 2;
+}
+
+message FindAllAccommodationIdsByOwnerIdRequest {
+    string ownerId = 1;
+}
+
+message DeleteByOwnerIdRequest {
+    string ownerId = 1;
 }
 
 //Responses
@@ -138,6 +169,14 @@ message AccomodationResponse {
     repeated bytes pictures = 13;
 }
 
+message FindAllAccommodationIdsByOwnerIdResponse {
+    repeated string ids = 1;
+}
+
+message DeleteByOwnerIdResponse {
+    bool deleted = 1;
+}
+
 //Requests
 message CreateReservationRequest {
     string buyerId = 5;
@@ -152,6 +191,14 @@ message FindAllReservedAccommodationsRequest {
     google.protobuf.Timestamp endDate = 2;
 }
 
+message CheckActiveReservationsForGuestRequest{
+    string guestId = 1;
+}
+
+message CheckActiveReservationsForAccommodationsRequest {
+    repeated string ids = 1;
+}
+
 //Responses
 message ReservationId{
     string id = 1;
@@ -163,4 +210,12 @@ message DeleteReservationResponse{
 
 message FindAllReservedAccommodationsResponse {
     repeated string ids = 1;
+}
+
+message CheckActiveReservationsForGuestResponse {
+    bool activeReservations = 1;
+}
+
+message CheckActiveReservationsForAccommodationsResponse {
+    bool activeReservations = 1;
 }

@@ -34,10 +34,13 @@ func (reservationController *ReservationController) Delete(ctx Context, req *Res
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
-	reservationId, _ := primitive.ObjectIDFromHex(req.GetId())
-	err := reservationController.ReservationService.Delete(reservationId)
+	reservationId, err := primitive.ObjectIDFromHex(req.GetId())
 	if err != nil {
-		return nil, status.Error(codes.Internal, err.Message)
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	e := reservationController.ReservationService.Delete(reservationId)
+	if e != nil {
+		return nil, status.Error(codes.Internal, e.Message)
 	}
 	return &DeleteReservationResponse{Message: "success"}, nil
 }
@@ -53,4 +56,34 @@ func (reservationController *ReservationController) FindAllReservedAccommodation
 		return nil, status.Error(codes.Internal, err.Message)
 	}
 	return &FindAllReservedAccommodationsResponse{Ids: reservedAccommodations}, nil
+}
+
+func (reservationController *ReservationController) CheckActiveReservationsForGuest(ctx Context, req *CheckActiveReservationsForGuestRequest) (*CheckActiveReservationsForGuestResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	id, err := primitive.ObjectIDFromHex(req.GetGuestId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	activeReservations, e := reservationController.ReservationService.CheckActiveReservationsForGuest(id)
+	if e != nil {
+		return &CheckActiveReservationsForGuestResponse{}, status.Error(codes.Internal, e.Message)
+	}
+	return &CheckActiveReservationsForGuestResponse{
+		ActiveReservations: activeReservations,
+	}, nil
+}
+
+func (reservationController *ReservationController) CheckActiveReservationsForAccommodations(ctx Context, req *CheckActiveReservationsForAccommodationsRequest) (*CheckActiveReservationsForAccommodationsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	activeReservations, e := reservationController.ReservationService.CheckActiveReservationsForAccommodations(req.GetIds())
+	if e != nil {
+		return &CheckActiveReservationsForAccommodationsResponse{}, status.Error(codes.Internal, e.Message)
+	}
+	return &CheckActiveReservationsForAccommodationsResponse{
+		ActiveReservations: activeReservations,
+	}, nil
 }
