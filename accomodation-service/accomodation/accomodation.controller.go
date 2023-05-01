@@ -41,7 +41,10 @@ func (accomodationController *AccomodationController) FindAll(ctx Context, req *
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
-	accomodations := accomodationController.AccomodationService.FindAll(req.GetCity(), req.GetGuests())
+	accomodations, e := accomodationController.AccomodationService.FindAll(req.GetCity(), req.GetGuests())
+	if e != nil {
+		return nil, status.Error(codes.Internal, e.Message)
+	}
 	var accomodationResponses []*AccomodationResponse
 	for _, a := range accomodations {
 		accomodationResponses = append(accomodationResponses, NewAccomodationResponse(a))
@@ -57,7 +60,10 @@ func (accomodationController *AccomodationController) FindAllAccommodationIdsByO
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	accommodations := accomodationController.AccomodationService.FindAllByOwnerId(id)
+	accommodations, e := accomodationController.AccomodationService.FindAllByOwnerId(id)
+	if e != nil {
+		return nil, status.Error(codes.Internal, e.Message)
+	}
 	var accommodationIds []string
 	for _, a := range accommodations {
 		accommodationIds = append(accommodationIds, a.Id.Hex())
@@ -73,6 +79,9 @@ func (accomodationController *AccomodationController) DeleteByOwnerId(ctx Contex
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	accomodationController.AccomodationService.DeleteByOwnerId(id)
+	e := accomodationController.AccomodationService.DeleteByOwnerId(id)
+	if e != nil {
+		return nil, status.Error(codes.Internal, e.Message)
+	}
 	return &DeleteByOwnerIdResponse{Deleted: true}, nil
 }

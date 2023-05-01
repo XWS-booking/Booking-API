@@ -18,7 +18,6 @@ type AccomodationRepository struct {
 func (accomodationRepository *AccomodationRepository) FindAll(city string, guests int32) ([]Accomodation, error) {
 	collection := accomodationRepository.getCollection("accomodations")
 	var accommodations []Accomodation
-
 	filter := bson.D{{Key: "city", Value: bson.D{{Key: "$regex", Value: "(?i).*" + city + ".*"}}}}
 	if guests != -1 {
 		filter = bson.D{{Key: "city", Value: bson.D{{Key: "$regex", Value: "(?i).*" + city + ".*"}}},
@@ -33,7 +32,7 @@ func (accomodationRepository *AccomodationRepository) FindAll(city string, guest
 
 	for cur.Next(context.TODO()) {
 		var elem Accomodation
-		err := cur.Decode(&elem)
+		err = cur.Decode(&elem)
 		if err != nil {
 			return accommodations, err
 		}

@@ -3,6 +3,7 @@ module accomodation_service
 go 1.20
 
 require (
+	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/supabase-community/storage-go v0.5.7
