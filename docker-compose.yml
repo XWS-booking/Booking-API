@@ -12,7 +12,7 @@ services:
     environment:
       PORT: 9000
       DATABASE_NAME: BOOKING_ACCOMODATION
-      STORAGE_URL: https://xcyrzflhnfgpyzfdzalc.supabase.com/v1/storage
+      STORAGE_URL: https://xcyrzflhnfgpyzfdzalc.supabase.co/storage/v1
       STORAGE_SERVICE_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeXJ6ZmxobmZncHl6ZmR6YWxjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY4MDYzODU0NSwiZXhwIjoxOTk2MjE0NTQ1fQ.CJURcOscoWrsZ1A0tkCLbjK854YUvvzYRFoO7Q-gRs8
       STORAGE_MAIN_BUCKET: pictures
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority

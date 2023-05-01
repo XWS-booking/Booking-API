@@ -19,6 +19,7 @@ service AuthService {
             body: "*"
           };
     }
+<<<<<<< HEAD
 
     rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse) {
         option (google.api.http) = {
@@ -26,14 +27,20 @@ service AuthService {
         };
     }
 }
+=======
+>>>>>>> 1b2f47e (update)
 
-service AccomodationService {
-    rpc Create(CreateAccomodationRequest) returns (CreateAccomodationResponse) {
-        option (google.api.http) = {
-            post: "/api/accomodation"
+    rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+        option(google.api.http) = {
+            post: "/api/auth/user"
             body: "*"
         };
     }
+
+}
+
+service AccomodationService {
+    rpc Create(CreateAccomodationRequest) returns (CreateAccomodationResponse) {}
     rpc FindAll(FindAllAccomodationRequest) returns (FindAllAccomodationResponse) {
         option (google.api.http) = {
             get: "/api/accommodation/{city}/{guests}"
@@ -79,6 +86,9 @@ message SignInRequest {
     string email = 1;
     string password = 2;
 }
+message GetUserRequest {
+    string token = 1;
+}
 
 message DeleteProfileRequest {
     string id = 1;
@@ -95,12 +105,24 @@ message RegistrationResponse {
 message SignInResponse {
     string access_token = 1;
 }
+<<<<<<< HEAD
 
 message DeleteProfileResponse {
     bool deleted = 1;
 }
 
+=======
+message GetUserResponse {
+    string id = 1;
+    string email = 2;
+    string role = 3;
+}
+>>>>>>> 1b2f47e (update)
 //Requests
+message ImageInfo {
+    bytes data = 1;
+    string filename = 2;
+}
 message CreateAccomodationRequest {
     string name = 1;
     string street = 2;
@@ -114,7 +136,8 @@ message CreateAccomodationRequest {
     bool freeParking = 10;
     int32 minGuests = 11;
     int32 maxGuests = 12;
-    bytes picture = 13;
+    repeated ImageInfo pictures = 13;
+    string ownerId = 14;
 }
 
 message FindAllAccomodationRequest {
@@ -146,6 +169,7 @@ message CreateAccomodationResponse {
     int32 minGuests = 11;
     int32 maxGuests = 12;
     repeated bytes pictures = 13;
+    string ownerId = 15;
 }
 
 message FindAllAccomodationResponse {
