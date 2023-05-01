@@ -3,12 +3,12 @@ module accomodation_service
 go 1.20
 
 require (
+	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/supabase-community/storage-go v0.5.7
 	go.mongodb.org/mongo-driver v1.11.4
-	google.golang.org/protobuf v1.28.1
 )
 
 require (
@@ -27,6 +27,7 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.7.0 // indirect
 	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
 )
 
 require (

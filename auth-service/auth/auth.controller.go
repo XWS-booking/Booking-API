@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"strconv"
 )
 
 func CreateAuthController(authService *AuthService) *AuthController {
@@ -54,11 +55,37 @@ func (authController *AuthController) Register(ctx context.Context, req *Registr
 	}
 
 	response := &RegistrationResponse{
-		Id:      registered.Id.String(),
+		Id:      registered.Id.Hex(),
 		Email:   registered.Email,
 		Name:    registered.Name,
 		Surname: registered.Surname,
-		Role:    string(registered.Role),
+		Role:    strconv.Itoa(int(registered.Role)),
+	}
+
+	return response, nil
+}
+
+func (authController *AuthController) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with user data")
+	}
+	if req.Token == "" {
+		return nil, status.Error(codes.Unauthenticated, "Invalid token")
+	}
+
+	id, e := authController.AuthService.DecryptToken(req.Token)
+	if e != nil {
+		return nil, status.Error(codes.Unauthenticated, e.Message)
+	}
+	user, e := authController.AuthService.GetCurrentUser(id)
+	if e != nil {
+		return nil, status.Error(codes.NotFound, e.Message)
+	}
+
+	response := &GetUserResponse{
+		Id:    user.Id.Hex(),
+		Email: user.Email,
+		Role:  strconv.Itoa(int(user.Role)),
 	}
 
 	return response, nil

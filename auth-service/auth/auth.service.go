@@ -7,6 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"os"
+	"strings"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -75,6 +76,18 @@ func (authService *AuthService) UpdatePersonalInfo(user User) (User, *Error) {
 	}
 	return updatedUser, nil
 }
+func (authService *AuthService) DecryptToken(bearerToken string) (string, *Error) {
+	token, err := validateToken(bearerToken)
+	if err != nil {
+		return "", err
+	}
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return "", TokenValidationFailed()
+	}
+	id := claims["id"].(string)
+	return id, nil
+}
 
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
@@ -108,4 +121,19 @@ func (authService *AuthService) Delete(id primitive.ObjectID) *Error {
 		return DeleteProfileError()
 	}
 	return nil
+}
+
+func validateToken(bearerToken string) (*jwt.Token, *Error) {
+	bearer := strings.Split(bearerToken, " ")
+	token, err := jwt.Parse(bearer[1], func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		var secretKey = []byte(os.Getenv("JWT_SECRET"))
+		return secretKey, nil
+	})
+	if err != nil {
+		return nil, TokenValidationFailed()
+	}
+	return token, nil
 }

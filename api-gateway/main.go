@@ -43,9 +43,9 @@ func main() {
 
 func initHandlers(gwmux *runtime.ServeMux) {
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	authEndpoint := "auth_service:9000"
-	accommodationEndpoint := "accomodation_service:9000"
-	reservationEndpoint := "reservation_service:9000"
+	authEndpoint := os.Getenv("AUTH_SERVICE_ADDRESS")
+	accommodationEndpoint := os.Getenv("ACCOMODATION_SERVICE_ADDRESS")
+	reservationEndpoint := os.Getenv("RESERVATION_SERVICE_ADDRESS")
 
 	err := gateway.RegisterAuthServiceHandlerFromEndpoint(context.TODO(), gwmux, authEndpoint, opts)
 	if err != nil {
@@ -65,5 +65,8 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	searchAccommodationsHandler.Init(gwmux)
 	deleteProfileHandler := api.NewDeleteProfileHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
 	deleteProfileHandler.Init(gwmux)
+
+	createAccomodationHandler := api.NewCreateAccomodationHandler(accommodationEndpoint, authEndpoint)
+	createAccomodationHandler.Init(gwmux)
 
 }

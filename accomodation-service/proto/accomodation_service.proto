@@ -11,6 +11,10 @@ service AccomodationService {
 
 
 //Requests
+message ImageInfo {
+  bytes data = 1;
+  string filename = 2;
+}
 message CreateAccomodationRequest {
   string name = 1;
   string street = 2;
@@ -24,7 +28,8 @@ message CreateAccomodationRequest {
   bool freeParking = 10;
   int32 minGuests = 11;
   int32 maxGuests = 12;
-  bytes picture = 13;
+  repeated ImageInfo pictures = 13;
+  string ownerId = 14;
 }
 
 message FindAllAccomodationRequest {
@@ -56,6 +61,7 @@ message CreateAccomodationResponse {
   int32 minGuests = 11;
   int32 maxGuests = 12;
   repeated bytes pictures = 13;
+  string ownerId = 15;
 }
 
 message FindAllAccomodationResponse {
