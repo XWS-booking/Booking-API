@@ -1,6 +1,7 @@
 package accomodation
 
 import (
+	"accomodation_service/accomodation/dtos"
 	"accomodation_service/accomodation/model"
 	accomodationGrpc "accomodation_service/proto/accomodation"
 )
@@ -20,5 +21,23 @@ func NewAccomodationResponse(accomodation model.Accomodation) *accomodationGrpc.
 		FreeParking:    accomodation.FreeParking,
 		MinGuests:      accomodation.MinGuests,
 		MaxGuests:      accomodation.MaxGuests,
+	}
+}
+
+func AccomodationDtoToAccomodation(accomodationDto dtos.AccomodationDto) model.Accomodation {
+	return model.Accomodation{
+		Name:           accomodationDto.Name,
+		Street:         accomodationDto.Street,
+		StreetNumber:   accomodationDto.StreetNumber,
+		City:           accomodationDto.City,
+		ZipCode:        accomodationDto.ZipCode,
+		Country:        accomodationDto.Country,
+		Wifi:           accomodationDto.Wifi,
+		Kitchen:        accomodationDto.Kitchen,
+		AirConditioner: accomodationDto.AirConditioner,
+		FreeParking:    accomodationDto.FreeParking,
+		MinGuests:      accomodationDto.MinGuests,
+		MaxGuests:      accomodationDto.MaxGuests,
+		OwnerId:        accomodationDto.OwnerId,
 	}
 }

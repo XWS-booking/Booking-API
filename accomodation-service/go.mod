@@ -3,6 +3,7 @@ module accomodation_service
 go 1.20
 
 require (
+	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/sirupsen/logrus v1.4.2

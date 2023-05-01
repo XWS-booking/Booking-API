@@ -33,3 +33,11 @@ func (accomodationService *AccomodationService) DeleteByOwnerId(id primitive.Obj
 	}
 	return nil
 }
+
+func (accomodationService *AccomodationService) Create(accomodation Accomodation) (*Accomodation, *Error) {
+	created, e := accomodationService.AccomodationRepository.Create(accomodation)
+	if e != nil {
+		return nil, AccomodationNotCreated()
+	}
+	return created, nil
+}

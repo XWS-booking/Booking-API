@@ -72,6 +72,16 @@ func (accommodationRepository *AccomodationRepository) DeleteByOwnerId(id primit
 	return nil
 }
 
+func (accomodationRepository *AccomodationRepository) Create(accomodation model.Accomodation) (*model.Accomodation, error) {
+	collection := accomodationRepository.getCollection("accomodations")
+	res, err := collection.InsertOne(context.TODO(), accomodation)
+	if err != nil {
+		return nil, err
+	}
+	accomodation.Id = res.InsertedID.(primitive.ObjectID)
+	return &accomodation, nil
+}
+
 func (accomodationRepository *AccomodationRepository) getCollection(key string) *mongo.Collection {
 	return accomodationRepository.DB.Database(os.Getenv("DATABASE_NAME")).Collection(key)
 }
