@@ -206,7 +206,6 @@ message CreateAccomodationResponse {
 
 message FindAllAccomodationResponse {
     repeated AccomodationResponse accomodationResponses = 1;
-    int32 pages = 2;
 }
 
 message AccomodationResponse {
