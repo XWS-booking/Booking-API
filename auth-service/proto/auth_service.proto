@@ -6,6 +6,8 @@ service AuthService {
     rpc SignIn(SignInRequest) returns (SignInResponse) {}
     rpc Register(RegistrationRequest) returns (RegistrationResponse) {}
     rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse) {}
+    rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+
 }
 
 
@@ -19,6 +21,9 @@ message RegistrationRequest {
 message SignInRequest {
     string email = 1;
     string password = 2;
+}
+message GetUserRequest {
+    string token = 1;
 }
 
 message DeleteProfileRequest {
@@ -38,6 +43,13 @@ message SignInResponse {
     string access_token = 1;
 }
 
+
 message DeleteProfileResponse {
     bool deleted = 1;
+}
+message GetUserResponse {
+    string id = 1;
+    string email = 2;
+    string role = 3;
+
 }

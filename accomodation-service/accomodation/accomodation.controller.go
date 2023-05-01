@@ -1,10 +1,17 @@
 package accomodation
 
 import (
+	"accomodation_service/accomodation/dtos"
 	"accomodation_service/accomodation/services/storage"
 	. "accomodation_service/proto/accomodation"
+	"accomodation_service/shared"
 	. "context"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"fmt"
+	"github.com/google/uuid"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -25,15 +32,50 @@ func (accomodationController *AccomodationController) Create(ctx Context, req *C
 		return nil, status.Error(codes.Aborted, "Something wrong with accomodation data")
 	}
 
-	data := req.Picture
+	data := req.Pictures
+	urls := make([]string, 0)
+	for _, info := range data {
+		uid := uuid.New()
+		info.Filename = uid.String() + "-" + info.Filename
+		url, err := accomodationController.StorageService.UploadImage(info.Data, info.Filename)
+		if err != nil {
 
-	err := accomodationController.StorageService.UploadImage(data)
-	if err != nil {
-		return nil, status.Error(codes.Aborted, "Data upload filed!")
+			fmt.Println("Something wrong when uploading!", err)
+			return nil, status.Error(codes.Aborted, "File upload failed!")
+		}
+		urls = append(urls, url)
+	}
+	fmt.Println(urls)
+
+	accomodationDto := dtos.AccomodationDto{
+		Name:           req.Name,
+		Street:         req.Street,
+		StreetNumber:   req.StreetNumber,
+		City:           req.City,
+		ZipCode:        req.ZipCode,
+		Country:        req.Country,
+		Wifi:           req.Wifi,
+		Kitchen:        req.Kitchen,
+		AirConditioner: req.AirConditioner,
+		FreeParking:    req.FreeParking,
+		MinGuests:      req.MinGuests,
+		MaxGuests:      req.MaxGuests,
+		OwnerId:        shared.StringToObjectId(req.OwnerId),
+	}
+	fmt.Println("evo me")
+	fmt.Println(accomodationDto.Pictures)
+
+	accomodation := AccomodationDtoToAccomodation(accomodationDto)
+	accomodation.PictureUrls = urls
+
+	created, e := accomodationController.AccomodationService.Create(accomodation)
+
+	if e != nil {
+		return nil, status.Error(codes.Aborted, e.Message)
 	}
 
 	return &CreateAccomodationResponse{
-		Id: "123",
+		Id: created.Id.Hex(),
 	}, nil
 }
 
