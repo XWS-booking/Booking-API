@@ -58,6 +58,24 @@ func (authService *AuthService) GetCurrentUser(userId string) (User, *Error) {
 	return user, nil
 }
 
+func (authService *AuthService) UpdatePersonalInfo(user User) (User, *Error) {
+	foundUser, err := authService.UserRepository.FindById(user.Id)
+	foundUser.Name = user.Name
+	foundUser.Surname = user.Surname
+	foundUser.Email = user.Email
+	foundUser.Password = user.Password
+	foundUser.Street = user.Street
+	foundUser.StreetNumber = user.StreetNumber
+	foundUser.City = user.City
+	foundUser.ZipCode = user.ZipCode
+	foundUser.Country = user.Country
+	updatedUser, err := authService.UserRepository.UpdatePersonalInfo(user)
+	fmt.Println(err)
+	if err != nil {
+		return user, PersonalInfoUpdateFailed()
+	}
+	return updatedUser, nil
+}
 func (authService *AuthService) DecryptToken(bearerToken string) (string, *Error) {
 	token, err := validateToken(bearerToken)
 	if err != nil {

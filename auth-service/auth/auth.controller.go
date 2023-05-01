@@ -91,6 +91,30 @@ func (authController *AuthController) GetUser(ctx context.Context, req *GetUserR
 	return response, nil
 }
 
+func (authController *AuthController) UpdatePersonalInfo(ctx context.Context, req *UpdatePersonalInfoRequest) (*UpdatePersonalInfoResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with user data")
+	}
+	user := UserFromUpdatePersonalInfoDto(req)
+	updatedUser, e := authController.AuthService.UpdatePersonalInfo(*user)
+	if e != nil {
+		return nil, status.Error(codes.Aborted, e.Message)
+	}
+
+	response := &UpdatePersonalInfoResponse{
+		Id:           updatedUser.Id.Hex(),
+		Email:        updatedUser.Email,
+		Name:         updatedUser.Name,
+		Surname:      updatedUser.Surname,
+		Street:       updatedUser.Street,
+		StreetNumber: updatedUser.StreetNumber,
+		City:         updatedUser.City,
+		ZipCode:      updatedUser.ZipCode,
+		Country:      updatedUser.Country,
+	}
+	return response, nil
+
+}
 func (authController *AuthController) DeleteProfile(ctx context.Context, req *DeleteProfileRequest) (*DeleteProfileResponse, error) {
 	id, err := primitive.ObjectIDFromHex(req.GetId())
 	if err != nil {

@@ -19,4 +19,9 @@ type User struct {
 	Email    string             `bson:"email" json:"email"`
 	Password string             `bson:"password" json:"password"`
 	Role     UserRole           `bson:"role" json:"role"`
+	Street 	 string 			`bson:"street" json:"street"`
+	StreetNumber string 		`bson:"street_number" json:"streetNumber"`
+	City	 string 			`bson:"city" json:"city"`
+	ZipCode  string				`bson:"zip_code" json:"zipCode"`
+	Country  string 			`bson:"country" json:"country"`
 }

@@ -52,6 +52,10 @@ func TicketServiceUnavailable() *Error {
 	return &Error{Message: "Ticket service unavailable!"}
 }
 
+func PersonalInfoUpdateFailed() *Error {
+	return &Error{Message: "Update not successful!"}
+
+}
 func DeleteProfileError() *Error {
 	return &Error{Message: "Can't delete profile!"}
 }
