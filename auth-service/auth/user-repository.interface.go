@@ -11,4 +11,5 @@ type IUserRepository interface {
 	FindById(id primitive.ObjectID) (User, error)
 	FindByEmail(email string) (User, error)
 	UpdatePersonalInfo(user User) (User, error)
+	Delete(id primitive.ObjectID) error
 }

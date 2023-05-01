@@ -6,6 +6,7 @@ service AuthService {
     rpc SignIn(SignInRequest) returns (SignInResponse) {}
     rpc Register(RegistrationRequest) returns (RegistrationResponse) {}
     rpc UpdatePersonalInfo(UpdatePersonalInfoRequest) returns (UpdatePersonalInfoResponse) {}
+    rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse) {}
 }
 
 
@@ -39,6 +40,11 @@ message UpdatePersonalInfoRequest {
     string country = 10;
 }
 
+message DeleteProfileRequest {
+    string id = 1;
+}
+
+
 //Responses
 message RegistrationResponse {
     string id = 1;
@@ -61,4 +67,8 @@ message UpdatePersonalInfoResponse{
     string city = 8;
     string zipCode = 9;
     string country = 10;
+}
+
+message DeleteProfileResponse {
+    bool deleted = 1;
 }

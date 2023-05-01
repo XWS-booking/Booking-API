@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+option go_package = "proto/reservationGrpc";
+
+import "google/protobuf/timestamp.proto";
+
+service ReservationService {
+  rpc Create(CreateReservationRequest) returns (ReservationId) {}
+  rpc Delete(ReservationId) returns (DeleteReservationResponse) {}
+  rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse) {}
+  rpc CheckActiveReservationsForGuest(CheckActiveReservationsForGuestRequest) returns (CheckActiveReservationsForGuestResponse) {}
+  rpc CheckActiveReservationsForAccommodations(CheckActiveReservationsForAccommodationsRequest) returns (CheckActiveReservationsForAccommodationsResponse) {}
+}
+
+
+message CreateReservationRequest {
+  string buyerId = 5;
+  string accommodationId = 1;
+  google.protobuf.Timestamp startDate = 2;
+  google.protobuf.Timestamp endDate = 3;
+  int32 guests = 4;
+}
+
+message FindAllReservedAccommodationsRequest {
+  google.protobuf.Timestamp startDate = 1;
+  google.protobuf.Timestamp endDate = 2;
+}
+
+message CheckActiveReservationsForGuestRequest{
+  string guestId = 1;
+}
+
+message CheckActiveReservationsForAccommodationsRequest {
+  repeated string ids = 1;
+}
+
+message ReservationId{
+  string id = 1;
+}
+
+message DeleteReservationResponse{
+  string message = 1;
+}
+
+message FindAllReservedAccommodationsResponse {
+  repeated string ids = 1;
+}
+
+message CheckActiveReservationsForGuestResponse {
+  bool activeReservations = 1;
+}
+
+message CheckActiveReservationsForAccommodationsResponse {
+  bool activeReservations = 1;
+}

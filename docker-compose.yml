@@ -1,6 +1,38 @@
 version: "3.8"
 
 services:
+  accomodation_service:
+    image: accomodation_service
+    container_name: accomodation_service
+    hostname: accomodation_service
+    build:
+      context: ./accomodation-service/
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      PORT: 9000
+      DATABASE_NAME: BOOKING_ACCOMODATION
+      STORAGE_URL: https://xcyrzflhnfgpyzfdzalc.supabase.com/v1/storage
+      STORAGE_SERVICE_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeXJ6ZmxobmZncHl6ZmR6YWxjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY4MDYzODU0NSwiZXhwIjoxOTk2MjE0NTQ1fQ.CJURcOscoWrsZ1A0tkCLbjK854YUvvzYRFoO7Q-gRs8
+      STORAGE_MAIN_BUCKET: pictures
+      DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+    networks:
+      - network
+  reservation_service:
+    image: reservation_service
+    container_name: reservation_service
+    hostname: reservation_service
+    build:
+      context: ./reservation-service/
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      PORT: 9000
+      DATABASE_NAME: BOOKING_RESERVATION
+      JWT_SECRET: secret
+      DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+    networks:
+      - network
   auth_service:
     image: auth_service
     container_name: auth_service
@@ -27,6 +59,8 @@ services:
     restart: always
     environment:
       AUTH_SERVICE_ADDRESS: auth_service:9000
+      ACCOMODATION_SERVICE_ADDRESS: accomodation_service:9000
+      RESERVATION_SERVICE_ADDRESS: reservation_service:9000
       GATEWAY_ADDRESS: 8085
     depends_on:
       - auth_service
