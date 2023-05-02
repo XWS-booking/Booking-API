@@ -43,6 +43,7 @@ func NewCreateAccomodationHandler(accommodationClientAddress, authClientAddress 
 }
 
 func (handler *CreateAccomodationHandler) Init(mux *runtime.ServeMux) {
+
 	err := mux.HandlePath("POST", "/api/accomodation/create", handler.Create)
 	if err != nil {
 		panic(err)
