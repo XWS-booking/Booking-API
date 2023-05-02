@@ -5,6 +5,7 @@ import (
 	"gateway/infrastructure/api"
 	"gateway/proto/gateway"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
@@ -17,12 +18,11 @@ import (
 func main() {
 
 	gwmux := runtime.NewServeMux()
-
 	initHandlers(gwmux)
-
+	handler := initCors(gwmux)
 	gwServer := &http.Server{
 		Addr:    ":" + os.Getenv("GATEWAY_ADDRESS"),
-		Handler: gwmux,
+		Handler: handler,
 	}
 
 	go func() {
@@ -70,4 +70,14 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	createAccomodationHandler.Init(gwmux)
 	cancelReservationHandler := api.NewCancelReservationHandler(reservationEndpoint, authEndpoint)
 	cancelReservationHandler.Init(gwmux)
+}
+
+func initCors(gwmux *runtime.ServeMux) http.Handler {
+	return cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization", "Access-Control-Allow-Origin"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}).Handler(gwmux)
 }
