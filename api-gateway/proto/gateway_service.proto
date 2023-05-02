@@ -75,6 +75,7 @@ service ReservationService {
     rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse){}
     rpc CheckActiveReservationsForGuest(CheckActiveReservationsForGuestRequest) returns (CheckActiveReservationsForGuestResponse) {}
     rpc CheckActiveReservationsForAccommodations(CheckActiveReservationsForAccommodationsRequest) returns (CheckActiveReservationsForAccommodationsResponse) {}
+    rpc CancelReservation(CancelReservationRequest) returns (CancelReservationResponse) {}
 }
 
 //Requests
@@ -255,6 +256,11 @@ message CheckActiveReservationsForAccommodationsRequest {
     repeated string ids = 1;
 }
 
+message CancelReservationRequest{
+    string token = 1;
+    string reservationId = 2;
+}
+
 //Responses
 message ReservationId{
     string id = 1;
@@ -274,4 +280,8 @@ message CheckActiveReservationsForGuestResponse {
 
 message CheckActiveReservationsForAccommodationsResponse {
     bool activeReservations = 1;
+}
+
+message CancelReservationResponse {
+
 }

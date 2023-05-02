@@ -19,3 +19,11 @@ func ReservationsNotFound() *Error {
 func CheckActiveReservationsError() *Error {
 	return &Error{Message: "Error when checking active reservations!"}
 }
+
+func ReservationCancelationFailed() *Error {
+	return &Error{Message: "Error when canceling reservation!"}
+}
+
+func ReservationCancelationTooLate() *Error {
+	return &Error{Message: "Can't cancel later than day before reservation start!"}
+}

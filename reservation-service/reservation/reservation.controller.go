@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 	. "reservation_service/proto/reservation"
 	"reservation_service/reservation/model"
+	"reservation_service/shared"
 )
 
 func NewReservationController(reservationService *ReservationService) *ReservationController {
@@ -86,4 +87,15 @@ func (reservationController *ReservationController) CheckActiveReservationsForAc
 	return &CheckActiveReservationsForAccommodationsResponse{
 		ActiveReservations: activeReservations,
 	}, nil
+}
+
+func (reservationController *ReservationController) CancelReservation(ctx Context, req *CancelReservationRequest) (*CancelReservationResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	e := reservationController.ReservationService.CancelReservation(shared.StringToObjectId(req.ReservationId))
+	if e != nil {
+		return &CancelReservationResponse{}, status.Error(codes.Aborted, e.Message)
+	}
+	return &CancelReservationResponse{}, nil
 }

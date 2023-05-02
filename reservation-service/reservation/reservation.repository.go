@@ -122,6 +122,16 @@ func (reservationRepository *ReservationRepository) DeleteByAccommodationId(id p
 	return nil
 }
 
+func (reservationRepository *ReservationRepository) UpdateReservation(reservation Reservation) error {
+	collection := reservationRepository.getCollection("reservations")
+	filter := bson.M{"_id": reservation.Id}
+	_, err := collection.UpdateOne(context.TODO(), filter, bson.M{"$set": reservation})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (reservationRepository *ReservationRepository) getCollection(key string) *mongo.Collection {
 	return reservationRepository.DB.Database(os.Getenv("DATABASE_NAME")).Collection(key)
 }

@@ -68,5 +68,6 @@ func initHandlers(gwmux *runtime.ServeMux) {
 
 	createAccomodationHandler := api.NewCreateAccomodationHandler(accommodationEndpoint, authEndpoint)
 	createAccomodationHandler.Init(gwmux)
-
+	cancelReservationHandler := api.NewCancelReservationHandler(reservationEndpoint, authEndpoint)
+	cancelReservationHandler.Init(gwmux)
 }

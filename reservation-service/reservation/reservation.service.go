@@ -74,3 +74,16 @@ func (reservationService *ReservationService) CheckActiveReservationsForAccommod
 	}
 	return false, nil
 }
+
+func (reservationService *ReservationService) CancelReservation(reservationId primitive.ObjectID) *shared.Error {
+	reservation, err := reservationService.ReservationRepository.FindById(reservationId)
+	if err != nil {
+		return shared.ReservationCancelationFailed()
+	}
+	e := reservation.Cancel()
+	if e != nil {
+		return e
+	}
+	reservationService.ReservationRepository.UpdateReservation(reservation)
+	return nil
+}
