@@ -99,3 +99,16 @@ func (reservationController *ReservationController) CancelReservation(ctx Contex
 	}
 	return &CancelReservationResponse{}, nil
 }
+
+func (reservationController *ReservationController) IsAccommodationAvailable(ctx Context, req *IsAccommodationAvailableRequest) (*IsAccommodationAvailableResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	startDate, _ := ptypes.Timestamp(req.StartDate)
+	endDate, _ := ptypes.Timestamp(req.EndDate)
+	available, e := reservationController.ReservationService.IsAccommodationAvailable(shared.StringToObjectId(req.AccommodationId), startDate, endDate)
+	if e != nil {
+		return &IsAccommodationAvailableResponse{Available: available}, status.Error(codes.Internal, e.Message)
+	}
+	return &IsAccommodationAvailableResponse{Available: available}, nil
+}

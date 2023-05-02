@@ -87,3 +87,11 @@ func (reservationService *ReservationService) CancelReservation(reservationId pr
 	reservationService.ReservationRepository.UpdateReservation(reservation)
 	return nil
 }
+
+func (reservationService *ReservationService) IsAccommodationAvailable(id primitive.ObjectID, startDate time.Time, endDate time.Time) (bool, *shared.Error) {
+	available, err := reservationService.ReservationRepository.IsAccommodationAvailable(id, startDate, endDate)
+	if err != nil {
+		return available, shared.ReservationsNotFound()
+	}
+	return available, nil
+}

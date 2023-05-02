@@ -132,6 +132,22 @@ func (reservationRepository *ReservationRepository) UpdateReservation(reservatio
 	return nil
 }
 
+func (reservationRepository *ReservationRepository) IsAccommodationAvailable(id primitive.ObjectID, startDate time.Time, endDate time.Time) (bool, error) {
+	collection := reservationRepository.getCollection("reservations")
+	filter := bson.M{
+		"accommodation_id": id,
+		"$and": []bson.M{
+			bson.M{"start_date": bson.M{"$lte": endDate}},
+			bson.M{"end_date": bson.M{"$gte": startDate}}},
+		"status": Approved}
+
+	count, err := collection.CountDocuments(context.TODO(), filter)
+	if err != nil {
+		return false, err
+	}
+	return count == 0, nil
+}
+
 func (reservationRepository *ReservationRepository) getCollection(key string) *mongo.Collection {
 	return reservationRepository.DB.Database(os.Getenv("DATABASE_NAME")).Collection(key)
 }

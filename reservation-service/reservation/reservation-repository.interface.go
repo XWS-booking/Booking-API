@@ -16,4 +16,5 @@ type IReservationRepository interface {
 	DeleteByBuyerId(id primitive.ObjectID) error
 	DeleteByAccommodationId(id primitive.ObjectID) error
 	UpdateReservation(reservation Reservation) error
+	IsAccommodationAvailable(id primitive.ObjectID, startDate time.Time, endDate time.Time) (bool, error)
 }

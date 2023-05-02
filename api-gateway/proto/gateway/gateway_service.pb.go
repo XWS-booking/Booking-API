@@ -1890,6 +1890,69 @@ func (x *CancelReservationRequest) GetReservationId() string {
 	return ""
 }
 
+type IsAccommodationAvailableRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	AccommodationId string                 `protobuf:"bytes,1,opt,name=accommodationId,proto3" json:"accommodationId,omitempty"`
+	StartDate       *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=startDate,proto3" json:"startDate,omitempty"`
+	EndDate         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=endDate,proto3" json:"endDate,omitempty"`
+}
+
+func (x *IsAccommodationAvailableRequest) Reset() {
+	*x = IsAccommodationAvailableRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_gateway_service_proto_msgTypes[25]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IsAccommodationAvailableRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IsAccommodationAvailableRequest) ProtoMessage() {}
+
+func (x *IsAccommodationAvailableRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_gateway_service_proto_msgTypes[25]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IsAccommodationAvailableRequest.ProtoReflect.Descriptor instead.
+func (*IsAccommodationAvailableRequest) Descriptor() ([]byte, []int) {
+	return file_gateway_service_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *IsAccommodationAvailableRequest) GetAccommodationId() string {
+	if x != nil {
+		return x.AccommodationId
+	}
+	return ""
+}
+
+func (x *IsAccommodationAvailableRequest) GetStartDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.StartDate
+	}
+	return nil
+}
+
+func (x *IsAccommodationAvailableRequest) GetEndDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.EndDate
+	}
+	return nil
+}
+
 // Responses
 type ReservationId struct {
 	state         protoimpl.MessageState
@@ -1902,7 +1965,7 @@ type ReservationId struct {
 func (x *ReservationId) Reset() {
 	*x = ReservationId{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gateway_service_proto_msgTypes[25]
+		mi := &file_gateway_service_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1915,7 +1978,7 @@ func (x *ReservationId) String() string {
 func (*ReservationId) ProtoMessage() {}
 
 func (x *ReservationId) ProtoReflect() protoreflect.Message {
-	mi := &file_gateway_service_proto_msgTypes[25]
+	mi := &file_gateway_service_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1928,7 +1991,7 @@ func (x *ReservationId) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReservationId.ProtoReflect.Descriptor instead.
 func (*ReservationId) Descriptor() ([]byte, []int) {
-	return file_gateway_service_proto_rawDescGZIP(), []int{25}
+	return file_gateway_service_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ReservationId) GetId() string {
@@ -1949,7 +2012,7 @@ type DeleteReservationResponse struct {
 func (x *DeleteReservationResponse) Reset() {
 	*x = DeleteReservationResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gateway_service_proto_msgTypes[26]
+		mi := &file_gateway_service_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1962,7 +2025,7 @@ func (x *DeleteReservationResponse) String() string {
 func (*DeleteReservationResponse) ProtoMessage() {}
 
 func (x *DeleteReservationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gateway_service_proto_msgTypes[26]
+	mi := &file_gateway_service_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1975,7 +2038,7 @@ func (x *DeleteReservationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteReservationResponse.ProtoReflect.Descriptor instead.
 func (*DeleteReservationResponse) Descriptor() ([]byte, []int) {
-	return file_gateway_service_proto_rawDescGZIP(), []int{26}
+	return file_gateway_service_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *DeleteReservationResponse) GetMessage() string {
@@ -1996,7 +2059,7 @@ type FindAllReservedAccommodationsResponse struct {
 func (x *FindAllReservedAccommodationsResponse) Reset() {
 	*x = FindAllReservedAccommodationsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gateway_service_proto_msgTypes[27]
+		mi := &file_gateway_service_proto_msgTypes[28]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2009,7 +2072,7 @@ func (x *FindAllReservedAccommodationsResponse) String() string {
 func (*FindAllReservedAccommodationsResponse) ProtoMessage() {}
 
 func (x *FindAllReservedAccommodationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gateway_service_proto_msgTypes[27]
+	mi := &file_gateway_service_proto_msgTypes[28]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2022,7 +2085,7 @@ func (x *FindAllReservedAccommodationsResponse) ProtoReflect() protoreflect.Mess
 
 // Deprecated: Use FindAllReservedAccommodationsResponse.ProtoReflect.Descriptor instead.
 func (*FindAllReservedAccommodationsResponse) Descriptor() ([]byte, []int) {
-	return file_gateway_service_proto_rawDescGZIP(), []int{27}
+	return file_gateway_service_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *FindAllReservedAccommodationsResponse) GetIds() []string {
@@ -2043,7 +2106,7 @@ type CheckActiveReservationsForGuestResponse struct {
 func (x *CheckActiveReservationsForGuestResponse) Reset() {
 	*x = CheckActiveReservationsForGuestResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gateway_service_proto_msgTypes[28]
+		mi := &file_gateway_service_proto_msgTypes[29]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2056,7 +2119,7 @@ func (x *CheckActiveReservationsForGuestResponse) String() string {
 func (*CheckActiveReservationsForGuestResponse) ProtoMessage() {}
 
 func (x *CheckActiveReservationsForGuestResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gateway_service_proto_msgTypes[28]
+	mi := &file_gateway_service_proto_msgTypes[29]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2069,7 +2132,7 @@ func (x *CheckActiveReservationsForGuestResponse) ProtoReflect() protoreflect.Me
 
 // Deprecated: Use CheckActiveReservationsForGuestResponse.ProtoReflect.Descriptor instead.
 func (*CheckActiveReservationsForGuestResponse) Descriptor() ([]byte, []int) {
-	return file_gateway_service_proto_rawDescGZIP(), []int{28}
+	return file_gateway_service_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *CheckActiveReservationsForGuestResponse) GetActiveReservations() bool {
@@ -2090,7 +2153,7 @@ type CheckActiveReservationsForAccommodationsResponse struct {
 func (x *CheckActiveReservationsForAccommodationsResponse) Reset() {
 	*x = CheckActiveReservationsForAccommodationsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gateway_service_proto_msgTypes[29]
+		mi := &file_gateway_service_proto_msgTypes[30]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2103,7 +2166,7 @@ func (x *CheckActiveReservationsForAccommodationsResponse) String() string {
 func (*CheckActiveReservationsForAccommodationsResponse) ProtoMessage() {}
 
 func (x *CheckActiveReservationsForAccommodationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gateway_service_proto_msgTypes[29]
+	mi := &file_gateway_service_proto_msgTypes[30]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2116,7 +2179,7 @@ func (x *CheckActiveReservationsForAccommodationsResponse) ProtoReflect() protor
 
 // Deprecated: Use CheckActiveReservationsForAccommodationsResponse.ProtoReflect.Descriptor instead.
 func (*CheckActiveReservationsForAccommodationsResponse) Descriptor() ([]byte, []int) {
-	return file_gateway_service_proto_rawDescGZIP(), []int{29}
+	return file_gateway_service_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *CheckActiveReservationsForAccommodationsResponse) GetActiveReservations() bool {
@@ -2135,7 +2198,7 @@ type CancelReservationResponse struct {
 func (x *CancelReservationResponse) Reset() {
 	*x = CancelReservationResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_gateway_service_proto_msgTypes[30]
+		mi := &file_gateway_service_proto_msgTypes[31]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -2148,7 +2211,7 @@ func (x *CancelReservationResponse) String() string {
 func (*CancelReservationResponse) ProtoMessage() {}
 
 func (x *CancelReservationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_gateway_service_proto_msgTypes[30]
+	mi := &file_gateway_service_proto_msgTypes[31]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2161,7 +2224,54 @@ func (x *CancelReservationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CancelReservationResponse.ProtoReflect.Descriptor instead.
 func (*CancelReservationResponse) Descriptor() ([]byte, []int) {
-	return file_gateway_service_proto_rawDescGZIP(), []int{30}
+	return file_gateway_service_proto_rawDescGZIP(), []int{31}
+}
+
+type IsAccommodationAvailableResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Available bool `protobuf:"varint,1,opt,name=available,proto3" json:"available,omitempty"`
+}
+
+func (x *IsAccommodationAvailableResponse) Reset() {
+	*x = IsAccommodationAvailableResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_gateway_service_proto_msgTypes[32]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *IsAccommodationAvailableResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IsAccommodationAvailableResponse) ProtoMessage() {}
+
+func (x *IsAccommodationAvailableResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_gateway_service_proto_msgTypes[32]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IsAccommodationAvailableResponse.ProtoReflect.Descriptor instead.
+func (*IsAccommodationAvailableResponse) Descriptor() ([]byte, []int) {
+	return file_gateway_service_proto_rawDescGZIP(), []int{32}
+}
+
+func (x *IsAccommodationAvailableResponse) GetAvailable() bool {
+	if x != nil {
+		return x.Available
+	}
+	return false
 }
 
 var File_gateway_service_proto protoreflect.FileDescriptor
@@ -2405,30 +2515,46 @@ var file_gateway_service_proto_rawDesc = []byte{
 	0x0a, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74,
 	0x6f, 0x6b, 0x65, 0x6e, 0x12, 0x24, 0x0a, 0x0d, 0x72, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74,
 	0x69, 0x6f, 0x6e, 0x49, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0d, 0x72, 0x65, 0x73,
-	0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0x1f, 0x0a, 0x0d, 0x52, 0x65,
-	0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x0e, 0x0a, 0x02, 0x69,
-	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x35, 0x0a, 0x19, 0x44,
-	0x65, 0x6c, 0x65, 0x74, 0x65, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73,
-	0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61,
-	0x67, 0x65, 0x22, 0x39, 0x0a, 0x25, 0x46, 0x69, 0x6e, 0x64, 0x41, 0x6c, 0x6c, 0x52, 0x65, 0x73,
-	0x65, 0x72, 0x76, 0x65, 0x64, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69,
-	0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x69,
-	0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x03, 0x69, 0x64, 0x73, 0x22, 0x59, 0x0a,
-	0x27, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x41, 0x63, 0x74, 0x69, 0x76, 0x65, 0x52, 0x65, 0x73, 0x65,
-	0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x46, 0x6f, 0x72, 0x47, 0x75, 0x65, 0x73, 0x74,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2e, 0x0a, 0x12, 0x61, 0x63, 0x74, 0x69,
-	0x76, 0x65, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x08, 0x52, 0x12, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x52, 0x65, 0x73, 0x65,
-	0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x22, 0x62, 0x0a, 0x30, 0x43, 0x68, 0x65, 0x63,
-	0x6b, 0x41, 0x63, 0x74, 0x69, 0x76, 0x65, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69,
-	0x6f, 0x6e, 0x73, 0x46, 0x6f, 0x72, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74,
-	0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2e, 0x0a, 0x12,
-	0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x12, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65,
-	0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x22, 0x1b, 0x0a, 0x19,
-	0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0xc3, 0x03, 0x0a, 0x0b, 0x41, 0x75,
+	0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0xbb, 0x01, 0x0a, 0x1f, 0x49,
+	0x73, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x41, 0x76,
+	0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x28,
+	0x0a, 0x0f, 0x61, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49,
+	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0f, 0x61, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f,
+	0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x38, 0x0a, 0x09, 0x73, 0x74, 0x61, 0x72,
+	0x74, 0x44, 0x61, 0x74, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f,
+	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69,
+	0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x73, 0x74, 0x61, 0x72, 0x74, 0x44, 0x61,
+	0x74, 0x65, 0x12, 0x34, 0x0a, 0x07, 0x65, 0x6e, 0x64, 0x44, 0x61, 0x74, 0x65, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52,
+	0x07, 0x65, 0x6e, 0x64, 0x44, 0x61, 0x74, 0x65, 0x22, 0x1f, 0x0a, 0x0d, 0x52, 0x65, 0x73, 0x65,
+	0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x35, 0x0a, 0x19, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67,
+	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x22, 0x39, 0x0a, 0x25, 0x46, 0x69, 0x6e, 0x64, 0x41, 0x6c, 0x6c, 0x52, 0x65, 0x73, 0x65, 0x72,
+	0x76, 0x65, 0x64, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x69, 0x64, 0x73,
+	0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x03, 0x69, 0x64, 0x73, 0x22, 0x59, 0x0a, 0x27, 0x43,
+	0x68, 0x65, 0x63, 0x6b, 0x41, 0x63, 0x74, 0x69, 0x76, 0x65, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x46, 0x6f, 0x72, 0x47, 0x75, 0x65, 0x73, 0x74, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2e, 0x0a, 0x12, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65,
+	0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x08, 0x52, 0x12, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x22, 0x62, 0x0a, 0x30, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x41,
+	0x63, 0x74, 0x69, 0x76, 0x65, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x73, 0x46, 0x6f, 0x72, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2e, 0x0a, 0x12, 0x61, 0x63,
+	0x74, 0x69, 0x76, 0x65, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x12, 0x61, 0x63, 0x74, 0x69, 0x76, 0x65, 0x52, 0x65,
+	0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x22, 0x1b, 0x0a, 0x19, 0x43, 0x61,
+	0x6e, 0x63, 0x65, 0x6c, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x40, 0x0a, 0x20, 0x49, 0x73, 0x41, 0x63, 0x63,
+	0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61,
+	0x62, 0x6c, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1c, 0x0a, 0x09, 0x61,
+	0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x09,
+	0x61, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x32, 0xc3, 0x03, 0x0a, 0x0b, 0x41, 0x75,
 	0x74, 0x68, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x46, 0x0a, 0x06, 0x53, 0x69, 0x67,
 	0x6e, 0x49, 0x6e, 0x12, 0x0e, 0x2e, 0x53, 0x69, 0x67, 0x6e, 0x49, 0x6e, 0x52, 0x65, 0x71, 0x75,
 	0x65, 0x73, 0x74, 0x1a, 0x0f, 0x2e, 0x53, 0x69, 0x67, 0x6e, 0x49, 0x6e, 0x52, 0x65, 0x73, 0x70,
@@ -2487,7 +2613,7 @@ var file_gateway_service_proto_rawDesc = []byte{
 	0x65, 0x74, 0x65, 0x42, 0x79, 0x4f, 0x77, 0x6e, 0x65, 0x72, 0x49, 0x64, 0x52, 0x65, 0x73, 0x70,
 	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x24, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x1e, 0x2a, 0x1c, 0x2f, 0x61,
 	0x70, 0x69, 0x2f, 0x61, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e,
-	0x2f, 0x7b, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x49, 0x64, 0x7d, 0x32, 0x87, 0x05, 0x0a, 0x12, 0x52,
+	0x2f, 0x7b, 0x6f, 0x77, 0x6e, 0x65, 0x72, 0x49, 0x64, 0x7d, 0x32, 0xc4, 0x06, 0x0a, 0x12, 0x52,
 	0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
 	0x65, 0x12, 0x50, 0x0a, 0x06, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x12, 0x19, 0x2e, 0x43, 0x72,
 	0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52,
@@ -2528,8 +2654,20 @@ var file_gateway_service_proto_rawDesc = []byte{
 	0x6e, 0x63, 0x65, 0x6c, 0x52, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52,
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1a, 0x2e, 0x43, 0x61, 0x6e, 0x63, 0x65, 0x6c, 0x52,
 	0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x22, 0x00, 0x42, 0x0f, 0x5a, 0x0d, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x61,
-	0x74, 0x65, 0x77, 0x61, 0x79, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x73, 0x65, 0x22, 0x00, 0x12, 0xba, 0x01, 0x0a, 0x18, 0x49, 0x73, 0x41, 0x63, 0x63, 0x6f, 0x6d,
+	0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c,
+	0x65, 0x12, 0x20, 0x2e, 0x49, 0x73, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x1a, 0x21, 0x2e, 0x49, 0x73, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x59, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x53, 0x12, 0x51,
+	0x2f, 0x61, 0x70, 0x69, 0x2f, 0x72, 0x65, 0x73, 0x65, 0x72, 0x76, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x2f, 0x69, 0x73, 0x41, 0x63, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x2f, 0x7b, 0x61, 0x63, 0x63, 0x6f, 0x6d,
+	0x6d, 0x6f, 0x64, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x7d, 0x2f, 0x7b, 0x73, 0x74, 0x61,
+	0x72, 0x74, 0x44, 0x61, 0x74, 0x65, 0x7d, 0x2f, 0x7b, 0x65, 0x6e, 0x64, 0x44, 0x61, 0x74, 0x65,
+	0x7d, 0x42, 0x0f, 0x5a, 0x0d, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x61, 0x74, 0x65, 0x77,
+	0x61, 0x79, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -2544,7 +2682,7 @@ func file_gateway_service_proto_rawDescGZIP() []byte {
 	return file_gateway_service_proto_rawDescData
 }
 
-var file_gateway_service_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
+var file_gateway_service_proto_msgTypes = make([]protoimpl.MessageInfo, 33)
 var file_gateway_service_proto_goTypes = []interface{}{
 	(*RegistrationRequest)(nil),                              // 0: RegistrationRequest
 	(*SignInRequest)(nil),                                    // 1: SignInRequest
@@ -2571,56 +2709,62 @@ var file_gateway_service_proto_goTypes = []interface{}{
 	(*CheckActiveReservationsForGuestRequest)(nil),           // 22: CheckActiveReservationsForGuestRequest
 	(*CheckActiveReservationsForAccommodationsRequest)(nil),  // 23: CheckActiveReservationsForAccommodationsRequest
 	(*CancelReservationRequest)(nil),                         // 24: CancelReservationRequest
-	(*ReservationId)(nil),                                    // 25: ReservationId
-	(*DeleteReservationResponse)(nil),                        // 26: DeleteReservationResponse
-	(*FindAllReservedAccommodationsResponse)(nil),            // 27: FindAllReservedAccommodationsResponse
-	(*CheckActiveReservationsForGuestResponse)(nil),          // 28: CheckActiveReservationsForGuestResponse
-	(*CheckActiveReservationsForAccommodationsResponse)(nil), // 29: CheckActiveReservationsForAccommodationsResponse
-	(*CancelReservationResponse)(nil),                        // 30: CancelReservationResponse
-	(*timestamppb.Timestamp)(nil),                            // 31: google.protobuf.Timestamp
+	(*IsAccommodationAvailableRequest)(nil),                  // 25: IsAccommodationAvailableRequest
+	(*ReservationId)(nil),                                    // 26: ReservationId
+	(*DeleteReservationResponse)(nil),                        // 27: DeleteReservationResponse
+	(*FindAllReservedAccommodationsResponse)(nil),            // 28: FindAllReservedAccommodationsResponse
+	(*CheckActiveReservationsForGuestResponse)(nil),          // 29: CheckActiveReservationsForGuestResponse
+	(*CheckActiveReservationsForAccommodationsResponse)(nil), // 30: CheckActiveReservationsForAccommodationsResponse
+	(*CancelReservationResponse)(nil),                        // 31: CancelReservationResponse
+	(*IsAccommodationAvailableResponse)(nil),                 // 32: IsAccommodationAvailableResponse
+	(*timestamppb.Timestamp)(nil),                            // 33: google.protobuf.Timestamp
 }
 var file_gateway_service_proto_depIdxs = []int32{
 	10, // 0: CreateAccomodationRequest.pictures:type_name -> ImageInfo
 	17, // 1: FindAllAccomodationResponse.accomodationResponses:type_name -> AccomodationResponse
-	31, // 2: CreateReservationRequest.startDate:type_name -> google.protobuf.Timestamp
-	31, // 3: CreateReservationRequest.endDate:type_name -> google.protobuf.Timestamp
-	31, // 4: FindAllReservedAccommodationsRequest.startDate:type_name -> google.protobuf.Timestamp
-	31, // 5: FindAllReservedAccommodationsRequest.endDate:type_name -> google.protobuf.Timestamp
-	1,  // 6: AuthService.SignIn:input_type -> SignInRequest
-	0,  // 7: AuthService.Register:input_type -> RegistrationRequest
-	2,  // 8: AuthService.UpdatePersonalInfo:input_type -> UpdatePersonalInfoRequest
-	4,  // 9: AuthService.DeleteProfile:input_type -> DeleteProfileRequest
-	3,  // 10: AuthService.GetUser:input_type -> GetUserRequest
-	11, // 11: AccomodationService.Create:input_type -> CreateAccomodationRequest
-	12, // 12: AccomodationService.FindAll:input_type -> FindAllAccomodationRequest
-	13, // 13: AccomodationService.FindAllAccommodationIdsByOwnerId:input_type -> FindAllAccommodationIdsByOwnerIdRequest
-	14, // 14: AccomodationService.DeleteByOwnerId:input_type -> DeleteByOwnerIdRequest
-	20, // 15: ReservationService.Create:input_type -> CreateReservationRequest
-	25, // 16: ReservationService.Delete:input_type -> ReservationId
-	21, // 17: ReservationService.FindAllReservedAccommodations:input_type -> FindAllReservedAccommodationsRequest
-	22, // 18: ReservationService.CheckActiveReservationsForGuest:input_type -> CheckActiveReservationsForGuestRequest
-	23, // 19: ReservationService.CheckActiveReservationsForAccommodations:input_type -> CheckActiveReservationsForAccommodationsRequest
-	24, // 20: ReservationService.CancelReservation:input_type -> CancelReservationRequest
-	6,  // 21: AuthService.SignIn:output_type -> SignInResponse
-	5,  // 22: AuthService.Register:output_type -> RegistrationResponse
-	7,  // 23: AuthService.UpdatePersonalInfo:output_type -> UpdatePersonalInfoResponse
-	8,  // 24: AuthService.DeleteProfile:output_type -> DeleteProfileResponse
-	9,  // 25: AuthService.GetUser:output_type -> GetUserResponse
-	15, // 26: AccomodationService.Create:output_type -> CreateAccomodationResponse
-	16, // 27: AccomodationService.FindAll:output_type -> FindAllAccomodationResponse
-	18, // 28: AccomodationService.FindAllAccommodationIdsByOwnerId:output_type -> FindAllAccommodationIdsByOwnerIdResponse
-	19, // 29: AccomodationService.DeleteByOwnerId:output_type -> DeleteByOwnerIdResponse
-	25, // 30: ReservationService.Create:output_type -> ReservationId
-	26, // 31: ReservationService.Delete:output_type -> DeleteReservationResponse
-	27, // 32: ReservationService.FindAllReservedAccommodations:output_type -> FindAllReservedAccommodationsResponse
-	28, // 33: ReservationService.CheckActiveReservationsForGuest:output_type -> CheckActiveReservationsForGuestResponse
-	29, // 34: ReservationService.CheckActiveReservationsForAccommodations:output_type -> CheckActiveReservationsForAccommodationsResponse
-	30, // 35: ReservationService.CancelReservation:output_type -> CancelReservationResponse
-	21, // [21:36] is the sub-list for method output_type
-	6,  // [6:21] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	33, // 2: CreateReservationRequest.startDate:type_name -> google.protobuf.Timestamp
+	33, // 3: CreateReservationRequest.endDate:type_name -> google.protobuf.Timestamp
+	33, // 4: FindAllReservedAccommodationsRequest.startDate:type_name -> google.protobuf.Timestamp
+	33, // 5: FindAllReservedAccommodationsRequest.endDate:type_name -> google.protobuf.Timestamp
+	33, // 6: IsAccommodationAvailableRequest.startDate:type_name -> google.protobuf.Timestamp
+	33, // 7: IsAccommodationAvailableRequest.endDate:type_name -> google.protobuf.Timestamp
+	1,  // 8: AuthService.SignIn:input_type -> SignInRequest
+	0,  // 9: AuthService.Register:input_type -> RegistrationRequest
+	2,  // 10: AuthService.UpdatePersonalInfo:input_type -> UpdatePersonalInfoRequest
+	4,  // 11: AuthService.DeleteProfile:input_type -> DeleteProfileRequest
+	3,  // 12: AuthService.GetUser:input_type -> GetUserRequest
+	11, // 13: AccomodationService.Create:input_type -> CreateAccomodationRequest
+	12, // 14: AccomodationService.FindAll:input_type -> FindAllAccomodationRequest
+	13, // 15: AccomodationService.FindAllAccommodationIdsByOwnerId:input_type -> FindAllAccommodationIdsByOwnerIdRequest
+	14, // 16: AccomodationService.DeleteByOwnerId:input_type -> DeleteByOwnerIdRequest
+	20, // 17: ReservationService.Create:input_type -> CreateReservationRequest
+	26, // 18: ReservationService.Delete:input_type -> ReservationId
+	21, // 19: ReservationService.FindAllReservedAccommodations:input_type -> FindAllReservedAccommodationsRequest
+	22, // 20: ReservationService.CheckActiveReservationsForGuest:input_type -> CheckActiveReservationsForGuestRequest
+	23, // 21: ReservationService.CheckActiveReservationsForAccommodations:input_type -> CheckActiveReservationsForAccommodationsRequest
+	24, // 22: ReservationService.CancelReservation:input_type -> CancelReservationRequest
+	25, // 23: ReservationService.IsAccommodationAvailable:input_type -> IsAccommodationAvailableRequest
+	6,  // 24: AuthService.SignIn:output_type -> SignInResponse
+	5,  // 25: AuthService.Register:output_type -> RegistrationResponse
+	7,  // 26: AuthService.UpdatePersonalInfo:output_type -> UpdatePersonalInfoResponse
+	8,  // 27: AuthService.DeleteProfile:output_type -> DeleteProfileResponse
+	9,  // 28: AuthService.GetUser:output_type -> GetUserResponse
+	15, // 29: AccomodationService.Create:output_type -> CreateAccomodationResponse
+	16, // 30: AccomodationService.FindAll:output_type -> FindAllAccomodationResponse
+	18, // 31: AccomodationService.FindAllAccommodationIdsByOwnerId:output_type -> FindAllAccommodationIdsByOwnerIdResponse
+	19, // 32: AccomodationService.DeleteByOwnerId:output_type -> DeleteByOwnerIdResponse
+	26, // 33: ReservationService.Create:output_type -> ReservationId
+	27, // 34: ReservationService.Delete:output_type -> DeleteReservationResponse
+	28, // 35: ReservationService.FindAllReservedAccommodations:output_type -> FindAllReservedAccommodationsResponse
+	29, // 36: ReservationService.CheckActiveReservationsForGuest:output_type -> CheckActiveReservationsForGuestResponse
+	30, // 37: ReservationService.CheckActiveReservationsForAccommodations:output_type -> CheckActiveReservationsForAccommodationsResponse
+	31, // 38: ReservationService.CancelReservation:output_type -> CancelReservationResponse
+	32, // 39: ReservationService.IsAccommodationAvailable:output_type -> IsAccommodationAvailableResponse
+	24, // [24:40] is the sub-list for method output_type
+	8,  // [8:24] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_gateway_service_proto_init() }
@@ -2930,7 +3074,7 @@ func file_gateway_service_proto_init() {
 			}
 		}
 		file_gateway_service_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ReservationId); i {
+			switch v := v.(*IsAccommodationAvailableRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2942,7 +3086,7 @@ func file_gateway_service_proto_init() {
 			}
 		}
 		file_gateway_service_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteReservationResponse); i {
+			switch v := v.(*ReservationId); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2954,7 +3098,7 @@ func file_gateway_service_proto_init() {
 			}
 		}
 		file_gateway_service_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*FindAllReservedAccommodationsResponse); i {
+			switch v := v.(*DeleteReservationResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2966,7 +3110,7 @@ func file_gateway_service_proto_init() {
 			}
 		}
 		file_gateway_service_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CheckActiveReservationsForGuestResponse); i {
+			switch v := v.(*FindAllReservedAccommodationsResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2978,7 +3122,7 @@ func file_gateway_service_proto_init() {
 			}
 		}
 		file_gateway_service_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CheckActiveReservationsForAccommodationsResponse); i {
+			switch v := v.(*CheckActiveReservationsForGuestResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -2990,7 +3134,31 @@ func file_gateway_service_proto_init() {
 			}
 		}
 		file_gateway_service_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CheckActiveReservationsForAccommodationsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_gateway_service_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*CancelReservationResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_gateway_service_proto_msgTypes[32].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*IsAccommodationAvailableResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -3008,7 +3176,7 @@ func file_gateway_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_gateway_service_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   31,
+			NumMessages:   33,
 			NumExtensions: 0,
 			NumServices:   3,
 		},
