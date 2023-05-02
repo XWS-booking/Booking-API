@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"gateway/infrastructure/services"
+	"gateway/model"
 	"gateway/proto/gateway"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/timestamp"
@@ -26,30 +27,18 @@ func NewSearchAccommodationHandler(accommodationClientAddress, reservationClient
 }
 
 func (handler *SearchAccommodationHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("GET", "/api/searchAccommodation/{city}/{guests}/{startDate}/{endDate}", handler.Search)
+	err := mux.HandlePath("GET", "/api/searchAccommodation/{city}/{guests}/{startDate}/{endDate}/{pageSize}/{pageNumber}", handler.Search)
 	if err != nil {
 		panic(err)
 	}
 }
 
 func (handler *SearchAccommodationHandler) Search(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
-	city := pathParams["city"]
-	guests, err := strconv.Atoi(pathParams["guests"])
+	city, guests, startDate, endDate, pageSize, pageNumber, err := handlePathParams(pathParams)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	startDate, err := parseTimestamp(pathParams["startDate"])
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	endDate, err := parseTimestamp(pathParams["endDate"])
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
 	accommodations, err := handler.SearchByCityAndGuests(city, guests)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -73,7 +62,9 @@ func (handler *SearchAccommodationHandler) Search(w http.ResponseWriter, r *http
 		}
 	}
 
-	response, err := json.Marshal(availableAccommodations)
+	data := pagination(pageSize, pageNumber, availableAccommodations)
+
+	response, err := json.Marshal(model.AccommodationPage{Data: data, TotalCount: len(availableAccommodations)})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -98,6 +89,61 @@ func (handler *SearchAccommodationHandler) FindAllReservedAccommodations(startDa
 		return nil, err
 	}
 	return ids.Ids, nil
+}
+
+func pagination(pageSize int, pageNumber int, accommodations []gateway.AccomodationResponse) []model.Accommodation {
+	startIndex := (pageNumber - 1) * pageSize
+	endIndex := startIndex + pageSize
+	if endIndex > len(accommodations) {
+		endIndex = len(accommodations)
+	}
+	paginationData := accommodations[startIndex:endIndex]
+	var data []model.Accommodation
+	for _, e := range paginationData {
+		data = append(data, model.Accommodation{
+			Id:             e.Id,
+			Name:           e.Name,
+			Street:         e.Street,
+			StreetNumber:   e.StreetNumber,
+			City:           e.City,
+			ZipCode:        e.ZipCode,
+			Country:        e.Country,
+			Wifi:           e.Wifi,
+			Kitchen:        e.Kitchen,
+			AirConditioner: e.AirConditioner,
+			FreeParking:    e.FreeParking,
+			MinGuests:      e.MinGuests,
+			MaxGuests:      e.MaxGuests,
+			PictureUrls:    e.Pictures,
+			OwnerId:        e.OwnerId,
+		})
+	}
+	return data
+}
+
+func handlePathParams(pathParams map[string]string) (string, int, *timestamp.Timestamp, *timestamp.Timestamp, int, int, error) {
+	city := pathParams["city"]
+	guests, err := strconv.Atoi(pathParams["guests"])
+	if err != nil {
+		return city, guests, nil, nil, -1, -1, err
+	}
+	startDate, err := parseTimestamp(pathParams["startDate"])
+	if err != nil {
+		return city, guests, startDate, nil, -1, -1, err
+	}
+	endDate, err := parseTimestamp(pathParams["endDate"])
+	if err != nil {
+		return city, guests, startDate, endDate, -1, -1, err
+	}
+	pageSize, err := strconv.Atoi(pathParams["pageSize"])
+	if err != nil {
+		return city, guests, startDate, endDate, pageSize, -1, err
+	}
+	pageNumber, err := strconv.Atoi(pathParams["pageNumber"])
+	if err != nil {
+		return city, guests, startDate, endDate, pageSize, pageNumber, err
+	}
+	return city, guests, startDate, endDate, pageSize, pageNumber, nil
 }
 
 func parseTimestamp(str string) (*timestamp.Timestamp, error) {

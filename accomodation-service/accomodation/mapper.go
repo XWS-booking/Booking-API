@@ -21,6 +21,8 @@ func NewAccomodationResponse(accomodation model.Accomodation) *accomodationGrpc.
 		FreeParking:    accomodation.FreeParking,
 		MinGuests:      accomodation.MinGuests,
 		MaxGuests:      accomodation.MaxGuests,
+		Pictures:       accomodation.PictureUrls,
+		OwnerId:        accomodation.OwnerId.Hex(),
 	}
 }
 
