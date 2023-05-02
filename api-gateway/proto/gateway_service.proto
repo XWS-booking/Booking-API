@@ -76,6 +76,11 @@ service ReservationService {
     rpc CheckActiveReservationsForGuest(CheckActiveReservationsForGuestRequest) returns (CheckActiveReservationsForGuestResponse) {}
     rpc CheckActiveReservationsForAccommodations(CheckActiveReservationsForAccommodationsRequest) returns (CheckActiveReservationsForAccommodationsResponse) {}
     rpc CancelReservation(CancelReservationRequest) returns (CancelReservationResponse) {}
+    rpc IsAccommodationAvailable(IsAccommodationAvailableRequest) returns (IsAccommodationAvailableResponse) {
+        option (google.api.http) = {
+            get: "/api/reservation/isAccommodationAvailable/{accommodationId}/{startDate}/{endDate}"
+        };
+    }
 }
 
 //Requests
@@ -262,6 +267,12 @@ message CancelReservationRequest{
     string reservationId = 2;
 }
 
+message IsAccommodationAvailableRequest{
+    string accommodationId = 1;
+    google.protobuf.Timestamp startDate = 2;
+    google.protobuf.Timestamp endDate = 3;
+}
+
 //Responses
 message ReservationId{
     string id = 1;
@@ -285,4 +296,8 @@ message CheckActiveReservationsForAccommodationsResponse {
 
 message CancelReservationResponse {
 
+}
+
+message IsAccommodationAvailableResponse{
+    bool available = 1;
 }

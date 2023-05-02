@@ -14,6 +14,7 @@ const (
 	Pending Status = iota
 	Approved
 	Rejected
+	Canceled
 )
 
 type Reservation struct {
@@ -24,7 +25,6 @@ type Reservation struct {
 	EndDate         time.Time          `bson:"end_date" json:"endDate"`
 	guests          int32              `bson:"guests" json:"guests"`
 	Status          Status             `bson:"status" json:"status"`
-	Canceled        bool               `bson:"canceled" json:"canceled"`
 }
 
 func NewReservation(req *CreateReservationRequest) Reservation {
@@ -48,6 +48,6 @@ func (reservation *Reservation) Cancel() *Error {
 	if time.Now().Add(time.Hour * 24).After(reservation.StartDate) {
 		return ReservationCancelationTooLate()
 	}
-	reservation.Canceled = true
+	reservation.Status = Canceled
 	return nil
 }
