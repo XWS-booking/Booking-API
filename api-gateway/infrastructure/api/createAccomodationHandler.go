@@ -70,9 +70,9 @@ func (handler *CreateAccomodationHandler) Create(w http.ResponseWriter, r *http.
 	files := MapFilesFromRequest(r, "attachment")
 	dto.OwnerId = user.Id
 	wifi, _ := strconv.ParseBool(r.FormValue("wifi"))
-	kitchen, _ := strconv.ParseBool(r.FormValue("wifi"))
-	airConditioner, _ := strconv.ParseBool(r.FormValue("wifi"))
-	freeParking, _ := strconv.ParseBool(r.FormValue("wifi"))
+	kitchen, _ := strconv.ParseBool(r.FormValue("kitchen"))
+	airConditioner, _ := strconv.ParseBool(r.FormValue("airConditioner"))
+	freeParking, _ := strconv.ParseBool(r.FormValue("freeParking"))
 	minGuests, _ := strconv.Atoi(r.FormValue("minGuests"))
 	maxGuests, _ := strconv.Atoi(r.FormValue("maxGuests"))
 
