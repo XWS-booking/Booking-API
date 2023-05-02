@@ -4,6 +4,7 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	. "reservation_service/proto/reservation"
+	. "reservation_service/shared"
 	"time"
 )
 
@@ -23,6 +24,7 @@ type Reservation struct {
 	EndDate         time.Time          `bson:"end_date" json:"endDate"`
 	guests          int32              `bson:"guests" json:"guests"`
 	Status          Status             `bson:"status" json:"status"`
+	Canceled        bool               `bson:"canceled" json:"canceled"`
 }
 
 func NewReservation(req *CreateReservationRequest) Reservation {
@@ -37,4 +39,15 @@ func NewReservation(req *CreateReservationRequest) Reservation {
 		guests:          req.Guests,
 		BuyerId:         buyerId,
 	}
+}
+
+func (reservation *Reservation) Cancel() *Error {
+	if reservation.Status != 1 {
+		return ReservationCancelationFailed()
+	}
+	if time.Now().Add(time.Hour * 24).After(reservation.StartDate) {
+		return ReservationCancelationTooLate()
+	}
+	reservation.Canceled = true
+	return nil
 }

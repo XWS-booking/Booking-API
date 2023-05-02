@@ -24,6 +24,7 @@ const (
 	ReservationService_FindAllReservedAccommodations_FullMethodName            = "/ReservationService/FindAllReservedAccommodations"
 	ReservationService_CheckActiveReservationsForGuest_FullMethodName          = "/ReservationService/CheckActiveReservationsForGuest"
 	ReservationService_CheckActiveReservationsForAccommodations_FullMethodName = "/ReservationService/CheckActiveReservationsForAccommodations"
+	ReservationService_CancelReservation_FullMethodName                        = "/ReservationService/CancelReservation"
 )
 
 // ReservationServiceClient is the client API for ReservationService service.
@@ -35,6 +36,7 @@ type ReservationServiceClient interface {
 	FindAllReservedAccommodations(ctx context.Context, in *FindAllReservedAccommodationsRequest, opts ...grpc.CallOption) (*FindAllReservedAccommodationsResponse, error)
 	CheckActiveReservationsForGuest(ctx context.Context, in *CheckActiveReservationsForGuestRequest, opts ...grpc.CallOption) (*CheckActiveReservationsForGuestResponse, error)
 	CheckActiveReservationsForAccommodations(ctx context.Context, in *CheckActiveReservationsForAccommodationsRequest, opts ...grpc.CallOption) (*CheckActiveReservationsForAccommodationsResponse, error)
+	CancelReservation(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*CancelReservationResponse, error)
 }
 
 type reservationServiceClient struct {
@@ -90,6 +92,15 @@ func (c *reservationServiceClient) CheckActiveReservationsForAccommodations(ctx 
 	return out, nil
 }
 
+func (c *reservationServiceClient) CancelReservation(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*CancelReservationResponse, error) {
+	out := new(CancelReservationResponse)
+	err := c.cc.Invoke(ctx, ReservationService_CancelReservation_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReservationServiceServer is the server API for ReservationService service.
 // All implementations must embed UnimplementedReservationServiceServer
 // for forward compatibility
@@ -99,6 +110,7 @@ type ReservationServiceServer interface {
 	FindAllReservedAccommodations(context.Context, *FindAllReservedAccommodationsRequest) (*FindAllReservedAccommodationsResponse, error)
 	CheckActiveReservationsForGuest(context.Context, *CheckActiveReservationsForGuestRequest) (*CheckActiveReservationsForGuestResponse, error)
 	CheckActiveReservationsForAccommodations(context.Context, *CheckActiveReservationsForAccommodationsRequest) (*CheckActiveReservationsForAccommodationsResponse, error)
+	CancelReservation(context.Context, *CancelReservationRequest) (*CancelReservationResponse, error)
 	mustEmbedUnimplementedReservationServiceServer()
 }
 
@@ -120,6 +132,9 @@ func (UnimplementedReservationServiceServer) CheckActiveReservationsForGuest(con
 }
 func (UnimplementedReservationServiceServer) CheckActiveReservationsForAccommodations(context.Context, *CheckActiveReservationsForAccommodationsRequest) (*CheckActiveReservationsForAccommodationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckActiveReservationsForAccommodations not implemented")
+}
+func (UnimplementedReservationServiceServer) CancelReservation(context.Context, *CancelReservationRequest) (*CancelReservationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelReservation not implemented")
 }
 func (UnimplementedReservationServiceServer) mustEmbedUnimplementedReservationServiceServer() {}
 
@@ -224,6 +239,24 @@ func _ReservationService_CheckActiveReservationsForAccommodations_Handler(srv in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReservationService_CancelReservation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelReservationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).CancelReservation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReservationService_CancelReservation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).CancelReservation(ctx, req.(*CancelReservationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ReservationService_ServiceDesc is the grpc.ServiceDesc for ReservationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -250,6 +283,10 @@ var ReservationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckActiveReservationsForAccommodations",
 			Handler:    _ReservationService_CheckActiveReservationsForAccommodations_Handler,
+		},
+		{
+			MethodName: "CancelReservation",
+			Handler:    _ReservationService_CancelReservation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
