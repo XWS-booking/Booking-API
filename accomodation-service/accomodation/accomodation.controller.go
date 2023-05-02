@@ -45,7 +45,6 @@ func (accomodationController *AccomodationController) Create(ctx Context, req *C
 		}
 		urls = append(urls, url)
 	}
-	fmt.Println(urls)
 
 	accomodationDto := dtos.AccomodationDto{
 		Name:           req.Name,
@@ -62,8 +61,6 @@ func (accomodationController *AccomodationController) Create(ctx Context, req *C
 		MaxGuests:      req.MaxGuests,
 		OwnerId:        shared.StringToObjectId(req.OwnerId),
 	}
-	fmt.Println("evo me")
-	fmt.Println(accomodationDto.Pictures)
 
 	accomodation := AccomodationDtoToAccomodation(accomodationDto)
 	accomodation.PictureUrls = urls

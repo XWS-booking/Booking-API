@@ -209,7 +209,7 @@ message FindAllAccomodationResponse {
 }
 
 message AccomodationResponse {
-    string id = 14;
+    string id = 15;
     string name = 1;
     string street = 2;
     string streetNumber = 3;
@@ -222,7 +222,8 @@ message AccomodationResponse {
     bool freeParking = 10;
     int32 minGuests = 11;
     int32 maxGuests = 12;
-    repeated bytes pictures = 13;
+    repeated string pictures = 13;
+    string ownerId = 14;
 }
 
 message FindAllAccommodationIdsByOwnerIdResponse {
