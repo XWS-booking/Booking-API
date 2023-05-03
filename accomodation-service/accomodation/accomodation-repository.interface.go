@@ -10,4 +10,5 @@ type IAccomodationRepository interface {
 	FindAllByOwnerId(id primitive.ObjectID) ([]Accomodation, error)
 	DeleteByOwnerId(id primitive.ObjectID) error
 	Create(accomodation Accomodation) (*Accomodation, error)
+	FindById(id primitive.ObjectID) (Accomodation, error)
 }

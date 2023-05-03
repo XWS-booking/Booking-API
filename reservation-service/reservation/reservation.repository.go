@@ -148,6 +148,27 @@ func (reservationRepository *ReservationRepository) IsAccommodationAvailable(id 
 	return count == 0, nil
 }
 
+func (reservationRepository *ReservationRepository) FindAllByBuyerId(id primitive.ObjectID) ([]Reservation, error) {
+	collection := reservationRepository.getCollection("reservations")
+	var reservations []Reservation
+
+	filter := bson.M{"buyer_id": id}
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return reservations, err
+	}
+
+	for cur.Next(context.TODO()) {
+		var elem Reservation
+		err := cur.Decode(&elem)
+		if err != nil {
+			return reservations, err
+		}
+		reservations = append(reservations, elem)
+	}
+	return reservations, nil
+}
+
 func (reservationRepository *ReservationRepository) getCollection(key string) *mongo.Collection {
 	return reservationRepository.DB.Database(os.Getenv("DATABASE_NAME")).Collection(key)
 }

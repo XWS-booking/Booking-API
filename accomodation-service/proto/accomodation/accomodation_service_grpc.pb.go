@@ -23,6 +23,7 @@ const (
 	AccomodationService_FindAll_FullMethodName                          = "/AccomodationService/FindAll"
 	AccomodationService_FindAllAccommodationIdsByOwnerId_FullMethodName = "/AccomodationService/FindAllAccommodationIdsByOwnerId"
 	AccomodationService_DeleteByOwnerId_FullMethodName                  = "/AccomodationService/DeleteByOwnerId"
+	AccomodationService_FindById_FullMethodName                         = "/AccomodationService/FindById"
 )
 
 // AccomodationServiceClient is the client API for AccomodationService service.
@@ -33,6 +34,7 @@ type AccomodationServiceClient interface {
 	FindAll(ctx context.Context, in *FindAllAccomodationRequest, opts ...grpc.CallOption) (*FindAllAccomodationResponse, error)
 	FindAllAccommodationIdsByOwnerId(ctx context.Context, in *FindAllAccommodationIdsByOwnerIdRequest, opts ...grpc.CallOption) (*FindAllAccommodationIdsByOwnerIdResponse, error)
 	DeleteByOwnerId(ctx context.Context, in *DeleteByOwnerIdRequest, opts ...grpc.CallOption) (*DeleteByOwnerIdResponse, error)
+	FindById(ctx context.Context, in *FindAccommodationByIdRequest, opts ...grpc.CallOption) (*AccomodationResponse, error)
 }
 
 type accomodationServiceClient struct {
@@ -79,6 +81,15 @@ func (c *accomodationServiceClient) DeleteByOwnerId(ctx context.Context, in *Del
 	return out, nil
 }
 
+func (c *accomodationServiceClient) FindById(ctx context.Context, in *FindAccommodationByIdRequest, opts ...grpc.CallOption) (*AccomodationResponse, error) {
+	out := new(AccomodationResponse)
+	err := c.cc.Invoke(ctx, AccomodationService_FindById_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccomodationServiceServer is the server API for AccomodationService service.
 // All implementations must embed UnimplementedAccomodationServiceServer
 // for forward compatibility
@@ -87,6 +98,7 @@ type AccomodationServiceServer interface {
 	FindAll(context.Context, *FindAllAccomodationRequest) (*FindAllAccomodationResponse, error)
 	FindAllAccommodationIdsByOwnerId(context.Context, *FindAllAccommodationIdsByOwnerIdRequest) (*FindAllAccommodationIdsByOwnerIdResponse, error)
 	DeleteByOwnerId(context.Context, *DeleteByOwnerIdRequest) (*DeleteByOwnerIdResponse, error)
+	FindById(context.Context, *FindAccommodationByIdRequest) (*AccomodationResponse, error)
 	mustEmbedUnimplementedAccomodationServiceServer()
 }
 
@@ -105,6 +117,9 @@ func (UnimplementedAccomodationServiceServer) FindAllAccommodationIdsByOwnerId(c
 }
 func (UnimplementedAccomodationServiceServer) DeleteByOwnerId(context.Context, *DeleteByOwnerIdRequest) (*DeleteByOwnerIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteByOwnerId not implemented")
+}
+func (UnimplementedAccomodationServiceServer) FindById(context.Context, *FindAccommodationByIdRequest) (*AccomodationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindById not implemented")
 }
 func (UnimplementedAccomodationServiceServer) mustEmbedUnimplementedAccomodationServiceServer() {}
 
@@ -191,6 +206,24 @@ func _AccomodationService_DeleteByOwnerId_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccomodationService_FindById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindAccommodationByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccomodationServiceServer).FindById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccomodationService_FindById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccomodationServiceServer).FindById(ctx, req.(*FindAccommodationByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AccomodationService_ServiceDesc is the grpc.ServiceDesc for AccomodationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -213,6 +246,10 @@ var AccomodationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteByOwnerId",
 			Handler:    _AccomodationService_DeleteByOwnerId_Handler,
+		},
+		{
+			MethodName: "FindById",
+			Handler:    _AccomodationService_FindById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

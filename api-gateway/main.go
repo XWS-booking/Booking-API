@@ -70,6 +70,8 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	createAccomodationHandler.Init(gwmux)
 	cancelReservationHandler := api.NewCancelReservationHandler(reservationEndpoint, authEndpoint)
 	cancelReservationHandler.Init(gwmux)
+	findAllReservationsByBuyerIdHandler := api.NewFindAllReservationsByBuyerIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
+	findAllReservationsByBuyerIdHandler.Init(gwmux)
 }
 
 func initCors(gwmux *runtime.ServeMux) http.Handler {

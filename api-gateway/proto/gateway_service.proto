@@ -58,6 +58,7 @@ service AccomodationService {
             delete: "/api/accommodation/{ownerId}"
         };
     }
+    rpc FindById(FindAccommodationByIdRequest) returns (AccomodationResponse) {}
 }
 
 service ReservationService {
@@ -81,6 +82,7 @@ service ReservationService {
             get: "/api/reservation/isAccommodationAvailable/{accommodationId}/{startDate}/{endDate}"
         };
     }
+    rpc FindAllByBuyerId(FindAllReservationsByBuyerIdRequest) returns (FindAllReservationsByBuyerIdResponse) {}
 }
 
 //Requests
@@ -191,6 +193,10 @@ message DeleteByOwnerIdRequest {
     string ownerId = 1;
 }
 
+message FindAccommodationByIdRequest {
+    string id = 1;
+}
+
 //Responses
 message CreateAccomodationResponse {
     string id = 14;
@@ -273,6 +279,11 @@ message IsAccommodationAvailableRequest{
     google.protobuf.Timestamp endDate = 3;
 }
 
+message FindAllReservationsByBuyerIdRequest{
+    string buyerId = 1;
+}
+
+
 //Responses
 message ReservationId{
     string id = 1;
@@ -300,4 +311,18 @@ message CancelReservationResponse {
 
 message IsAccommodationAvailableResponse{
     bool available = 1;
+}
+
+message FindAllReservationsByBuyerIdResponse{
+    repeated ReservationResponse reservations = 1;
+}
+
+message ReservationResponse {
+    string Id = 1;
+    string AccommodationId = 2;
+    string BuyerId = 3;
+    google.protobuf.Timestamp  StartDate = 4;
+    google.protobuf.Timestamp   EndDate = 5;
+    int32         Guests = 6;
+    int32          Status = 7;
 }

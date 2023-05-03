@@ -124,3 +124,18 @@ func (accomodationController *AccomodationController) DeleteByOwnerId(ctx Contex
 	}
 	return &DeleteByOwnerIdResponse{Deleted: true}, nil
 }
+
+func (accomodationController *AccomodationController) FindById(ctx Context, req *FindAccommodationByIdRequest) (*AccomodationResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	id, err := primitive.ObjectIDFromHex(req.Id)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	accommodation, e := accomodationController.AccomodationService.FindById(id)
+	if e != nil {
+		return nil, status.Error(codes.Internal, e.Message)
+	}
+	return NewAccomodationResponse(accommodation), nil
+}
