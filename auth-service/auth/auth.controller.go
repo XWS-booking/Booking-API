@@ -5,7 +5,6 @@ import (
 	. "auth_service/proto/auth"
 	"context"
 	. "context"
-	"fmt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -34,7 +33,6 @@ func (authController *AuthController) SignIn(ctx Context, req *SignInRequest) (*
 		return nil, status.Error(codes.Unauthenticated, e.Message)
 	}
 
-	fmt.Println(token)
 	response := &SignInResponse{
 		AccessToken: token,
 	}
