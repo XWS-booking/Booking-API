@@ -27,7 +27,7 @@ func NewSearchAccommodationHandler(accommodationClientAddress, reservationClient
 }
 
 func (handler *SearchAccommodationHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("GET", "/api/searchAccommodation/{city}/{guests}/{startDate}/{endDate}/{pageSize}/{pageNumber}", handler.Search)
+	err := mux.HandlePath("GET", "/api/accommodations/search/{city}/{guests}/{startDate}/{endDate}/{pageSize}/{pageNumber}", handler.Search)
 	if err != nil {
 		panic(err)
 	}

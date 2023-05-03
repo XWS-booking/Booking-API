@@ -26,7 +26,7 @@ func NewFindAllReservationsByBuyerIdHandler(authClientAddress, accommodationClie
 }
 
 func (handler *FindAllReservationsByBuyerIdHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("GET", "/api/findAllReservationsByBuyerId", handler.FindAll)
+	err := mux.HandlePath("GET", "/api/reservations/buyer", handler.FindAll)
 	if err != nil {
 		panic(err)
 	}

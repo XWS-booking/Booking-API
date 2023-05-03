@@ -2,10 +2,9 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"gateway/infrastructure/services"
-	"gateway/model"
 	"gateway/proto/gateway"
+	"gateway/shared"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"net/http"
 )
@@ -25,7 +24,7 @@ func NewDeleteProfileHandler(authClientAddress, accommodationClientAddress, rese
 }
 
 func (handler *DeleteProfileHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("DELETE", "/api/deleteProfile", handler.Delete)
+	err := mux.HandlePath("DELETE", "/api/auth/user", handler.Delete)
 	if err != nil {
 		panic(err)
 	}
@@ -37,7 +36,7 @@ func (handler *DeleteProfileHandler) Delete(w http.ResponseWriter, r *http.Reque
 	authClient := services.NewAuthClient(handler.authClientAddress)
 	user, e := authClient.GetUser(context.TODO(), &gateway.GetUserRequest{Token: token})
 	if e != nil {
-		panic(e)
+		shared.NotFound(w, "User not found")
 	}
 
 	var canDelete bool
@@ -54,26 +53,17 @@ func (handler *DeleteProfileHandler) Delete(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	var message string
 	if canDelete {
-		_, err := handler.DeleteProfile(user.Id)
+		deleted, err := handler.DeleteProfile(user.Id)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		message = "Profile deleted!"
+		shared.Ok(&w, deleted)
 	} else {
-		message = "Can't delete profile because there are active reservations!"
-	}
-
-	response, err := json.Marshal(model.DeleteProfileResponse{Message: message, Deleted: canDelete})
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		http.Error(w, "Cannot delete profile due to active reservations!", http.StatusBadRequest)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(response)
-
 }
 
 func (handler *DeleteProfileHandler) CanDeleteGuestProfile(id string) (bool, error) {
