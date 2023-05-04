@@ -137,3 +137,11 @@ func validateToken(bearerToken string) (*jwt.Token, *Error) {
 	}
 	return token, nil
 }
+
+func (authService *AuthService) FindById(id primitive.ObjectID) (User, *Error) {
+	user, err := authService.UserRepository.FindById(id)
+	if err != nil {
+		return user, UserNotFoundError()
+	}
+	return user, nil
+}

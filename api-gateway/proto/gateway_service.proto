@@ -38,7 +38,7 @@ service AuthService {
             body: "*"
         };
     }
-
+    rpc FindById(FindUserByIdRequest) returns (FindUserByIdResponse) {};
 }
 
 service AccomodationService {
@@ -124,6 +124,10 @@ message DeleteProfileRequest {
     string id = 1;
 }
 
+message FindUserByIdRequest {
+    string id = 1;
+}
+
 //Responses
 message RegistrationResponse {
     string id = 1;
@@ -158,6 +162,20 @@ message GetUserResponse {
     string email = 2;
     string role = 3;
 }
+
+message FindUserByIdResponse {
+    string id = 1;
+    string name = 2;
+    string surname = 3;
+    string email = 4;
+    int32 role = 5;
+    string street = 6;
+    string streetNumber = 7;
+    string city = 8;
+    string zipcode = 9;
+    string country = 10;
+}
+
 //Requests
 message ImageInfo {
     bytes data = 1;

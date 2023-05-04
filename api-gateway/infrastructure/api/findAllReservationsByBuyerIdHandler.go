@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"gateway/infrastructure/services"
 	"gateway/model"
+	"gateway/model/mapper"
 	"gateway/proto/gateway"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -59,7 +60,7 @@ func (handler *FindAllReservationsByBuyerIdHandler) FindAll(w http.ResponseWrite
 		endDate, _ := ptypes.Timestamp(r.EndDate)
 		reservationsWithAccommodation = append(reservationsWithAccommodation, model.Reservation{
 			Id:            r.Id,
-			Accommodation: model.NewAccommodation(accommodation),
+			Accommodation: mapper.AccommodationFromAccomodationResponse(accommodation, model.User{}),
 			BuyerId:       r.BuyerId,
 			StartDate:     startDate,
 			EndDate:       endDate,
