@@ -82,6 +82,17 @@ func (accomodationRepository *AccomodationRepository) Create(accomodation Accomo
 	return &accomodation, nil
 }
 
+func (accommodationRepository *AccomodationRepository) FindById(id primitive.ObjectID) (Accomodation, error) {
+	collection := accommodationRepository.getCollection("accomodations")
+	var accommodation Accomodation
+	filter := bson.M{"_id": id}
+	err := collection.FindOne(context.TODO(), filter).Decode(&accommodation)
+	if err != nil {
+		return Accomodation{}, err
+	}
+	return accommodation, nil
+}
+
 func (accomodationRepository *AccomodationRepository) getCollection(key string) *mongo.Collection {
 	return accomodationRepository.DB.Database(os.Getenv("DATABASE_NAME")).Collection(key)
 }

@@ -112,3 +112,18 @@ func (reservationController *ReservationController) IsAccommodationAvailable(ctx
 	}
 	return &IsAccommodationAvailableResponse{Available: available}, nil
 }
+
+func (reservationController *ReservationController) FindAllByBuyerId(ctx Context, req *FindAllReservationsByBuyerIdRequest) (*FindAllReservationsByBuyerIdResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	reservations, e := reservationController.ReservationService.FindAllByBuyerId(shared.StringToObjectId(req.BuyerId))
+	if e != nil {
+		return &FindAllReservationsByBuyerIdResponse{}, status.Error(codes.Internal, e.Message)
+	}
+	var reservationResponses []*ReservationResponse
+	for _, r := range reservations {
+		reservationResponses = append(reservationResponses, NewReservationResponse(r))
+	}
+	return &FindAllReservationsByBuyerIdResponse{Reservations: reservationResponses}, nil
+}

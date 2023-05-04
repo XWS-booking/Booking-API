@@ -95,3 +95,11 @@ func (reservationService *ReservationService) IsAccommodationAvailable(id primit
 	}
 	return available, nil
 }
+
+func (reservationService *ReservationService) FindAllByBuyerId(id primitive.ObjectID) ([]Reservation, *shared.Error) {
+	reservations, err := reservationService.ReservationRepository.FindAllByBuyerId(id)
+	if err != nil {
+		return reservations, shared.ReservationsNotFound()
+	}
+	return reservations, nil
+}

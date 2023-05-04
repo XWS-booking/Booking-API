@@ -59,3 +59,7 @@ func PersonalInfoUpdateFailed() *Error {
 func DeleteProfileError() *Error {
 	return &Error{Message: "Can't delete profile!"}
 }
+
+func UserNotFoundError() *Error {
+	return &Error{Message: "User not found!"}
+}

@@ -7,6 +7,7 @@ service AccomodationService {
   rpc FindAll(FindAllAccomodationRequest) returns (FindAllAccomodationResponse) {}
   rpc FindAllAccommodationIdsByOwnerId(FindAllAccommodationIdsByOwnerIdRequest) returns (FindAllAccommodationIdsByOwnerIdResponse) {}
   rpc DeleteByOwnerId(DeleteByOwnerIdRequest) returns (DeleteByOwnerIdResponse) {}
+  rpc FindById(FindAccommodationByIdRequest) returns (AccomodationResponse) {}
 }
 
 
@@ -43,6 +44,10 @@ message FindAllAccommodationIdsByOwnerIdRequest {
 
 message DeleteByOwnerIdRequest {
   string ownerId = 1;
+}
+
+message FindAccommodationByIdRequest {
+  string id = 1;
 }
 
 //Responses

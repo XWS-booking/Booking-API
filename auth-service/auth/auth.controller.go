@@ -3,6 +3,7 @@ package auth
 import (
 	. "auth_service/auth/model"
 	. "auth_service/proto/auth"
+	"auth_service/shared"
 	"context"
 	. "context"
 	"fmt"
@@ -125,4 +126,32 @@ func (authController *AuthController) DeleteProfile(ctx context.Context, req *De
 		return &DeleteProfileResponse{Deleted: false}, status.Error(codes.Internal, e.Message)
 	}
 	return &DeleteProfileResponse{Deleted: true}, nil
+}
+
+func (authController *AuthController) FindById(ctx context.Context, req *FindUserByIdRequest) (*FindUserByIdResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with user data")
+	}
+
+	user, e := authController.AuthService.FindById(shared.StringToObjectId(req.Id))
+	if e != nil {
+		return nil, status.Error(codes.NotFound, e.Message)
+	}
+	if e != nil {
+		return nil, status.Error(codes.NotFound, e.Message)
+	}
+
+	response := &FindUserByIdResponse{
+		Id:           user.Id.Hex(),
+		Name:         user.Name,
+		Surname:      user.Surname,
+		Email:        user.Email,
+		Role:         int32(user.Role),
+		Street:       user.Street,
+		StreetNumber: user.StreetNumber,
+		Zipcode:      user.ZipCode,
+		City:         user.City,
+		Country:      user.Country,
+	}
+	return response, nil
 }

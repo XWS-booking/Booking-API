@@ -38,7 +38,7 @@ service AuthService {
             body: "*"
         };
     }
-
+    rpc FindById(FindUserByIdRequest) returns (FindUserByIdResponse) {};
 }
 
 service AccomodationService {
@@ -58,6 +58,7 @@ service AccomodationService {
             delete: "/api/accommodation/{ownerId}"
         };
     }
+    rpc FindById(FindAccommodationByIdRequest) returns (AccomodationResponse) {}
 }
 
 service ReservationService {
@@ -81,6 +82,7 @@ service ReservationService {
             get: "/api/reservation/isAccommodationAvailable/{accommodationId}/{startDate}/{endDate}"
         };
     }
+    rpc FindAllByBuyerId(FindAllReservationsByBuyerIdRequest) returns (FindAllReservationsByBuyerIdResponse) {}
 }
 
 //Requests
@@ -122,6 +124,10 @@ message DeleteProfileRequest {
     string id = 1;
 }
 
+message FindUserByIdRequest {
+    string id = 1;
+}
+
 //Responses
 message RegistrationResponse {
     string id = 1;
@@ -156,6 +162,20 @@ message GetUserResponse {
     string email = 2;
     string role = 3;
 }
+
+message FindUserByIdResponse {
+    string id = 1;
+    string name = 2;
+    string surname = 3;
+    string email = 4;
+    int32 role = 5;
+    string street = 6;
+    string streetNumber = 7;
+    string city = 8;
+    string zipcode = 9;
+    string country = 10;
+}
+
 //Requests
 message ImageInfo {
     bytes data = 1;
@@ -189,6 +209,10 @@ message FindAllAccommodationIdsByOwnerIdRequest {
 
 message DeleteByOwnerIdRequest {
     string ownerId = 1;
+}
+
+message FindAccommodationByIdRequest {
+    string id = 1;
 }
 
 //Responses
@@ -273,6 +297,11 @@ message IsAccommodationAvailableRequest{
     google.protobuf.Timestamp endDate = 3;
 }
 
+message FindAllReservationsByBuyerIdRequest{
+    string buyerId = 1;
+}
+
+
 //Responses
 message ReservationId{
     string id = 1;
@@ -300,4 +329,18 @@ message CancelReservationResponse {
 
 message IsAccommodationAvailableResponse{
     bool available = 1;
+}
+
+message FindAllReservationsByBuyerIdResponse{
+    repeated ReservationResponse reservations = 1;
+}
+
+message ReservationResponse {
+    string Id = 1;
+    string AccommodationId = 2;
+    string BuyerId = 3;
+    google.protobuf.Timestamp  StartDate = 4;
+    google.protobuf.Timestamp   EndDate = 5;
+    int32         Guests = 6;
+    int32          Status = 7;
 }

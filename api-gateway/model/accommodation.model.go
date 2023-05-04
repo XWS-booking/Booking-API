@@ -15,7 +15,7 @@ type Accommodation struct {
 	MinGuests      int32    `json:"minGuests"`
 	MaxGuests      int32    `json:"maxGuests"`
 	PictureUrls    []string `json:"pictureUrls"`
-	OwnerId        string   `json:"ownerId"`
+	Owner          User     `json:"owner"`
 }
 
 type AccommodationPage struct {

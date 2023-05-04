@@ -61,7 +61,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	}
 
 	//init custom handlers
-	searchAccommodationsHandler := api.NewSearchAccommodationHandler(accommodationEndpoint, reservationEndpoint)
+	searchAccommodationsHandler := api.NewSearchAccommodationHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
 	searchAccommodationsHandler.Init(gwmux)
 	deleteProfileHandler := api.NewDeleteProfileHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
 	deleteProfileHandler.Init(gwmux)
@@ -70,6 +70,8 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	createAccomodationHandler.Init(gwmux)
 	cancelReservationHandler := api.NewCancelReservationHandler(reservationEndpoint, authEndpoint)
 	cancelReservationHandler.Init(gwmux)
+	findAllReservationsByBuyerIdHandler := api.NewFindAllReservationsByBuyerIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
+	findAllReservationsByBuyerIdHandler.Init(gwmux)
 }
 
 func initCors(gwmux *runtime.ServeMux) http.Handler {

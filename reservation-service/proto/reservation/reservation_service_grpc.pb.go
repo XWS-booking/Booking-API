@@ -26,6 +26,7 @@ const (
 	ReservationService_CheckActiveReservationsForAccommodations_FullMethodName = "/ReservationService/CheckActiveReservationsForAccommodations"
 	ReservationService_CancelReservation_FullMethodName                        = "/ReservationService/CancelReservation"
 	ReservationService_IsAccommodationAvailable_FullMethodName                 = "/ReservationService/IsAccommodationAvailable"
+	ReservationService_FindAllByBuyerId_FullMethodName                         = "/ReservationService/FindAllByBuyerId"
 )
 
 // ReservationServiceClient is the client API for ReservationService service.
@@ -39,6 +40,7 @@ type ReservationServiceClient interface {
 	CheckActiveReservationsForAccommodations(ctx context.Context, in *CheckActiveReservationsForAccommodationsRequest, opts ...grpc.CallOption) (*CheckActiveReservationsForAccommodationsResponse, error)
 	CancelReservation(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*CancelReservationResponse, error)
 	IsAccommodationAvailable(ctx context.Context, in *IsAccommodationAvailableRequest, opts ...grpc.CallOption) (*IsAccommodationAvailableResponse, error)
+	FindAllByBuyerId(ctx context.Context, in *FindAllReservationsByBuyerIdRequest, opts ...grpc.CallOption) (*FindAllReservationsByBuyerIdResponse, error)
 }
 
 type reservationServiceClient struct {
@@ -112,6 +114,15 @@ func (c *reservationServiceClient) IsAccommodationAvailable(ctx context.Context,
 	return out, nil
 }
 
+func (c *reservationServiceClient) FindAllByBuyerId(ctx context.Context, in *FindAllReservationsByBuyerIdRequest, opts ...grpc.CallOption) (*FindAllReservationsByBuyerIdResponse, error) {
+	out := new(FindAllReservationsByBuyerIdResponse)
+	err := c.cc.Invoke(ctx, ReservationService_FindAllByBuyerId_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReservationServiceServer is the server API for ReservationService service.
 // All implementations must embed UnimplementedReservationServiceServer
 // for forward compatibility
@@ -123,6 +134,7 @@ type ReservationServiceServer interface {
 	CheckActiveReservationsForAccommodations(context.Context, *CheckActiveReservationsForAccommodationsRequest) (*CheckActiveReservationsForAccommodationsResponse, error)
 	CancelReservation(context.Context, *CancelReservationRequest) (*CancelReservationResponse, error)
 	IsAccommodationAvailable(context.Context, *IsAccommodationAvailableRequest) (*IsAccommodationAvailableResponse, error)
+	FindAllByBuyerId(context.Context, *FindAllReservationsByBuyerIdRequest) (*FindAllReservationsByBuyerIdResponse, error)
 	mustEmbedUnimplementedReservationServiceServer()
 }
 
@@ -150,6 +162,9 @@ func (UnimplementedReservationServiceServer) CancelReservation(context.Context, 
 }
 func (UnimplementedReservationServiceServer) IsAccommodationAvailable(context.Context, *IsAccommodationAvailableRequest) (*IsAccommodationAvailableResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsAccommodationAvailable not implemented")
+}
+func (UnimplementedReservationServiceServer) FindAllByBuyerId(context.Context, *FindAllReservationsByBuyerIdRequest) (*FindAllReservationsByBuyerIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindAllByBuyerId not implemented")
 }
 func (UnimplementedReservationServiceServer) mustEmbedUnimplementedReservationServiceServer() {}
 
@@ -290,6 +305,24 @@ func _ReservationService_IsAccommodationAvailable_Handler(srv interface{}, ctx c
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReservationService_FindAllByBuyerId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindAllReservationsByBuyerIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).FindAllByBuyerId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReservationService_FindAllByBuyerId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).FindAllByBuyerId(ctx, req.(*FindAllReservationsByBuyerIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ReservationService_ServiceDesc is the grpc.ServiceDesc for ReservationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -324,6 +357,10 @@ var ReservationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "IsAccommodationAvailable",
 			Handler:    _ReservationService_IsAccommodationAvailable_Handler,
+		},
+		{
+			MethodName: "FindAllByBuyerId",
+			Handler:    _ReservationService_FindAllByBuyerId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

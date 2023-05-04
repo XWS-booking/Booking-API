@@ -41,3 +41,11 @@ func (accomodationService *AccomodationService) Create(accomodation model.Accomo
 	}
 	return created, nil
 }
+
+func (accomodationService *AccomodationService) FindById(id primitive.ObjectID) (model.Accomodation, *shared.Error) {
+	accommodation, e := accomodationService.AccomodationRepository.FindById(id)
+	if e != nil {
+		return accommodation, shared.AccommodationsNotFound()
+	}
+	return accommodation, nil
+}
