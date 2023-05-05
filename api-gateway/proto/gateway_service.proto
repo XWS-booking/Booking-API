@@ -152,15 +152,25 @@ message UpdatePersonalInfoResponse{
     string zipCode = 9;
     string country = 10;
     string role = 11;
+    string username = 12;
 }
 message DeleteProfileResponse {
     bool deleted = 1;
 }
 
 message GetUserResponse {
-    string id = 1;
-    string email = 2;
-    string role = 3;
+    string id = 12;
+    string name = 1;
+    string surname = 2;
+    string email = 3;
+    string password = 4;
+    string street = 5;
+    string streetNumber = 6;
+    string city = 7;
+    string zipCode = 8;
+    string country = 9;
+    string role = 10;
+    string username = 11;
 }
 
 message FindUserByIdResponse {

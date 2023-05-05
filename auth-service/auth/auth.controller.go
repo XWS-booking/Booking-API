@@ -84,9 +84,18 @@ func (authController *AuthController) GetUser(ctx context.Context, req *GetUserR
 	}
 
 	response := &GetUserResponse{
-		Id:    user.Id.Hex(),
-		Email: user.Email,
-		Role:  strconv.Itoa(int(user.Role)),
+		Id:           user.Id.Hex(),
+		Email:        user.Email,
+		Role:         strconv.Itoa(int(user.Role)),
+		Name:         user.Name,
+		Surname:      user.Surname,
+		Password:     user.Password,
+		Street:       user.Street,
+		StreetNumber: user.StreetNumber,
+		City:         user.City,
+		ZipCode:      user.ZipCode,
+		Country:      user.Country,
+		Username:     user.Username,
 	}
 
 	return response, nil
