@@ -46,7 +46,8 @@ func (handler *CancelReservationHandler) Cancel(w http.ResponseWriter, r *http.R
 	}
 	res, err := reservationClient.CancelReservation(context.TODO(), &gateway.CancelReservationRequest{Token: "", ReservationId: body.ReservationId.Hex()})
 	if err != nil {
-		panic(err)
+		shared.BadRequest(w, "Error when canceling reservation!")
+		return
 	}
 	shared.Ok(&w, res)
 }
