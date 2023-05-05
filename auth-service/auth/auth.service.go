@@ -69,7 +69,7 @@ func (authService *AuthService) UpdatePersonalInfo(user User) (User, *Error) {
 	foundUser.ZipCode = user.ZipCode
 	foundUser.Country = user.Country
 	foundUser.Username = user.Username
-	updatedUser, err := authService.UserRepository.UpdatePersonalInfo(user)
+	updatedUser, err := authService.UserRepository.UpdatePersonalInfo(foundUser)
 	fmt.Println(err)
 	if err != nil {
 		return user, PersonalInfoUpdateFailed()
