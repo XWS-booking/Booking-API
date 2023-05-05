@@ -40,6 +40,7 @@ message UpdatePersonalInfoRequest {
     string city = 8;
     string zipCode = 9;
     string country = 10;
+    string username = 11;
 }
 message GetUserRequest {
     string token = 1;

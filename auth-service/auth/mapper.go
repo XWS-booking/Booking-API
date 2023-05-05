@@ -34,5 +34,6 @@ func UserFromUpdatePersonalInfoDto(dto *UpdatePersonalInfoRequest) *User {
 		City:         dto.City,
 		ZipCode:      dto.ZipCode,
 		Country:      dto.Country,
+		Username:     dto.Username,
 	}
 }

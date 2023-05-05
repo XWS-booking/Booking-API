@@ -121,6 +121,7 @@ func (authController *AuthController) UpdatePersonalInfo(ctx context.Context, re
 		City:         updatedUser.City,
 		ZipCode:      updatedUser.ZipCode,
 		Country:      updatedUser.Country,
+		Username:     updatedUser.Username,
 	}
 	return response, nil
 
