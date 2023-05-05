@@ -39,6 +39,13 @@ service AuthService {
         };
     }
     rpc FindById(FindUserByIdRequest) returns (FindUserByIdResponse) {};
+
+    rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {
+        option(google.api.http) = {
+            patch: "/api/auth/password/change"
+            body: "*"
+        };
+    }
 }
 
 service AccomodationService {
@@ -129,6 +136,12 @@ message FindUserByIdRequest {
     string id = 1;
 }
 
+message ChangePasswordRequest {
+    string id = 1;
+    string oldPassword = 2;
+    string newPassword = 3;
+}
+
 //Responses
 message RegistrationResponse {
     string id = 1;
@@ -185,6 +198,10 @@ message FindUserByIdResponse {
     string city = 8;
     string zipcode = 9;
     string country = 10;
+}
+
+message ChangePasswordResponse {
+
 }
 
 //Requests
