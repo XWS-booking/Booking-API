@@ -76,6 +76,28 @@ func (authService *AuthService) UpdatePersonalInfo(user User) (User, *Error) {
 	}
 	return updatedUser, nil
 }
+
+func (authService *AuthService) ChangePassword(id string, oldPassword string, newPassword string) *Error {
+	user, e := authService.FindById(StringToObjectId(id))
+	if e != nil {
+		return e
+	}
+	isPasswordValid := CheckPasswordHash(oldPassword, user.Password)
+	if !isPasswordValid {
+		return InvalidCredentials()
+	}
+	hashedPass, err := HashPassword(newPassword)
+	if err != nil {
+		return PersonalInfoUpdateFailed()
+	}
+	user.Password = hashedPass
+	_, err = authService.UserRepository.UpdatePersonalInfo(user)
+	if err != nil {
+		return PersonalInfoUpdateFailed()
+	}
+	return nil
+}
+
 func (authService *AuthService) DecryptToken(bearerToken string) (string, *Error) {
 	token, err := validateToken(bearerToken)
 	if err != nil {

@@ -77,7 +77,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 func initCors(gwmux *runtime.ServeMux) http.Handler {
 	return cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "PATCH"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization", "Access-Control-Allow-Origin"},
 		AllowCredentials: true,
 		MaxAge:           300,

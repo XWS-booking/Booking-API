@@ -147,9 +147,6 @@ func (authController *AuthController) FindById(ctx context.Context, req *FindUse
 	if e != nil {
 		return nil, status.Error(codes.NotFound, e.Message)
 	}
-	if e != nil {
-		return nil, status.Error(codes.NotFound, e.Message)
-	}
 
 	response := &FindUserByIdResponse{
 		Id:           user.Id.Hex(),
@@ -164,4 +161,15 @@ func (authController *AuthController) FindById(ctx context.Context, req *FindUse
 		Country:      user.Country,
 	}
 	return response, nil
+}
+
+func (authController *AuthController) ChangePassword(ctx context.Context, req *ChangePasswordRequest) (*ChangePasswordResponse, error) {
+	if req == nil {
+		return &ChangePasswordResponse{}, status.Error(codes.Aborted, "Something wrong with user data")
+	}
+	e := authController.AuthService.ChangePassword(req.Id, req.OldPassword, req.NewPassword)
+	if e != nil {
+		return &ChangePasswordResponse{}, status.Error(codes.Aborted, e.Message)
+	}
+	return &ChangePasswordResponse{}, nil
 }
