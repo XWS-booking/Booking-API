@@ -63,7 +63,6 @@ func (authService *AuthService) UpdatePersonalInfo(user User) (User, *Error) {
 	foundUser.Name = user.Name
 	foundUser.Surname = user.Surname
 	foundUser.Email = user.Email
-	foundUser.Password = user.Password
 	foundUser.Street = user.Street
 	foundUser.StreetNumber = user.StreetNumber
 	foundUser.City = user.City
