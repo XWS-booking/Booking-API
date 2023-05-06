@@ -70,6 +70,7 @@ func (handler *CreateAccomodationHandler) Create(w http.ResponseWriter, r *http.
 	files := MapFilesFromRequest(r, "attachment")
 	dto.OwnerId = user.Id
 	wifi, _ := strconv.ParseBool(r.FormValue("wifi"))
+	autoReservation, _ := strconv.ParseBool(r.FormValue("autoReservation"))
 	kitchen, _ := strconv.ParseBool(r.FormValue("kitchen"))
 	airConditioner, _ := strconv.ParseBool(r.FormValue("airConditioner"))
 	freeParking, _ := strconv.ParseBool(r.FormValue("freeParking"))
@@ -77,20 +78,21 @@ func (handler *CreateAccomodationHandler) Create(w http.ResponseWriter, r *http.
 	maxGuests, _ := strconv.Atoi(r.FormValue("maxGuests"))
 
 	accReq := &gateway.CreateAccomodationRequest{
-		Name:           r.FormValue("name"),
-		Street:         r.FormValue("street"),
-		StreetNumber:   r.FormValue("streetNumber"),
-		City:           r.FormValue("city"),
-		ZipCode:        r.FormValue("street"),
-		Country:        r.FormValue("street"),
-		Wifi:           wifi,
-		Kitchen:        kitchen,
-		AirConditioner: airConditioner,
-		FreeParking:    freeParking,
-		MinGuests:      int32(minGuests),
-		MaxGuests:      int32(maxGuests),
-		OwnerId:        user.Id,
-		Pictures:       files,
+		Name:            r.FormValue("name"),
+		Street:          r.FormValue("street"),
+		StreetNumber:    r.FormValue("streetNumber"),
+		City:            r.FormValue("city"),
+		ZipCode:         r.FormValue("street"),
+		Country:         r.FormValue("street"),
+		Wifi:            wifi,
+		Kitchen:         kitchen,
+		AirConditioner:  airConditioner,
+		AutoReservation: autoReservation,
+		FreeParking:     freeParking,
+		MinGuests:       int32(minGuests),
+		MaxGuests:       int32(maxGuests),
+		OwnerId:         user.Id,
+		Pictures:        files,
 	}
 	res, e := accomodationClient.Create(context.TODO(), accReq)
 

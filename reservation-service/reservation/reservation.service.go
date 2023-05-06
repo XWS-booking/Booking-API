@@ -88,6 +88,32 @@ func (reservationService *ReservationService) CancelReservation(reservationId pr
 	return nil
 }
 
+func (reservationService *ReservationService) ConfirmReservation(id primitive.ObjectID) *shared.Error {
+	reservation, err := reservationService.ReservationRepository.FindById(id)
+	if err != nil {
+		return shared.ReservationConfirmationFailed()
+	}
+	e := reservation.Confirm()
+	if e != nil {
+		return e
+	}
+	reservationService.ReservationRepository.UpdateReservation(reservation)
+	return nil
+}
+
+func (reservationService *ReservationService) RejectReservation(id primitive.ObjectID) *shared.Error {
+	reservation, err := reservationService.ReservationRepository.FindById(id)
+	if err != nil {
+		return shared.ReservationRejectionFailed()
+	}
+	e := reservation.Reject()
+	if e != nil {
+		return e
+	}
+	reservationService.ReservationRepository.UpdateReservation(reservation)
+	return nil
+}
+
 func (reservationService *ReservationService) IsAccommodationAvailable(id primitive.ObjectID, startDate time.Time, endDate time.Time) (bool, *shared.Error) {
 	available, err := reservationService.ReservationRepository.IsAccommodationAvailable(id, startDate, endDate)
 	if err != nil {
@@ -98,6 +124,14 @@ func (reservationService *ReservationService) IsAccommodationAvailable(id primit
 
 func (reservationService *ReservationService) FindAllByBuyerId(id primitive.ObjectID) ([]Reservation, *shared.Error) {
 	reservations, err := reservationService.ReservationRepository.FindAllByBuyerId(id)
+	if err != nil {
+		return reservations, shared.ReservationsNotFound()
+	}
+	return reservations, nil
+}
+
+func (reservationService *ReservationService) FindAllByAccommodationId(id primitive.ObjectID) ([]Reservation, *shared.Error) {
+	reservations, err := reservationService.ReservationRepository.FindAllByAccommodationId(id)
 	if err != nil {
 		return reservations, shared.ReservationsNotFound()
 	}

@@ -31,6 +31,7 @@ message CreateAccomodationRequest {
   int32 maxGuests = 12;
   repeated ImageInfo pictures = 13;
   string ownerId = 14;
+  bool autoReservation = 15;
 }
 
 message FindAllAccomodationRequest {
@@ -67,6 +68,7 @@ message CreateAccomodationResponse {
   int32 maxGuests = 12;
   repeated bytes pictures = 13;
   string ownerId = 15;
+  bool autoReservation = 16;
 }
 
 message FindAllAccomodationResponse {
@@ -89,6 +91,7 @@ message AccomodationResponse {
     int32 maxGuests = 12;
     repeated string pictures = 13;
     string ownerId = 14;
+    bool autoReservation = 16;
 }
 
 message FindAllAccommodationIdsByOwnerIdResponse {

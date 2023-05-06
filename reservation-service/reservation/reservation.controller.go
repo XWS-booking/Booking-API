@@ -46,6 +46,36 @@ func (reservationController *ReservationController) Delete(ctx Context, req *Res
 	return &DeleteReservationResponse{Message: "success"}, nil
 }
 
+func (reservationController *ReservationController) Confirm(ctx Context, req *ReservationId) (*ConfirmReservationResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	reservationId, err := primitive.ObjectIDFromHex(req.GetId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	e := reservationController.ReservationService.ConfirmReservation(reservationId)
+	if e != nil {
+		return nil, status.Error(codes.Internal, e.Message)
+	}
+	return &ConfirmReservationResponse{}, nil
+}
+
+func (reservationController *ReservationController) Reject(ctx Context, req *ReservationId) (*RejectReservationResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	reservationId, err := primitive.ObjectIDFromHex(req.GetId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	e := reservationController.ReservationService.RejectReservation(reservationId)
+	if e != nil {
+		return nil, status.Error(codes.Internal, e.Message)
+	}
+	return &RejectReservationResponse{}, nil
+}
+
 func (reservationController *ReservationController) FindAllReservedAccommodations(ctx Context, req *FindAllReservedAccommodationsRequest) (*FindAllReservedAccommodationsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
@@ -126,4 +156,19 @@ func (reservationController *ReservationController) FindAllByBuyerId(ctx Context
 		reservationResponses = append(reservationResponses, NewReservationResponse(r))
 	}
 	return &FindAllReservationsByBuyerIdResponse{Reservations: reservationResponses}, nil
+}
+
+func (reservationController *ReservationController) FindAllByAccommodationId(ctx Context, req *FindAllReservationsByAccommodationIdRequest) (*FindAllReservationsByAccommodationIdResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	reservations, e := reservationController.ReservationService.FindAllByAccommodationId(shared.StringToObjectId(req.AccommodationId))
+	if e != nil {
+		return &FindAllReservationsByAccommodationIdResponse{}, status.Error(codes.Internal, e.Message)
+	}
+	var reservationResponses []*ReservationResponse
+	for _, r := range reservations {
+		reservationResponses = append(reservationResponses, NewReservationResponse(r))
+	}
+	return &FindAllReservationsByAccommodationIdResponse{Reservations: reservationResponses}, nil
 }

@@ -8,6 +8,10 @@ func ReservationNotDeleted() *Error {
 	return &Error{Message: "Reservation can't be deleted!"}
 }
 
+func ReservationNotConfirmed() *Error {
+	return &Error{Message: "Reservation can't be confirmed!"}
+}
+
 func ReservationNotFound() *Error {
 	return &Error{Message: "Reservation not found!"}
 }
@@ -22,6 +26,14 @@ func CheckActiveReservationsError() *Error {
 
 func ReservationCancelationFailed() *Error {
 	return &Error{Message: "Error when canceling reservation!"}
+}
+
+func ReservationConfirmationFailed() *Error {
+	return &Error{Message: "Error when confirming reservation!"}
+}
+
+func ReservationRejectionFailed() *Error {
+	return &Error{Message: "Error when rejecting reservation!"}
 }
 
 func ReservationCancelationTooLate() *Error {

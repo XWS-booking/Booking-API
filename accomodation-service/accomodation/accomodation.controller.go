@@ -6,7 +6,6 @@ import (
 	. "accomodation_service/proto/accomodation"
 	"accomodation_service/shared"
 	. "context"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"fmt"
@@ -47,19 +46,20 @@ func (accomodationController *AccomodationController) Create(ctx Context, req *C
 	}
 
 	accomodationDto := dtos.AccomodationDto{
-		Name:           req.Name,
-		Street:         req.Street,
-		StreetNumber:   req.StreetNumber,
-		City:           req.City,
-		ZipCode:        req.ZipCode,
-		Country:        req.Country,
-		Wifi:           req.Wifi,
-		Kitchen:        req.Kitchen,
-		AirConditioner: req.AirConditioner,
-		FreeParking:    req.FreeParking,
-		MinGuests:      req.MinGuests,
-		MaxGuests:      req.MaxGuests,
-		OwnerId:        shared.StringToObjectId(req.OwnerId),
+		Name:            req.Name,
+		Street:          req.Street,
+		StreetNumber:    req.StreetNumber,
+		City:            req.City,
+		ZipCode:         req.ZipCode,
+		Country:         req.Country,
+		Wifi:            req.Wifi,
+		Kitchen:         req.Kitchen,
+		AirConditioner:  req.AirConditioner,
+		AutoReservation: req.AutoReservation,
+		FreeParking:     req.FreeParking,
+		MinGuests:       req.MinGuests,
+		MaxGuests:       req.MaxGuests,
+		OwnerId:         shared.StringToObjectId(req.OwnerId),
 	}
 
 	accomodation := AccomodationDtoToAccomodation(accomodationDto)
