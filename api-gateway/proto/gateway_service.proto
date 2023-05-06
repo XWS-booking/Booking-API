@@ -69,21 +69,27 @@ service AccomodationService {
 }
 
 service ReservationService {
-    rpc Create(CreateReservationRequest) returns (ReservationId) {
-        option (google.api.http) = {
-            post: "/api/reservation"
-            body: "*"
-        };
-    }
     rpc Delete(ReservationId) returns (DeleteReservationResponse){
         option (google.api.http) = {
             delete: "/api/reservation/{id}"
         };
     }
+    rpc Create(CreateReservationRequest) returns (ReservationId) {}
+    rpc Confirm(ReservationId) returns (ConfirmReservationResponse) {
+        option (google.api.http) = {
+            patch: "/api/reservation/confirm/{id}"
+        };
+    }
+    rpc Reject(ReservationId) returns (RejectReservationResponse) {
+        option (google.api.http) = {
+            patch: "/api/reservation/reject/{id}"
+        };
+    }
+    rpc CancelReservation(CancelReservationRequest) returns (CancelReservationResponse) {}
     rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse){}
     rpc CheckActiveReservationsForGuest(CheckActiveReservationsForGuestRequest) returns (CheckActiveReservationsForGuestResponse) {}
     rpc CheckActiveReservationsForAccommodations(CheckActiveReservationsForAccommodationsRequest) returns (CheckActiveReservationsForAccommodationsResponse) {}
-    rpc CancelReservation(CancelReservationRequest) returns (CancelReservationResponse) {}
+    rpc FindAllByAccommodationId(FindAllReservationsByAccommodationIdRequest) returns (FindAllReservationsByAccommodationIdResponse) {}
     rpc IsAccommodationAvailable(IsAccommodationAvailableRequest) returns (IsAccommodationAvailableResponse) {
         option (google.api.http) = {
             get: "/api/reservation/isAccommodationAvailable/{accommodationId}/{startDate}/{endDate}"
@@ -123,6 +129,9 @@ message UpdatePersonalInfoRequest {
     string country = 10;
     string username = 11;
 
+}
+message FindAllReservationsByAccommodationIdRequest{
+    string accommodationId = 1;
 }
 message GetUserRequest {
     string token = 1;
@@ -224,6 +233,7 @@ message CreateAccomodationRequest {
     int32 maxGuests = 12;
     repeated ImageInfo pictures = 13;
     string ownerId = 14;
+    bool autoReservation = 15;
 }
 
 message FindAllAccomodationRequest {
@@ -260,6 +270,7 @@ message CreateAccomodationResponse {
     int32 maxGuests = 12;
     repeated bytes pictures = 13;
     string ownerId = 15;
+    bool autoReservation = 16;
 }
 
 message FindAllAccomodationResponse {
@@ -282,6 +293,7 @@ message AccomodationResponse {
     int32 maxGuests = 12;
     repeated string pictures = 13;
     string ownerId = 14;
+    bool autoReservation = 16;
 }
 
 message FindAllAccommodationIdsByOwnerIdResponse {
@@ -329,10 +341,13 @@ message FindAllReservationsByBuyerIdRequest{
     string buyerId = 1;
 }
 
-
 //Responses
 message ReservationId{
     string id = 1;
+}
+
+message FindAllReservationsByAccommodationIdResponse{
+    repeated ReservationResponse reservations = 1;
 }
 
 message DeleteReservationResponse{
@@ -355,6 +370,14 @@ message CancelReservationResponse {
 
 }
 
+message RejectReservationResponse {
+
+}
+
+message ConfirmReservationResponse{
+
+}
+
 message IsAccommodationAvailableResponse{
     bool available = 1;
 }
@@ -370,5 +393,5 @@ message ReservationResponse {
     google.protobuf.Timestamp  StartDate = 4;
     google.protobuf.Timestamp   EndDate = 5;
     int32         Guests = 6;
-    int32          Status = 7;
+    int32         Status = 7;
 }

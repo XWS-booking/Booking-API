@@ -52,11 +52,6 @@ func main() {
 	accomodationController := NewAccomodationController(accomodationService, storageService)
 	accomodationGrpc.RegisterAccomodationServiceServer(grpcServer, accomodationController)
 
-	// userRepository := &UserRepository{DB: db, Logger: logger}
-	// authService := &AuthService{UserRepository: userRepository}
-	// authController := CreateAuthController(authService)
-	// accomodationGrpc.RegisterAuthServiceServer(grpcServer, authController)
-
 	go func() {
 		if err := grpcServer.Serve(listener); err != nil {
 			log.Fatal("server error: ", err)

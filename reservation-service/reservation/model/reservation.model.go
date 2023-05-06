@@ -12,7 +12,7 @@ type Status = int
 
 const (
 	Pending Status = iota
-	Approved
+	Confirmed
 	Rejected
 	Canceled
 )
@@ -49,5 +49,21 @@ func (reservation *Reservation) Cancel() *Error {
 		return ReservationCancelationTooLate()
 	}
 	reservation.Status = Canceled
+	return nil
+}
+
+func (reservation *Reservation) Confirm() *Error {
+	if reservation.Status != 0 {
+		return ReservationConfirmationFailed()
+	}
+	reservation.Status = Confirmed
+	return nil
+}
+
+func (reservation *Reservation) Reject() *Error {
+	if reservation.Status != 0 {
+		return ReservationRejectionFailed()
+	}
+	reservation.Status = Rejected
 	return nil
 }

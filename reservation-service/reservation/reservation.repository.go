@@ -75,7 +75,7 @@ func (reservationRepository *ReservationRepository) CheckActiveReservationsForGu
 		"end_date": bson.M{
 			"$gt": time.Now(),
 		},
-		"status": bson.M{"$in": bson.A{Pending, Approved}},
+		"status": bson.M{"$in": bson.A{Pending, Confirmed}},
 	}
 
 	count, err := collection.CountDocuments(context.TODO(), filter)
@@ -92,7 +92,7 @@ func (reservationRepository *ReservationRepository) CheckActiveReservationsForAc
 		"end_date": bson.M{
 			"$gt": time.Now(),
 		},
-		"status": bson.M{"$in": bson.A{Pending, Approved}},
+		"status": bson.M{"$in": bson.A{Pending, Confirmed}},
 	}
 
 	count, err := collection.CountDocuments(context.TODO(), filter)
@@ -139,7 +139,7 @@ func (reservationRepository *ReservationRepository) IsAccommodationAvailable(id 
 		"$and": []bson.M{
 			bson.M{"start_date": bson.M{"$lte": endDate}},
 			bson.M{"end_date": bson.M{"$gte": startDate}}},
-		"status": Approved}
+		"status": Confirmed}
 
 	count, err := collection.CountDocuments(context.TODO(), filter)
 	if err != nil {
@@ -153,6 +153,27 @@ func (reservationRepository *ReservationRepository) FindAllByBuyerId(id primitiv
 	var reservations []Reservation
 
 	filter := bson.M{"buyer_id": id}
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return reservations, err
+	}
+
+	for cur.Next(context.TODO()) {
+		var elem Reservation
+		err := cur.Decode(&elem)
+		if err != nil {
+			return reservations, err
+		}
+		reservations = append(reservations, elem)
+	}
+	return reservations, nil
+}
+
+func (reservationRepository *ReservationRepository) FindAllByAccommodationId(id primitive.ObjectID) ([]Reservation, error) {
+	collection := reservationRepository.getCollection("reservations")
+	var reservations []Reservation
+
+	filter := bson.M{"accommodation_id": id}
 	cur, err := collection.Find(context.TODO(), filter)
 	if err != nil {
 		return reservations, err
