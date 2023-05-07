@@ -19,17 +19,16 @@ type ConfirmReservationDto struct {
 
 type ConfirmReservationHandler struct {
 	reservationClientAddress string
-	authClientAddress        string
 }
 
-func NewConfirmReservationHandler(reservationClientAddress, authClientAddress string) Handler {
+func NewConfirmReservationHandler(reservationClientAddress string) Handler {
 	return &ConfirmReservationHandler{
 		reservationClientAddress: reservationClientAddress,
 	}
 }
 
 func (handler *ConfirmReservationHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("PATCH", "/api/reservation/confirm/{id}", TokenValidationMiddleware(RolesMiddleware([]UserRole{1}, handler.Confirm)))
+	err := mux.HandlePath("PATCH", "/api/reservation/confirm", TokenValidationMiddleware(RolesMiddleware([]UserRole{1}, handler.Confirm)))
 	if err != nil {
 		panic(err)
 	}

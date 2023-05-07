@@ -19,17 +19,16 @@ type RejectReservationDto struct {
 
 type RejectReservationHandler struct {
 	reservationClientAddress string
-	authClientAddress        string
 }
 
-func NewRejectReservationHandler(reservationClientAddress, authClientAddress string) Handler {
+func NewRejectReservationHandler(reservationClientAddress string) Handler {
 	return &RejectReservationHandler{
 		reservationClientAddress: reservationClientAddress,
 	}
 }
 
 func (handler *RejectReservationHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("PATCH", "/api/reservation/reject/{id}", TokenValidationMiddleware(RolesMiddleware([]UserRole{1}, handler.Reject)))
+	err := mux.HandlePath("PATCH", "/api/reservation/reject", TokenValidationMiddleware(RolesMiddleware([]UserRole{1}, handler.Reject)))
 	if err != nil {
 		panic(err)
 	}
@@ -37,7 +36,7 @@ func (handler *RejectReservationHandler) Init(mux *runtime.ServeMux) {
 
 func (handler *RejectReservationHandler) Reject(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
-	var body ConfirmReservationDto
+	var body RejectReservationDto
 	err := DecodeBody(r, &body)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to parse form: %s", err.Error()), http.StatusBadRequest)
