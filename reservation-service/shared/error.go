@@ -32,6 +32,10 @@ func ReservationConfirmationFailed() *Error {
 	return &Error{Message: "Error when confirming reservation!"}
 }
 
+func ReservationUpdateFailed() *Error {
+	return &Error{Message: "Error when updating reservation!"}
+}
+
 func ReservationRejectionFailed() *Error {
 	return &Error{Message: "Error when rejecting reservation!"}
 }
