@@ -97,7 +97,28 @@ func (reservationService *ReservationService) ConfirmReservation(id primitive.Ob
 	if e != nil {
 		return e
 	}
-	reservationService.ReservationRepository.UpdateReservation(reservation)
+	err = reservationService.ReservationRepository.UpdateReservation(reservation)
+	if err != nil {
+		return shared.ReservationUpdateFailed()
+	}
+	e = reservationService.CancelOverlappingReservations(reservation)
+	if e != nil {
+		return e
+	}
+	return nil
+}
+
+func (reservationService *ReservationService) CancelOverlappingReservations(reservation Reservation) *shared.Error {
+	id2, _ := primitive.ObjectIDFromHex(reservation.AccommodationId.Hex())
+	reservations, err := reservationService.ReservationRepository.FindAllPendingByAccommodationId(id2)
+	if err != nil {
+		return shared.ReservationNotFound()
+	}
+	for _, reservationToCheck := range reservations {
+		if reservationToCheck.IsOverlapping(reservation) {
+			reservationService.RejectReservation(reservationToCheck.Id)
+		}
+	}
 	return nil
 }
 

@@ -5,8 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"gateway/infrastructure/services"
+	. "gateway/middlewares"
+	. "gateway/model"
 	"gateway/proto/gateway"
 	"gateway/shared"
+	ctx "github.com/gorilla/context"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"io"
 	"net/http"
@@ -44,20 +47,14 @@ func NewCreateAccomodationHandler(accommodationClientAddress, authClientAddress 
 
 func (handler *CreateAccomodationHandler) Init(mux *runtime.ServeMux) {
 
-	err := mux.HandlePath("POST", "/api/accomodation/create", handler.Create)
+	err := mux.HandlePath("POST", "/api/accomodation/create", TokenValidationMiddleware(RolesMiddleware([]UserRole{1}, UserMiddleware(handler.Create))))
 	if err != nil {
 		panic(err)
 	}
 }
 
 func (handler *CreateAccomodationHandler) Create(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
-	token := r.Header["Authorization"][0]
-
-	authClient := services.NewAuthClient(handler.authClientAddress)
-	user, e := authClient.GetUser(context.TODO(), &gateway.GetUserRequest{Token: token})
-	if e != nil {
-		panic(e)
-	}
+	userId := ctx.Get(r, "id").(string)
 	accomodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
 	var dto AccomodationDto
 
@@ -68,7 +65,7 @@ func (handler *CreateAccomodationHandler) Create(w http.ResponseWriter, r *http.
 	}
 
 	files := MapFilesFromRequest(r, "attachment")
-	dto.OwnerId = user.Id
+	dto.OwnerId = userId
 	wifi, _ := strconv.ParseBool(r.FormValue("wifi"))
 	autoReservation, _ := strconv.ParseBool(r.FormValue("autoReservation"))
 	kitchen, _ := strconv.ParseBool(r.FormValue("kitchen"))
@@ -91,7 +88,7 @@ func (handler *CreateAccomodationHandler) Create(w http.ResponseWriter, r *http.
 		FreeParking:     freeParking,
 		MinGuests:       int32(minGuests),
 		MaxGuests:       int32(maxGuests),
-		OwnerId:         user.Id,
+		OwnerId:         userId,
 		Pictures:        files,
 	}
 	res, e := accomodationClient.Create(context.TODO(), accReq)

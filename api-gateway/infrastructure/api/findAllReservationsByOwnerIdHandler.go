@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"gateway/infrastructure/services"
-	"gateway/model"
+	. "gateway/middlewares"
+	. "gateway/model"
 	"gateway/model/mapper"
 	"gateway/proto/gateway"
+	ctx "github.com/gorilla/context"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"net/http"
 )
@@ -26,28 +28,22 @@ func NewFindAllReservationsByOwnerIdHandler(authClientAddress, accommodationClie
 }
 
 func (handler *FindAllReservationsByOwnerIdHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("GET", "/api/reservations/owner", handler.FindAll)
+	err := mux.HandlePath("GET", "/api/reservations/owner", TokenValidationMiddleware(RolesMiddleware([]UserRole{1}, UserMiddleware(handler.FindAll))))
 	if err != nil {
 		panic(err)
 	}
 }
 
 func (handler *FindAllReservationsByOwnerIdHandler) FindAll(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
-	token := r.Header["Authorization"][0]
-
-	authClient := services.NewAuthClient(handler.authClientAddress)
-	user, e := authClient.GetUser(context.TODO(), &gateway.GetUserRequest{Token: token})
-	if e != nil {
-		panic(e)
-	}
+	id := ctx.Get(r, "id").(string)
 	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
-	accommodations, e := accommodationClient.FindAllAccommodationIdsByOwnerId(context.TODO(), &gateway.FindAllAccommodationIdsByOwnerIdRequest{OwnerId: user.Id})
+	accommodations, e := accommodationClient.FindAllAccommodationIdsByOwnerId(context.TODO(), &gateway.FindAllAccommodationIdsByOwnerIdRequest{OwnerId: id})
 	if e != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
-	var reservationsWithAccommodation []model.Reservation
+	var reservationsWithAccommodation []Reservation
 	for _, accommId := range accommodations.Ids {
 		accommodation, e := accommodationClient.FindById(context.TODO(), &gateway.FindAccommodationByIdRequest{Id: accommId})
 		if e != nil {
@@ -60,9 +56,9 @@ func (handler *FindAllReservationsByOwnerIdHandler) FindAll(w http.ResponseWrite
 			return
 		}
 		for _, reservation := range reservations.Reservations {
-			reservationsWithAccommodation = append(reservationsWithAccommodation, model.Reservation{
+			reservationsWithAccommodation = append(reservationsWithAccommodation, Reservation{
 				Id:            reservation.Id,
-				Accommodation: mapper.AccommodationFromAccomodationResponse(accommodation, model.User{}),
+				Accommodation: mapper.AccommodationFromAccomodationResponse(accommodation, User{}),
 				BuyerId:       reservation.BuyerId,
 				StartDate:     reservation.StartDate.AsTime(),
 				EndDate:       reservation.EndDate.AsTime(),

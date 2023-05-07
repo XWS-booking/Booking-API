@@ -75,11 +75,7 @@ service ReservationService {
         };
     }
     rpc Create(CreateReservationRequest) returns (ReservationId) {}
-    rpc Confirm(ReservationId) returns (ConfirmReservationResponse) {
-        option (google.api.http) = {
-            patch: "/api/reservation/confirm/{id}"
-        };
-    }
+    rpc Confirm(ReservationId) returns (ConfirmReservationResponse) {}
     rpc Reject(ReservationId) returns (RejectReservationResponse) {
         option (google.api.http) = {
             patch: "/api/reservation/reject/{id}"
