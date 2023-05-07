@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "proto/accomodationGrpc";
 
 service AccomodationService {
@@ -51,6 +53,13 @@ message FindAccommodationByIdRequest {
   string id = 1;
 }
 
+message GetBookingPriceRequest {
+  string accomodationId = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+  int32 guests = 4;
+}
+
 //Responses
 message CreateAccomodationResponse {
   string id = 14;
@@ -100,4 +109,8 @@ message FindAllAccommodationIdsByOwnerIdResponse {
 
 message DeleteByOwnerIdResponse {
   bool deleted = 1;
+}
+
+message GetBookingPriceResponse {
+  float price = 1;
 }

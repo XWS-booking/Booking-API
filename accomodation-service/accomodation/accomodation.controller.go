@@ -2,11 +2,14 @@ package accomodation
 
 import (
 	"accomodation_service/accomodation/dtos"
+	"accomodation_service/accomodation/model"
 	"accomodation_service/accomodation/services/storage"
 	. "accomodation_service/proto/accomodation"
 	"accomodation_service/shared"
 	. "context"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 
 	"fmt"
 	"github.com/google/uuid"
@@ -138,4 +141,24 @@ func (accomodationController *AccomodationController) FindById(ctx Context, req 
 		return nil, status.Error(codes.Internal, e.Message)
 	}
 	return NewAccomodationResponse(accommodation), nil
+}
+
+func (accomodationController *AccomodationController) GetBookingPrice(ctx Context, req *GetBookingPriceRequest) (*GetBookingPriceResponse, error) {
+	from := time.Unix(req.From.Seconds, int64(req.From.Nanos)).UTC()
+	to := time.Unix(req.To.Seconds, int64(req.To.Nanos)).UTC()
+	interval := model.TimeInterval{From: from, To: to}
+	params := model.BookingPriceParams{
+		Guests:         req.Guests,
+		Interval:       interval,
+		AccomodationId: shared.StringToObjectId(req.AccomodationId),
+	}
+
+	price, err := accomodationController.AccomodationService.GetBookingPrice(params)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Message)
+	}
+
+	return &GetBookingPriceResponse{
+		Price: price,
+	}, nil
 }
