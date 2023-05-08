@@ -24,6 +24,7 @@ type Reservation struct {
 	StartDate       time.Time          `bson:"start_date" json:"startDate"`
 	EndDate         time.Time          `bson:"end_date" json:"endDate"`
 	Guests          int32              `bson:"guests" json:"guests"`
+	Price           float32            `bson:"price" json:"price"`
 	Status          Status             `bson:"status" json:"status"`
 }
 
@@ -38,6 +39,7 @@ func NewReservation(req *CreateReservationRequest) Reservation {
 		EndDate:         endDate,
 		Guests:          req.Guests,
 		BuyerId:         buyerId,
+		Price:           req.Price,
 	}
 }
 

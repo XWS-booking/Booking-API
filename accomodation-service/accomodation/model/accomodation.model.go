@@ -34,6 +34,7 @@ type Accomodation struct {
 
 func (accomodation *Accomodation) CalculateBookingPrice(interval TimeInterval, guests int32) (float32, *shared.Error) {
 	startingPricing := accomodation.FindStartingPricingInterval(interval)
+
 	if startingPricing == nil {
 		return 0, shared.NoMatchingPricingInterval()
 	}

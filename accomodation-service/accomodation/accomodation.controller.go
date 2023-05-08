@@ -48,6 +48,14 @@ func (accomodationController *AccomodationController) Create(ctx Context, req *C
 		urls = append(urls, url)
 	}
 
+	pricing := make([]model.Pricing, 0)
+	fmt.Println(req.Pricing)
+
+	for _, pr := range req.Pricing {
+		single := PricingRequestToPricing(*pr)
+		pricing = append(pricing, *single)
+	}
+
 	accomodationDto := dtos.AccomodationDto{
 		Name:            req.Name,
 		Street:          req.Street,
@@ -63,6 +71,7 @@ func (accomodationController *AccomodationController) Create(ctx Context, req *C
 		MinGuests:       req.MinGuests,
 		MaxGuests:       req.MaxGuests,
 		OwnerId:         shared.StringToObjectId(req.OwnerId),
+		Pricing:         pricing,
 	}
 
 	accomodation := AccomodationDtoToAccomodation(accomodationDto)

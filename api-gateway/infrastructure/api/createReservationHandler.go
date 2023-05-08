@@ -47,6 +47,7 @@ func (handler *CreateReservationHandler) Init(mux *runtime.ServeMux) {
 func (handler *CreateReservationHandler) Create(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
 	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
+
 	var body CreateReservationDto
 	err := DecodeBody(r, &body)
 	if err != nil {
@@ -54,12 +55,24 @@ func (handler *CreateReservationHandler) Create(w http.ResponseWriter, r *http.R
 		return
 	}
 	guests, _ := strconv.ParseInt(body.Guests, 10, 32)
+	pricingDto := gateway.GetBookingPriceRequest{
+		From:           timestamppb.New(body.StartDate),
+		To:             timestamppb.New(body.EndDate),
+		Guests:         int32(guests),
+		AccomodationId: body.AccommodationId.Hex(),
+	}
+	price, err := accommodationClient.GetBookingPrice(context.TODO(), &pricingDto)
+	if err != nil {
+		panic(err)
+	}
+
 	res, err := reservationClient.Create(context.TODO(), &gateway.CreateReservationRequest{
 		AccommodationId: body.AccommodationId.Hex(),
 		StartDate:       timestamppb.New(body.StartDate),
 		EndDate:         timestamppb.New(body.EndDate),
 		Guests:          int32(guests),
 		BuyerId:         body.BuyerId.Hex(),
+		Price:           price.Price,
 	})
 	if err != nil {
 		panic(err)

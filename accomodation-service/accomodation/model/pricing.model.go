@@ -1,6 +1,8 @@
 package model
 
-import "sort"
+import (
+	"sort"
+)
 
 type PricingType int32
 
@@ -30,8 +32,10 @@ func AppendPricingIntervals(startingPricing Pricing, intervals []Pricing) (TimeI
 	var appendedIntervals = []Pricing{startingPricing}
 
 	for _, pricing := range intervals {
-		startingInterval.TryAppendInterval(pricing.Interval)
-		appendedIntervals = append(appendedIntervals, pricing)
+		isAppended := startingInterval.TryAppendInterval(pricing.Interval)
+		if isAppended {
+			appendedIntervals = append(appendedIntervals, pricing)
+		}
 	}
 	return startingInterval, appendedIntervals
 }

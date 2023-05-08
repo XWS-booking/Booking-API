@@ -22,6 +22,7 @@ type AccomodationDto struct {
 	MaxGuests       int32              `json:"maxGuests"`
 	Pictures        []byte             `json:"pictures"`
 	OwnerId         primitive.ObjectID `json:"ownerId"`
+	Pricing         []model.Pricing    `json:"pricing"`
 }
 
 func NewAccomodationDto(accomodation model.Accomodation) *AccomodationDto {
