@@ -12,3 +12,11 @@ type User struct {
 	ZipCode      string `json:"zipCode"`
 	Country      string `json:"country"`
 }
+
+type UserRole int32
+
+const (
+	GUEST             UserRole = 0
+	HOST              UserRole = 1
+	NOT_AUTHENTICATED UserRole = 2
+)

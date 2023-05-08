@@ -1,18 +1,19 @@
 package middlewares
 
 import (
-	. "auth_service/shared"
 	"fmt"
+	. "gateway/shared"
+	"github.com/golang-jwt/jwt/v5"
+	runtime "github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"net/http"
 	"os"
 	"strings"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/context"
 )
 
-func TokenValidationMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+func TokenValidationMiddleware(next runtime.HandlerFunc) runtime.HandlerFunc {
+	return runtime.HandlerFunc(func(rw http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 		if r.Header["Authorization"] == nil {
 			Unauthorized(rw)
 			return
@@ -26,10 +27,11 @@ func TokenValidationMiddleware(next http.Handler) http.Handler {
 			return secretKey, nil
 		})
 		if err != nil {
+			fmt.Println(err.Error())
 			Unauthorized(rw)
 			return
 		}
 		context.Set(r, "Token", token)
-		next.ServeHTTP(rw, r)
+		next(rw, r, pathParams)
 	})
 }

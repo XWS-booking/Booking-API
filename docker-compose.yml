@@ -61,6 +61,7 @@ services:
       AUTH_SERVICE_ADDRESS: auth_service:9000
       ACCOMODATION_SERVICE_ADDRESS: accomodation_service:9000
       RESERVATION_SERVICE_ADDRESS: reservation_service:9000
+      JWT_SECRET: secret
       GATEWAY_ADDRESS: 8085
     depends_on:
       - auth_service

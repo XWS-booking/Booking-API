@@ -54,6 +54,14 @@ func (reservation *Reservation) Cancel() *Error {
 	return nil
 }
 
+func (reservation *Reservation) IsOverlapping(reservationToCheck Reservation) bool {
+	if reservation.StartDate.Before(reservationToCheck.EndDate) &&
+		reservation.EndDate.After(reservationToCheck.StartDate) {
+		return true
+	}
+	return false
+}
+
 func (reservation *Reservation) Confirm() *Error {
 	if reservation.Status != 0 {
 		return ReservationConfirmationFailed()

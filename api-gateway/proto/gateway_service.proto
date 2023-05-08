@@ -76,16 +76,8 @@ service ReservationService {
         };
     }
     rpc Create(CreateReservationRequest) returns (ReservationId) {}
-    rpc Confirm(ReservationId) returns (ConfirmReservationResponse) {
-        option (google.api.http) = {
-            patch: "/api/reservation/confirm/{id}"
-        };
-    }
-    rpc Reject(ReservationId) returns (RejectReservationResponse) {
-        option (google.api.http) = {
-            patch: "/api/reservation/reject/{id}"
-        };
-    }
+    rpc Confirm(ReservationId) returns (ConfirmReservationResponse) {}
+    rpc Reject(ReservationId) returns (RejectReservationResponse) {}
     rpc CancelReservation(CancelReservationRequest) returns (CancelReservationResponse) {}
     rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse){}
     rpc CheckActiveReservationsForGuest(CheckActiveReservationsForGuestRequest) returns (CheckActiveReservationsForGuestResponse) {}

@@ -1,15 +1,16 @@
 package middlewares
 
 import (
-	. "auth_service/shared"
+	. "gateway/shared"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"net/http"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/context"
 )
 
-func UserMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+func UserMiddleware(next runtime.HandlerFunc) runtime.HandlerFunc {
+	return runtime.HandlerFunc(func(rw http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 		var token *jwt.Token = context.Get(r, "Token").(*jwt.Token)
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok || !token.Valid {
@@ -18,6 +19,6 @@ func UserMiddleware(next http.Handler) http.Handler {
 		}
 		id := claims["id"].(string)
 		context.Set(r, "id", id)
-		next.ServeHTTP(rw, r)
+		next(rw, r, pathParams)
 	})
 }
