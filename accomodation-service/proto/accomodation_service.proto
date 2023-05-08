@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "proto/accomodationGrpc";
 
 service AccomodationService {
@@ -8,6 +10,7 @@ service AccomodationService {
   rpc FindAllAccommodationIdsByOwnerId(FindAllAccommodationIdsByOwnerIdRequest) returns (FindAllAccommodationIdsByOwnerIdResponse) {}
   rpc DeleteByOwnerId(DeleteByOwnerIdRequest) returns (DeleteByOwnerIdResponse) {}
   rpc FindById(FindAccommodationByIdRequest) returns (AccomodationResponse) {}
+  rpc GetBookingPrice(GetBookingPriceRequest) returns (GetBookingPriceResponse) {}
 }
 
 
@@ -32,6 +35,7 @@ message CreateAccomodationRequest {
   repeated ImageInfo pictures = 13;
   string ownerId = 14;
   bool autoReservation = 15;
+  repeated Pricing pricing = 16;
 }
 
 message FindAllAccomodationRequest {
@@ -49,6 +53,20 @@ message DeleteByOwnerIdRequest {
 
 message FindAccommodationByIdRequest {
   string id = 1;
+}
+
+message GetBookingPriceRequest {
+  string accomodationId = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+  int32 guests = 4;
+}
+
+message Pricing {
+  google.protobuf.Timestamp from = 1;
+  google.protobuf.Timestamp to = 2;
+  int32 pricingType = 3;
+  float price = 4;
 }
 
 //Responses
@@ -76,7 +94,6 @@ message FindAllAccomodationResponse {
 }
 
 message AccomodationResponse {
-    string id = 15;
     string name = 1;
     string street = 2;
     string streetNumber = 3;
@@ -91,7 +108,9 @@ message AccomodationResponse {
     int32 maxGuests = 12;
     repeated string pictures = 13;
     string ownerId = 14;
+    string id = 15;
     bool autoReservation = 16;
+    repeated Pricing pricing = 17;
 }
 
 message FindAllAccommodationIdsByOwnerIdResponse {
@@ -100,4 +119,8 @@ message FindAllAccommodationIdsByOwnerIdResponse {
 
 message DeleteByOwnerIdResponse {
   bool deleted = 1;
+}
+
+message GetBookingPriceResponse {
+  float price = 1;
 }

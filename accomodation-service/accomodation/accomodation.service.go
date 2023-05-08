@@ -35,6 +35,11 @@ func (accomodationService *AccomodationService) DeleteByOwnerId(id primitive.Obj
 }
 
 func (accomodationService *AccomodationService) Create(accomodation model.Accomodation) (*model.Accomodation, *shared.Error) {
+	err := accomodation.ValidatePricing()
+	if err != nil {
+		return nil, err
+	}
+
 	created, e := accomodationService.AccomodationRepository.Create(accomodation)
 	if e != nil {
 		return nil, shared.AccomodationNotCreated()
@@ -48,4 +53,16 @@ func (accomodationService *AccomodationService) FindById(id primitive.ObjectID) 
 		return accommodation, shared.AccommodationsNotFound()
 	}
 	return accommodation, nil
+}
+
+func (accomodationService *AccomodationService) GetBookingPrice(params model.BookingPriceParams) (float32, *shared.Error) {
+	accomodation, err := accomodationService.FindById(params.AccomodationId)
+	if err != nil {
+		return 0, err
+	}
+	price, err := accomodation.CalculateBookingPrice(params.Interval, params.Guests)
+	if err != nil {
+		return 0, err
+	}
+	return price, nil
 }

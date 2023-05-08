@@ -66,6 +66,7 @@ service AccomodationService {
         };
     }
     rpc FindById(FindAccommodationByIdRequest) returns (AccomodationResponse) {}
+    rpc GetBookingPrice(GetBookingPriceRequest) returns (GetBookingPriceResponse) {}
 }
 
 service ReservationService {
@@ -143,6 +144,13 @@ message ChangePasswordRequest {
     string newPassword = 3;
 }
 
+message GetBookingPriceRequest {
+    string accomodationId = 1;
+    google.protobuf.Timestamp from = 2;
+    google.protobuf.Timestamp to = 3;
+    int32 guests = 4;
+}
+
 //Responses
 message RegistrationResponse {
     string id = 1;
@@ -210,6 +218,13 @@ message ImageInfo {
     bytes data = 1;
     string filename = 2;
 }
+
+message Pricing {
+    google.protobuf.Timestamp from = 1;
+    google.protobuf.Timestamp to = 2;
+    int32 pricingType = 3;
+    float price = 4;
+}
 message CreateAccomodationRequest {
     string name = 1;
     string street = 2;
@@ -226,6 +241,7 @@ message CreateAccomodationRequest {
     repeated ImageInfo pictures = 13;
     string ownerId = 14;
     bool autoReservation = 15;
+    repeated Pricing pricing = 16;
 }
 
 message FindAllAccomodationRequest {
@@ -286,6 +302,7 @@ message AccomodationResponse {
     repeated string pictures = 13;
     string ownerId = 14;
     bool autoReservation = 16;
+    repeated Pricing pricing = 17;
 }
 
 message FindAllAccommodationIdsByOwnerIdResponse {
@@ -298,11 +315,12 @@ message DeleteByOwnerIdResponse {
 
 //Requests
 message CreateReservationRequest {
-    string buyerId = 5;
-    string accommodationId = 1;
-    google.protobuf.Timestamp startDate = 2;
-    google.protobuf.Timestamp endDate = 3;
-    int32 guests = 4;
+    string buyerId = 1;
+    string accommodationId = 2;
+    google.protobuf.Timestamp startDate = 3;
+    google.protobuf.Timestamp endDate = 4;
+    int32 guests = 5;
+    float price = 6;
 }
 
 message FindAllReservedAccommodationsRequest {
@@ -386,4 +404,8 @@ message ReservationResponse {
     google.protobuf.Timestamp   EndDate = 5;
     int32         Guests = 6;
     int32         Status = 7;
+}
+
+message GetBookingPriceResponse {
+    float price = 1;
 }

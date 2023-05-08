@@ -4,6 +4,9 @@ import (
 	"accomodation_service/accomodation/dtos"
 	"accomodation_service/accomodation/model"
 	accomodationGrpc "accomodation_service/proto/accomodation"
+	proto "accomodation_service/proto/accomodation"
+	"google.golang.org/protobuf/types/known/timestamppb"
+	"time"
 )
 
 func NewAccomodationResponse(accomodation model.Accomodation) *accomodationGrpc.AccomodationResponse {
@@ -24,6 +27,7 @@ func NewAccomodationResponse(accomodation model.Accomodation) *accomodationGrpc.
 		MaxGuests:       accomodation.MaxGuests,
 		Pictures:        accomodation.PictureUrls,
 		OwnerId:         accomodation.OwnerId.Hex(),
+		Pricing:         mapAccomodationPricing(accomodation.Pricing),
 	}
 }
 
@@ -43,5 +47,30 @@ func AccomodationDtoToAccomodation(accomodationDto dtos.AccomodationDto) model.A
 		MinGuests:       accomodationDto.MinGuests,
 		MaxGuests:       accomodationDto.MaxGuests,
 		OwnerId:         accomodationDto.OwnerId,
+		Pricing:         accomodationDto.Pricing,
 	}
+}
+
+func PricingRequestToPricing(pricingReq proto.Pricing) *model.Pricing {
+	return &model.Pricing{
+		Price:       pricingReq.Price,
+		PricingType: model.PricingType(pricingReq.PricingType),
+		Interval: model.TimeInterval{
+			From: time.Unix(pricingReq.From.Seconds, int64(pricingReq.From.Nanos)).UTC(),
+			To:   time.Unix(pricingReq.To.Seconds, int64(pricingReq.To.Nanos)).UTC(),
+		},
+	}
+}
+
+func mapAccomodationPricing(pricing []model.Pricing) []*accomodationGrpc.Pricing {
+	result := make([]*accomodationGrpc.Pricing, 0)
+	for _, pric := range pricing {
+		result = append(result, &accomodationGrpc.Pricing{
+			Price:       pric.Price,
+			PricingType: int32(pric.PricingType),
+			From:        timestamppb.New(pric.Interval.From),
+			To:          timestamppb.New(pric.Interval.To),
+		})
+	}
+	return result
 }

@@ -11,9 +11,11 @@ import (
 	"gateway/shared"
 	ctx "github.com/gorilla/context"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type CreateAccomodationHandler struct {
@@ -36,6 +38,13 @@ type AccomodationDto struct {
 	MinGuests      int32  `json:"minGuests"`
 	MaxGuests      int32  `json:"maxGuests"`
 	OwnerId        string `json:"ownerId"`
+}
+
+type PricingDto struct {
+	From        time.Time `json:"from"`
+	To          time.Time `json:"to"`
+	PricingType int32     `json:"pricingType"`
+	Price       float32   `json:"price"`
 }
 
 func NewCreateAccomodationHandler(accommodationClientAddress, authClientAddress string) Handler {
@@ -73,6 +82,22 @@ func (handler *CreateAccomodationHandler) Create(w http.ResponseWriter, r *http.
 	freeParking, _ := strconv.ParseBool(r.FormValue("freeParking"))
 	minGuests, _ := strconv.Atoi(r.FormValue("minGuests"))
 	maxGuests, _ := strconv.Atoi(r.FormValue("maxGuests"))
+	var pricing []PricingDto
+	err = json.Unmarshal([]byte(r.FormValue("pricing")), &pricing)
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+
+	var pricingPointers []*gateway.Pricing
+	for _, price := range pricing {
+		pricingPointers = append(pricingPointers, &gateway.Pricing{
+			Price:       price.Price,
+			From:        timestamppb.New(price.From),
+			To:          timestamppb.New(price.To),
+			PricingType: price.PricingType,
+		})
+	}
 
 	accReq := &gateway.CreateAccomodationRequest{
 		Name:            r.FormValue("name"),
@@ -90,6 +115,7 @@ func (handler *CreateAccomodationHandler) Create(w http.ResponseWriter, r *http.
 		MaxGuests:       int32(maxGuests),
 		OwnerId:         userId,
 		Pictures:        files,
+		Pricing:         pricingPointers,
 	}
 	res, e := accomodationClient.Create(context.TODO(), accReq)
 
