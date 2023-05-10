@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 	"gateway/infrastructure/services"
+	. "gateway/middlewares"
+	. "gateway/model"
 	"gateway/proto/gateway"
 	"gateway/shared"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -24,7 +26,7 @@ func NewDeleteProfileHandler(authClientAddress, accommodationClientAddress, rese
 }
 
 func (handler *DeleteProfileHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("DELETE", "/api/auth/user", handler.Delete)
+	err := mux.HandlePath("DELETE", "/api/auth/user", TokenValidationMiddleware(RolesMiddleware([]UserRole{0, 1}, UserMiddleware(handler.Delete))))
 	if err != nil {
 		panic(err)
 	}

@@ -83,6 +83,10 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	updatePersonalInfoHandler.Init(gwmux)
 	changePasswordHadler := api.NewChangePasswordHandler(authEndpoint)
 	changePasswordHadler.Init(gwmux)
+	deleteReservationHandler := api.NewDeleteReservationHandler(reservationEndpoint)
+	deleteReservationHandler.Init(gwmux)
+	isAccommodationAvailableHandler := api.NewIsAccommodationAvailableHandler(reservationEndpoint)
+	isAccommodationAvailableHandler.Init(gwmux)
 }
 
 func initCors(gwmux *runtime.ServeMux) http.Handler {

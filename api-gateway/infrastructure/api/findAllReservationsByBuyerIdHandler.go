@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"gateway/infrastructure/services"
+	. "gateway/middlewares"
 	"gateway/model"
+	. "gateway/model"
 	"gateway/model/mapper"
 	"gateway/proto/gateway"
 	"github.com/golang/protobuf/ptypes"
@@ -27,7 +29,7 @@ func NewFindAllReservationsByBuyerIdHandler(authClientAddress, accommodationClie
 }
 
 func (handler *FindAllReservationsByBuyerIdHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("GET", "/api/reservations/buyer", handler.FindAll)
+	err := mux.HandlePath("GET", "/api/reservations/buyer", TokenValidationMiddleware(RolesMiddleware([]UserRole{0}, UserMiddleware(handler.FindAll))))
 	if err != nil {
 		panic(err)
 	}
