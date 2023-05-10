@@ -43,7 +43,7 @@ func (handler *FindAllReservationsByOwnerIdHandler) FindAll(w http.ResponseWrite
 		return
 	}
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
-	var reservationsWithAccommodation []Reservation
+	var reservationsWithAccommodation []ReservationWithCancellation
 	for _, accommId := range accommodations.Ids {
 		accommodation, e := accommodationClient.FindById(context.TODO(), &gateway.FindAccommodationByIdRequest{Id: accommId})
 		if e != nil {
@@ -56,14 +56,20 @@ func (handler *FindAllReservationsByOwnerIdHandler) FindAll(w http.ResponseWrite
 			return
 		}
 		for _, reservation := range reservations.Reservations {
-			reservationsWithAccommodation = append(reservationsWithAccommodation, Reservation{
-				Id:            reservation.Id,
-				Accommodation: mapper.AccommodationFromAccomodationResponse(accommodation, User{}),
-				BuyerId:       reservation.BuyerId,
-				StartDate:     reservation.StartDate.AsTime(),
-				EndDate:       reservation.EndDate.AsTime(),
-				Guests:        reservation.Guests,
-				Status:        reservation.Status,
+			numberOfCancellation, e := reservationClient.FindNumberOfBuyersCancellations(context.TODO(), &gateway.NumberOfCancellationRequest{BuyerId: reservation.BuyerId})
+			if e != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			reservationsWithAccommodation = append(reservationsWithAccommodation, ReservationWithCancellation{
+				Id:                   reservation.Id,
+				Accommodation:        mapper.AccommodationFromAccomodationResponse(accommodation, User{}),
+				BuyerId:              reservation.BuyerId,
+				StartDate:            reservation.StartDate.AsTime(),
+				EndDate:              reservation.EndDate.AsTime(),
+				Guests:               reservation.Guests,
+				Status:               reservation.Status,
+				NumberOfCancellation: numberOfCancellation.CancellationNumber,
 			})
 		}
 	}

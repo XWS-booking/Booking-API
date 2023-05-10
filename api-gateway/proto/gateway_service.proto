@@ -77,6 +77,7 @@ service ReservationService {
         };
     }
     rpc FindAllByBuyerId(FindAllReservationsByBuyerIdRequest) returns (FindAllReservationsByBuyerIdResponse) {}
+    rpc FindNumberOfBuyersCancellations(NumberOfCancellationRequest) returns (NumberOfCancellationResponse){}
 }
 
 //Requests
@@ -124,6 +125,10 @@ message DeleteProfileRequest {
 
 message FindUserByIdRequest {
     string id = 1;
+}
+
+message NumberOfCancellationRequest {
+    string buyerId = 1;
 }
 
 message ChangePasswordRequest {
@@ -267,6 +272,10 @@ message CreateAccomodationResponse {
     repeated bytes pictures = 13;
     string ownerId = 15;
     bool autoReservation = 16;
+}
+
+message NumberOfCancellationResponse {
+    int32 cancellationNumber = 1;
 }
 
 message FindAllAccomodationResponse {

@@ -18,6 +18,7 @@ type IReservationRepository interface {
 	UpdateReservation(reservation Reservation) error
 	IsAccommodationAvailable(id primitive.ObjectID, startDate time.Time, endDate time.Time) (bool, error)
 	FindAllByBuyerId(id primitive.ObjectID) ([]Reservation, error)
+	FindNumberOfBuyersCancellations(id primitive.ObjectID) (int, error)
 	FindAllByAccommodationId(id primitive.ObjectID) ([]Reservation, error)
 	FindAllPendingByAccommodationId(id primitive.ObjectID) ([]Reservation, error)
 }
