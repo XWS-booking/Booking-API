@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"gateway/infrastructure/services"
+	. "gateway/middlewares"
+	. "gateway/model"
 	"gateway/proto/gateway"
 	"gateway/shared"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -29,7 +31,7 @@ func NewCancelReservationHandler(reservationClientAddress, authClientAddress str
 }
 
 func (handler *CancelReservationHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("POST", "/api/reservation/cancel", handler.Cancel)
+	err := mux.HandlePath("POST", "/api/reservation/cancel", TokenValidationMiddleware(RolesMiddleware([]UserRole{1}, UserMiddleware(handler.Cancel))))
 	if err != nil {
 		panic(err)
 	}
