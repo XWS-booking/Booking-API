@@ -50,31 +50,19 @@ service AuthService {
 
 service AccomodationService {
     rpc Create(CreateAccomodationRequest) returns (CreateAccomodationResponse) {}
-    rpc FindAll(FindAllAccomodationRequest) returns (FindAllAccomodationResponse) {
+    rpc FindAll(FindAllAccomodationRequest) returns (FindAllAccomodationResponse) {}
+    rpc FindAllAccommodationIdsByOwnerId(FindAllAccommodationIdsByOwnerIdRequest) returns (FindAllAccommodationIdsByOwnerIdResponse) {}
+    rpc DeleteByOwnerId(DeleteByOwnerIdRequest) returns (DeleteByOwnerIdResponse) {}
+    rpc FindById(FindAccommodationByIdRequest) returns (AccomodationResponse) {
         option (google.api.http) = {
-            get: "/api/accommodation/{city}/{guests}"
+            get: "/api/accommodation/{id}"
         };
     }
-    rpc FindAllAccommodationIdsByOwnerId(FindAllAccommodationIdsByOwnerIdRequest) returns (FindAllAccommodationIdsByOwnerIdResponse) {
-        option (google.api.http) = {
-            get: "/api/accommodation/getAllByOwnerId/{ownerId}"
-        };
-    }
-    rpc DeleteByOwnerId(DeleteByOwnerIdRequest) returns (DeleteByOwnerIdResponse) {
-        option (google.api.http) = {
-            delete: "/api/accommodation/{ownerId}"
-        };
-    }
-    rpc FindById(FindAccommodationByIdRequest) returns (AccomodationResponse) {}
     rpc GetBookingPrice(GetBookingPriceRequest) returns (GetBookingPriceResponse) {}
 }
 
 service ReservationService {
-    rpc Delete(ReservationId) returns (DeleteReservationResponse){
-        option (google.api.http) = {
-            delete: "/api/reservation/{id}"
-        };
-    }
+    rpc Delete(ReservationId) returns (DeleteReservationResponse){}
     rpc Create(CreateReservationRequest) returns (ReservationId) {}
     rpc Confirm(ReservationId) returns (ConfirmReservationResponse) {}
     rpc Reject(ReservationId) returns (RejectReservationResponse) {}
