@@ -19,12 +19,7 @@ service AuthService {
             body: "*"
           };
     }
-    rpc UpdatePersonalInfo(UpdatePersonalInfoRequest) returns (UpdatePersonalInfoResponse) {
-        option (google.api.http) = {
-            post: "/api/auth/personal/update"
-            body: "*"
-        };
-    }
+    rpc UpdatePersonalInfo(UpdatePersonalInfoRequest) returns (UpdatePersonalInfoResponse) {}
 
     rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse) {
         option (google.api.http) = {
@@ -40,12 +35,7 @@ service AuthService {
     }
     rpc FindById(FindUserByIdRequest) returns (FindUserByIdResponse) {};
 
-    rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {
-        option(google.api.http) = {
-            patch: "/api/auth/password/change"
-            body: "*"
-        };
-    }
+    rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
 }
 
 service AccomodationService {
