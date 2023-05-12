@@ -25,6 +25,7 @@ const (
 	AccomodationService_DeleteByOwnerId_FullMethodName                  = "/AccomodationService/DeleteByOwnerId"
 	AccomodationService_FindById_FullMethodName                         = "/AccomodationService/FindById"
 	AccomodationService_GetBookingPrice_FullMethodName                  = "/AccomodationService/GetBookingPrice"
+	AccomodationService_UpdatePricing_FullMethodName                    = "/AccomodationService/UpdatePricing"
 )
 
 // AccomodationServiceClient is the client API for AccomodationService service.
@@ -37,6 +38,7 @@ type AccomodationServiceClient interface {
 	DeleteByOwnerId(ctx context.Context, in *DeleteByOwnerIdRequest, opts ...grpc.CallOption) (*DeleteByOwnerIdResponse, error)
 	FindById(ctx context.Context, in *FindAccommodationByIdRequest, opts ...grpc.CallOption) (*AccomodationResponse, error)
 	GetBookingPrice(ctx context.Context, in *GetBookingPriceRequest, opts ...grpc.CallOption) (*GetBookingPriceResponse, error)
+	UpdatePricing(ctx context.Context, in *UpdatePricingRequest, opts ...grpc.CallOption) (*UpdatePricingResponse, error)
 }
 
 type accomodationServiceClient struct {
@@ -101,6 +103,15 @@ func (c *accomodationServiceClient) GetBookingPrice(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *accomodationServiceClient) UpdatePricing(ctx context.Context, in *UpdatePricingRequest, opts ...grpc.CallOption) (*UpdatePricingResponse, error) {
+	out := new(UpdatePricingResponse)
+	err := c.cc.Invoke(ctx, AccomodationService_UpdatePricing_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccomodationServiceServer is the server API for AccomodationService service.
 // All implementations must embed UnimplementedAccomodationServiceServer
 // for forward compatibility
@@ -111,6 +122,7 @@ type AccomodationServiceServer interface {
 	DeleteByOwnerId(context.Context, *DeleteByOwnerIdRequest) (*DeleteByOwnerIdResponse, error)
 	FindById(context.Context, *FindAccommodationByIdRequest) (*AccomodationResponse, error)
 	GetBookingPrice(context.Context, *GetBookingPriceRequest) (*GetBookingPriceResponse, error)
+	UpdatePricing(context.Context, *UpdatePricingRequest) (*UpdatePricingResponse, error)
 	mustEmbedUnimplementedAccomodationServiceServer()
 }
 
@@ -135,6 +147,9 @@ func (UnimplementedAccomodationServiceServer) FindById(context.Context, *FindAcc
 }
 func (UnimplementedAccomodationServiceServer) GetBookingPrice(context.Context, *GetBookingPriceRequest) (*GetBookingPriceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBookingPrice not implemented")
+}
+func (UnimplementedAccomodationServiceServer) UpdatePricing(context.Context, *UpdatePricingRequest) (*UpdatePricingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePricing not implemented")
 }
 func (UnimplementedAccomodationServiceServer) mustEmbedUnimplementedAccomodationServiceServer() {}
 
@@ -257,6 +272,24 @@ func _AccomodationService_GetBookingPrice_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccomodationService_UpdatePricing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePricingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccomodationServiceServer).UpdatePricing(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccomodationService_UpdatePricing_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccomodationServiceServer).UpdatePricing(ctx, req.(*UpdatePricingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AccomodationService_ServiceDesc is the grpc.ServiceDesc for AccomodationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -287,6 +320,10 @@ var AccomodationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBookingPrice",
 			Handler:    _AccomodationService_GetBookingPrice_Handler,
+		},
+		{
+			MethodName: "UpdatePricing",
+			Handler:    _AccomodationService_UpdatePricing_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
