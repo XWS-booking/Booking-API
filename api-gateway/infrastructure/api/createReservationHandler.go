@@ -77,7 +77,7 @@ func (handler *CreateReservationHandler) Create(w http.ResponseWriter, r *http.R
 		Price:           price.Price,
 	})
 	if err != nil {
-		panic(err)
+		http.Error(w, "Failed booking reservation!", http.StatusConflict)
 	}
 
 	accommodation, err := accommodationClient.FindById(context.TODO(), &gateway.FindAccommodationByIdRequest{Id: body.AccommodationId.Hex()})
@@ -89,7 +89,7 @@ func (handler *CreateReservationHandler) Create(w http.ResponseWriter, r *http.R
 			Id: ConvertStringToValidObjectID(res.Id),
 		})
 		if err != nil {
-			panic(err)
+			http.Error(w, "Failed to auto confirm!", http.StatusConflict)
 		}
 	}
 	shared.Ok(&w, res)
