@@ -66,3 +66,19 @@ func (accomodationService *AccomodationService) GetBookingPrice(params model.Boo
 	}
 	return price, nil
 }
+
+func (accomodationService *AccomodationService) UpdatePricing(id primitive.ObjectID, acc model.Accomodation) *shared.Error {
+	accomodation, err := accomodationService.FindById(id)
+	if err != nil {
+		return shared.AccommodationsNotFound()
+	}
+	if acc.OwnerId != accomodation.OwnerId {
+		return shared.NotAccomodationOwner()
+	}
+	err = accomodation.ValidatePricing()
+	if err != nil {
+		return err
+	}
+	accomodationService.AccomodationRepository.UpdatePricing(id, acc)
+	return nil
+}

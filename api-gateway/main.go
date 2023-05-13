@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"gateway/infrastructure/api"
 	"gateway/proto/gateway"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -48,6 +49,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	reservationEndpoint := os.Getenv("RESERVATION_SERVICE_ADDRESS")
 
 	err := gateway.RegisterAuthServiceHandlerFromEndpoint(context.TODO(), gwmux, authEndpoint, opts)
+	fmt.Println(err)
 	if err != nil {
 		panic(err)
 	}
@@ -77,12 +79,18 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	rejectReservationHandler.Init(gwmux)
 	findAllReservationsByOwnerIdHandler := api.NewFindAllReservationsByOwnerIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
 	findAllReservationsByOwnerIdHandler.Init(gwmux)
-	findAllReservationsByBuyerIdHandler := api.NewFindAllReservationsByBuyerIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
-	findAllReservationsByBuyerIdHandler.Init(gwmux)
+	//findAllReservationsByBuyerIdHandler := api.NewFindAllReservationsByBuyerIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
+	//findAllReservationsByBuyerIdHandler.Init(gwmux)
+	updatePersonalInfoHandler := api.NewUpdatePersonalInfoHandler(authEndpoint)
+	updatePersonalInfoHandler.Init(gwmux)
+	changePasswordHadler := api.NewChangePasswordHandler(authEndpoint)
+	changePasswordHadler.Init(gwmux)
 	deleteReservationHandler := api.NewDeleteReservationHandler(reservationEndpoint)
 	deleteReservationHandler.Init(gwmux)
 	isAccommodationAvailableHandler := api.NewIsAccommodationAvailableHandler(reservationEndpoint)
 	isAccommodationAvailableHandler.Init(gwmux)
+	updatePricingHandler := api.NewUpdatePricingHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
+	updatePricingHandler.Init(gwmux)
 }
 
 func initCors(gwmux *runtime.ServeMux) http.Handler {

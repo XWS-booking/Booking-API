@@ -96,3 +96,15 @@ func (accommodationRepository *AccomodationRepository) FindById(id primitive.Obj
 func (accomodationRepository *AccomodationRepository) getCollection(key string) *mongo.Collection {
 	return accomodationRepository.DB.Database(os.Getenv("DATABASE_NAME")).Collection(key)
 }
+
+func (accomodationRepository *AccomodationRepository) UpdatePricing(id primitive.ObjectID, accomodation Accomodation) error {
+	collection := accomodationRepository.getCollection("accomodations")
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"pricing": accomodation.Pricing}}
+
+	_, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return err
+	}
+	return nil
+}

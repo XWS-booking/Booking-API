@@ -19,12 +19,7 @@ service AuthService {
             body: "*"
           };
     }
-    rpc UpdatePersonalInfo(UpdatePersonalInfoRequest) returns (UpdatePersonalInfoResponse) {
-        option (google.api.http) = {
-            post: "/api/auth/personal/update"
-            body: "*"
-        };
-    }
+    rpc UpdatePersonalInfo(UpdatePersonalInfoRequest) returns (UpdatePersonalInfoResponse) {}
 
     rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse) {
         option (google.api.http) = {
@@ -40,12 +35,7 @@ service AuthService {
     }
     rpc FindById(FindUserByIdRequest) returns (FindUserByIdResponse) {};
 
-    rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {
-        option(google.api.http) = {
-            patch: "/api/auth/password/change"
-            body: "*"
-        };
-    }
+    rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
 }
 
 service AccomodationService {
@@ -59,6 +49,7 @@ service AccomodationService {
         };
     }
     rpc GetBookingPrice(GetBookingPriceRequest) returns (GetBookingPriceResponse) {}
+    rpc UpdatePricing(UpdatePricingRequest) returns (UpdatePricingResponse) {}
 }
 
 service ReservationService {
@@ -81,6 +72,11 @@ service ReservationService {
 }
 
 //Requests
+message UpdatePricingRequest {
+    string userId = 1;
+    string id = 2;
+    repeated Pricing pricing = 3;
+}
 message RegistrationRequest {
     string name = 1;
     string surname = 2;
@@ -255,6 +251,7 @@ message FindAccommodationByIdRequest {
 }
 
 //Responses
+message UpdatePricingResponse {}
 message CreateAccomodationResponse {
     string id = 14;
     string name = 1;
