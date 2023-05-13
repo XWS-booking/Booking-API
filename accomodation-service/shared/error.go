@@ -27,3 +27,7 @@ func NoPricingIntervalsFound() *Error {
 func PricingIntervalsOverlapping() *Error {
 	return &Error{Message: "Pricing intervals should not overlap!"}
 }
+
+func NotAccomodationOwner() *Error {
+	return &Error{Message: "Forbidden. Not accommodation owner!"}
+}

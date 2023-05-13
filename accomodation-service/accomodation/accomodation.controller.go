@@ -152,6 +152,27 @@ func (accomodationController *AccomodationController) FindById(ctx Context, req 
 	return NewAccomodationResponse(accommodation), nil
 }
 
+func (accomodationController *AccomodationController) UpdatePricing(ctx Context, req *UpdatePricingRequest) (*UpdatePricingResponse, error) {
+
+	id := shared.StringToObjectId(req.Id)
+	pricing := make([]model.Pricing, 0)
+	fmt.Println(req.Pricing)
+
+	for _, pr := range req.Pricing {
+		single := PricingRequestToPricing(*pr)
+		pricing = append(pricing, *single)
+	}
+	acc := model.Accomodation{
+		Pricing: pricing,
+		OwnerId: shared.StringToObjectId(req.UserId),
+	}
+	err := accomodationController.AccomodationService.UpdatePricing(id, acc)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Message)
+	}
+	return &UpdatePricingResponse{}, nil
+}
+
 func (accomodationController *AccomodationController) GetBookingPrice(ctx Context, req *GetBookingPriceRequest) (*GetBookingPriceResponse, error) {
 	from := time.Unix(req.From.Seconds, int64(req.From.Nanos)).UTC()
 	to := time.Unix(req.To.Seconds, int64(req.To.Nanos)).UTC()

@@ -65,7 +65,7 @@ func (handler *CreateReservationHandler) Create(w http.ResponseWriter, r *http.R
 	}
 	price, err := accommodationClient.GetBookingPrice(context.TODO(), &pricingDto)
 	if err != nil {
-		panic(err)
+		http.Error(w, "No matching interval for reservation!", http.StatusConflict)
 	}
 
 	res, err := reservationClient.Create(context.TODO(), &gateway.CreateReservationRequest{
