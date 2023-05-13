@@ -56,7 +56,7 @@ func NewCreateAccomodationHandler(accommodationClientAddress, authClientAddress 
 
 func (handler *CreateAccomodationHandler) Init(mux *runtime.ServeMux) {
 
-	err := mux.HandlePath("POST", "/api/accomodation/create", TokenValidationMiddleware(RolesMiddleware([]UserRole{1}, UserMiddleware(handler.Create))))
+	err := mux.HandlePath("POST", "/api/accomodation/create", TokenValidationMiddleware(RolesMiddleware([]UserRole{HOST}, UserMiddleware(handler.Create))))
 	if err != nil {
 		panic(err)
 	}

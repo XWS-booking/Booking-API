@@ -25,6 +25,8 @@ message RegistrationRequest {
     string city = 7;
     string zipCode = 8;
     string country = 9;
+    int32 role = 10;
+    string username = 11;
 }
 message SignInRequest {
     string email = 1;
