@@ -158,6 +158,17 @@ func (reservationController *ReservationController) FindAllByBuyerId(ctx Context
 	return &FindAllReservationsByBuyerIdResponse{Reservations: reservationResponses}, nil
 }
 
+func (reservationController *ReservationController) FindNumberOfBuyersCancellations(ctx Context, req *NumberOfCancellationRequest) (*NumberOfCancellationResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	numberOfCancellations, e := reservationController.ReservationService.FindNumberOfBuyersCancellations(shared.StringToObjectId(req.BuyerId))
+	if e != nil {
+		return &NumberOfCancellationResponse{}, status.Error(codes.Internal, e.Message)
+	}
+	return &NumberOfCancellationResponse{CancellationNumber: int32(numberOfCancellations)}, nil
+}
+
 func (reservationController *ReservationController) FindAllByAccommodationId(ctx Context, req *FindAllReservationsByAccommodationIdRequest) (*FindAllReservationsByAccommodationIdResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")

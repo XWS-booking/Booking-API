@@ -151,6 +151,14 @@ func (reservationService *ReservationService) FindAllByBuyerId(id primitive.Obje
 	return reservations, nil
 }
 
+func (reservationService *ReservationService) FindNumberOfBuyersCancellations(id primitive.ObjectID) (int, *shared.Error) {
+	numberOfCancellations, err := reservationService.ReservationRepository.FindNumberOfBuyersCancellations(id)
+	if err != nil {
+		return numberOfCancellations, shared.ReservationsNotFound()
+	}
+	return numberOfCancellations, nil
+}
+
 func (reservationService *ReservationService) FindAllByAccommodationId(id primitive.ObjectID) ([]Reservation, *shared.Error) {
 	reservations, err := reservationService.ReservationRepository.FindAllByAccommodationId(id)
 	if err != nil {

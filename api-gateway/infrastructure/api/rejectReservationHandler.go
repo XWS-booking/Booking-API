@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"gateway/infrastructure/services"
 	. "gateway/middlewares"
 	. "gateway/model"
@@ -28,7 +27,7 @@ func NewRejectReservationHandler(reservationClientAddress string) Handler {
 }
 
 func (handler *RejectReservationHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("PATCH", "/api/reservation/reject", TokenValidationMiddleware(RolesMiddleware([]UserRole{1}, handler.Reject)))
+	err := mux.HandlePath("PATCH", "/api/reservation/reject/{id}", TokenValidationMiddleware(RolesMiddleware([]UserRole{1}, handler.Reject)))
 	if err != nil {
 		panic(err)
 	}
@@ -36,13 +35,12 @@ func (handler *RejectReservationHandler) Init(mux *runtime.ServeMux) {
 
 func (handler *RejectReservationHandler) Reject(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
-	var body RejectReservationDto
-	err := DecodeBody(r, &body)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("failed to parse form: %s", err.Error()), http.StatusBadRequest)
+	id, e := pathParams["id"]
+	if !e {
+		shared.BadRequest(w, "Error with data!")
 		return
 	}
-	res, err := reservationClient.Reject(context.TODO(), &gateway.ReservationId{Id: body.ReservationId.Hex()})
+	res, err := reservationClient.Reject(context.TODO(), &gateway.ReservationId{Id: id})
 	if err != nil {
 		shared.BadRequest(w, "Error when rejecting reservation!")
 		return
