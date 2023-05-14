@@ -85,8 +85,8 @@ func (handler *CreateAccomodationHandler) Create(w http.ResponseWriter, r *http.
 	var pricing []PricingDto
 	err = json.Unmarshal([]byte(r.FormValue("pricing")), &pricing)
 	if err != nil {
-		fmt.Println(err)
-		panic(err)
+		http.Error(w, fmt.Sprintf("problem with pricing"), http.StatusBadRequest)
+		return
 	}
 
 	var pricingPointers []*gateway.Pricing
@@ -120,7 +120,8 @@ func (handler *CreateAccomodationHandler) Create(w http.ResponseWriter, r *http.
 	res, e := accomodationClient.Create(context.TODO(), accReq)
 
 	if e != nil {
-		panic(e)
+		http.Error(w, fmt.Sprintf("problem with pricing"), http.StatusBadRequest)
+		return
 	}
 	shared.Ok(&w, res)
 }

@@ -18,7 +18,7 @@ type UpdatePersonalInfoDto struct {
 	Surname      string `json:"surname"`
 	Email        string `json:"email"`
 	Street       string `json:"street"`
-	StreetNumber string `json:"stringNumber"`
+	StreetNumber string `json:"streetNumber"`
 	City         string `json:"city"`
 	ZipCode      string `json:"zipCode"`
 	Country      string `json:"country"`

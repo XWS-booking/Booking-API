@@ -31,7 +31,7 @@ func NewCancelReservationHandler(reservationClientAddress, authClientAddress str
 }
 
 func (handler *CancelReservationHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("POST", "/api/reservation/cancel", TokenValidationMiddleware(RolesMiddleware([]UserRole{1}, UserMiddleware(handler.Cancel))))
+	err := mux.HandlePath("POST", "/api/reservation/cancel", TokenValidationMiddleware(RolesMiddleware([]UserRole{0}, UserMiddleware(handler.Cancel))))
 	if err != nil {
 		panic(err)
 	}
