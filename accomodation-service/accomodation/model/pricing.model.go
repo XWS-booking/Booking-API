@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"sort"
 )
 
@@ -19,11 +20,21 @@ type Pricing struct {
 }
 
 func (pricing *Pricing) CalculatePrice(interval TimeInterval, guests int32) float32 {
-	total := float32(interval.GetDaysDifference()) * pricing.Price
+	newInterval := TimeInterval{
+		From: max(pricing.Interval.From, interval.From),
+		To:   min(pricing.Interval.To, interval.To),
+	}
+	fmt.Println("This is new interval for payment", newInterval)
+	fmt.Println("This is date difference", newInterval.GetDaysDifference())
+	if newInterval.From.After(newInterval.To) {
+		return 0
+	}
+	total := float32(newInterval.GetDaysDifference()+1) * pricing.Price
 	if pricing.PricingType == PER_GUEST {
 		return total * float32(guests)
 	}
-
+	fmt.Println("This is pricing", pricing.Price)
+	fmt.Println("This is total price", total)
 	return total
 }
 

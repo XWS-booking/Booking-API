@@ -181,6 +181,7 @@ func (accomodationController *AccomodationController) GetBookingPrice(ctx Contex
 		Interval:       interval,
 		AccomodationId: shared.StringToObjectId(req.AccomodationId),
 	}
+	fmt.Println(params)
 
 	price, err := accomodationController.AccomodationService.GetBookingPrice(params)
 	if err != nil {
