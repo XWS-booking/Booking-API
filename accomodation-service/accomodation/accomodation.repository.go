@@ -97,9 +97,9 @@ func (accomodationRepository *AccomodationRepository) getCollection(key string) 
 	return accomodationRepository.DB.Database(os.Getenv("DATABASE_NAME")).Collection(key)
 }
 
-func (accomodationRepository *AccomodationRepository) UpdatePricing(id primitive.ObjectID, accomodation Accomodation) error {
+func (accomodationRepository *AccomodationRepository) UpdatePricing(accomodation Accomodation) error {
 	collection := accomodationRepository.getCollection("accomodations")
-	filter := bson.M{"_id": id}
+	filter := bson.M{"_id": accomodation.Id}
 	update := bson.M{"$set": bson.M{"pricing": accomodation.Pricing}}
 
 	_, err := collection.UpdateOne(context.TODO(), filter, update)

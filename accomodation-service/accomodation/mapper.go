@@ -53,6 +53,7 @@ func AccomodationDtoToAccomodation(accomodationDto dtos.AccomodationDto) model.A
 
 func PricingRequestToPricing(pricingReq proto.Pricing) *model.Pricing {
 	return &model.Pricing{
+		Uuid:        pricingReq.Uuid,
 		Price:       pricingReq.Price,
 		PricingType: model.PricingType(pricingReq.PricingType),
 		Interval: model.TimeInterval{
@@ -66,6 +67,7 @@ func mapAccomodationPricing(pricing []model.Pricing) []*accomodationGrpc.Pricing
 	result := make([]*accomodationGrpc.Pricing, 0)
 	for _, pric := range pricing {
 		result = append(result, &accomodationGrpc.Pricing{
+			Uuid:        pric.Uuid,
 			Price:       pric.Price,
 			PricingType: int32(pric.PricingType),
 			From:        timestamppb.New(pric.Interval.From),

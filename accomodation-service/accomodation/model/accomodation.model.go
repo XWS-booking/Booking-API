@@ -2,6 +2,7 @@ package model
 
 import (
 	"accomodation_service/shared"
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
@@ -58,7 +59,7 @@ func (accomodation *Accomodation) ValidatePricing() *shared.Error {
 	}
 	sorted := SortPricingIntervals(accomodation.Pricing)
 
-	for i := 1; i <= pricingCount-1; i++ {
+	for i := 0; i <= pricingCount-1; i++ {
 		if i == (pricingCount - 1) {
 			break
 		}
@@ -84,4 +85,56 @@ func (accomodation *Accomodation) FindStartingPricingInterval(interval TimeInter
 		}
 	}
 	return nil
+}
+
+func (accomodation *Accomodation) GeneratePricingUuids() {
+	newPricing := make([]Pricing, 0)
+	for _, pricing := range accomodation.Pricing {
+		if pricing.Uuid == "" {
+			id, _ := uuid.NewUUID()
+			pricing.Uuid = id.String()
+		}
+		newPricing = append(newPricing, pricing)
+	}
+	accomodation.Pricing = newPricing
+}
+
+func (accomodation *Accomodation) UpdatePricing(pricing []Pricing) {
+	addedPricing := filterAddedPricing(pricing)
+	editedPricing := filterEditedPricing(pricing)
+	newPricing := make([]Pricing, 0)
+	for _, oldPrice := range accomodation.Pricing {
+		for i, newPrice := range editedPricing {
+			if oldPrice.Uuid == newPrice.Uuid {
+				newPricing = append(newPricing, newPrice)
+				break
+			}
+			if i == (len(editedPricing) - 1) {
+				newPricing = append(newPricing, oldPrice)
+			}
+		}
+	}
+	for _, p := range addedPricing {
+		newPricing = append(newPricing, p)
+	}
+	accomodation.Pricing = newPricing
+}
+
+func filterAddedPricing(pricing []Pricing) []Pricing {
+	filtered := make([]Pricing, 0)
+	for _, price := range pricing {
+		if price.Uuid == "" {
+			filtered = append(filtered, price)
+		}
+	}
+	return filtered
+}
+func filterEditedPricing(pricing []Pricing) []Pricing {
+	filtered := make([]Pricing, 0)
+	for _, price := range pricing {
+		if price.Uuid != "" {
+			filtered = append(filtered, price)
+		}
+	}
+	return filtered
 }

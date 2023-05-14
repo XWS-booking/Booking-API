@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"gateway/infrastructure/services"
 	"gateway/model"
 	"gateway/model/mapper"
@@ -109,7 +108,6 @@ func (handler *SearchAccommodationHandler) pagination(pageSize int, pageNumber i
 	var data []model.Accommodation
 	authClient := services.NewAuthClient(handler.authClientAddress)
 	for _, e := range paginationData {
-		fmt.Println(e.OwnerId)
 		owner, err := authClient.FindById(context.TODO(), &gateway.FindUserByIdRequest{Id: e.OwnerId})
 		if err != nil {
 			return nil, err

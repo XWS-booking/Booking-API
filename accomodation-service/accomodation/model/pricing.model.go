@@ -12,6 +12,7 @@ const (
 )
 
 type Pricing struct {
+	Uuid        string       `bson:"uuid" json:"uuid"'`
 	Interval    TimeInterval `bson:"interval" json:"interval"`
 	Price       float32      `bson:"price" json:"price"`
 	PricingType PricingType  `bson:"pricing_type" json:"pricingType"`

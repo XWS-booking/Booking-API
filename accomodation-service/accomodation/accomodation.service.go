@@ -35,6 +35,7 @@ func (accomodationService *AccomodationService) DeleteByOwnerId(id primitive.Obj
 }
 
 func (accomodationService *AccomodationService) Create(accomodation model.Accomodation) (*model.Accomodation, *shared.Error) {
+	accomodation.GeneratePricingUuids()
 	err := accomodation.ValidatePricing()
 	if err != nil {
 		return nil, err
@@ -67,18 +68,20 @@ func (accomodationService *AccomodationService) GetBookingPrice(params model.Boo
 	return price, nil
 }
 
-func (accomodationService *AccomodationService) UpdatePricing(id primitive.ObjectID, acc model.Accomodation) *shared.Error {
-	accomodation, err := accomodationService.FindById(id)
+func (accomodationService *AccomodationService) UpdatePricing(acc model.Accomodation) *shared.Error {
+	accomodation, err := accomodationService.FindById(acc.Id)
 	if err != nil {
 		return shared.AccommodationsNotFound()
 	}
 	if acc.OwnerId != accomodation.OwnerId {
 		return shared.NotAccomodationOwner()
 	}
+	accomodation.UpdatePricing(acc.Pricing)
+	accomodation.GeneratePricingUuids()
 	err = accomodation.ValidatePricing()
 	if err != nil {
 		return err
 	}
-	accomodationService.AccomodationRepository.UpdatePricing(id, acc)
+	accomodationService.AccomodationRepository.UpdatePricing(accomodation)
 	return nil
 }

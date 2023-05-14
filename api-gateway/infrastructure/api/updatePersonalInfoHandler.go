@@ -63,7 +63,6 @@ func (handler *UpdatePersonalInfoHandler) UpdatePersonalInfo(w http.ResponseWrit
 		Country:      body.Country,
 		Username:     body.Username,
 	}
-	fmt.Println(req.Id)
 
 	res, err := authClient.UpdatePersonalInfo(context.TODO(), req)
 	if err != nil {

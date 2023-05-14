@@ -24,8 +24,6 @@ func (authService *AuthService) Register(user User) (User, *Error) {
 	}
 	user.Password = hashedPassword
 
-	fmt.Println("Hit")
-
 	id, err := authService.UserRepository.Create(user)
 	if err != nil {
 		return User{}, RegistrationFailed()
