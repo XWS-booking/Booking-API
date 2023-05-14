@@ -7,6 +7,10 @@ import (
 )
 
 func UserFromRegistrationDto(dto *RegistrationRequest) *User {
+	role := GUEST
+	if dto.Role == 1 {
+		role = HOST
+	}
 	return &User{
 		Email:        dto.Email,
 		Name:         dto.Name,
@@ -18,6 +22,7 @@ func UserFromRegistrationDto(dto *RegistrationRequest) *User {
 		City:         dto.City,
 		ZipCode:      dto.ZipCode,
 		Country:      dto.Country,
+		Role:         role,
 	}
 }
 

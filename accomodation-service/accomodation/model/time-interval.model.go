@@ -12,7 +12,7 @@ type TimeInterval struct {
 func (timeInterval *TimeInterval) IsOverlapping(interval TimeInterval) bool {
 	start := max(timeInterval.From, interval.From)
 	end := min(timeInterval.To, interval.To)
-	return !(start.After(end) || start.Equal(end))
+	return start.Before(end) || start.Equal(end)
 }
 
 func (timeInterval *TimeInterval) TryAppendInterval(interval TimeInterval) bool {

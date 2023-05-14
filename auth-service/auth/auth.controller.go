@@ -1,12 +1,10 @@
 package auth
 
 import (
-	. "auth_service/auth/model"
 	. "auth_service/proto/auth"
 	"auth_service/shared"
 	"context"
 	. "context"
-	"fmt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -35,7 +33,6 @@ func (authController *AuthController) SignIn(ctx Context, req *SignInRequest) (*
 		return nil, status.Error(codes.Unauthenticated, e.Message)
 	}
 
-	fmt.Println(token)
 	response := &SignInResponse{
 		AccessToken: token,
 	}
@@ -49,7 +46,6 @@ func (authController *AuthController) Register(ctx context.Context, req *Registr
 	}
 
 	user := UserFromRegistrationDto(req)
-	user.Role = HOST
 	registered, e := authController.AuthService.Register(*user)
 	if e != nil {
 		return nil, status.Error(codes.Aborted, e.Message)

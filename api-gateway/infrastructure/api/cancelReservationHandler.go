@@ -38,7 +38,6 @@ func (handler *CancelReservationHandler) Init(mux *runtime.ServeMux) {
 }
 
 func (handler *CancelReservationHandler) Cancel(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
-	fmt.Println("Hit")
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
 	var body CancelReservationDto
 	err := DecodeBody(r, &body)

@@ -213,6 +213,7 @@ message Pricing {
     google.protobuf.Timestamp to = 2;
     int32 pricingType = 3;
     float price = 4;
+    string uuid = 5;
 }
 message CreateAccomodationRequest {
     string name = 1;

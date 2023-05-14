@@ -74,9 +74,10 @@ message Pricing {
   google.protobuf.Timestamp to = 2;
   int32 pricingType = 3;
   float price = 4;
+  string uuid = 5;
 }
 
-//Responses
+//Response
 message CreateAccomodationResponse {
   string id = 14;
   string name = 1;

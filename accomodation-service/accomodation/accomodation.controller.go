@@ -49,7 +49,6 @@ func (accomodationController *AccomodationController) Create(ctx Context, req *C
 	}
 
 	pricing := make([]model.Pricing, 0)
-	fmt.Println(req.Pricing)
 
 	for _, pr := range req.Pricing {
 		single := PricingRequestToPricing(*pr)
@@ -156,7 +155,6 @@ func (accomodationController *AccomodationController) UpdatePricing(ctx Context,
 
 	id := shared.StringToObjectId(req.Id)
 	pricing := make([]model.Pricing, 0)
-	fmt.Println(req.Pricing)
 
 	for _, pr := range req.Pricing {
 		single := PricingRequestToPricing(*pr)
@@ -165,8 +163,9 @@ func (accomodationController *AccomodationController) UpdatePricing(ctx Context,
 	acc := model.Accomodation{
 		Pricing: pricing,
 		OwnerId: shared.StringToObjectId(req.UserId),
+		Id:      id,
 	}
-	err := accomodationController.AccomodationService.UpdatePricing(id, acc)
+	err := accomodationController.AccomodationService.UpdatePricing(acc)
 	if err != nil {
 		return nil, status.Error(codes.Aborted, err.Message)
 	}

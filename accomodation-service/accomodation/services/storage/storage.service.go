@@ -18,7 +18,6 @@ type StorageService struct {
 func NewStorageService() *StorageService {
 	storageUrl := os.Getenv("STORAGE_URL")
 	serviceToken := os.Getenv("STORAGE_SERVICE_TOKEN")
-	fmt.Println(storageUrl, serviceToken)
 	client := storage_go.NewClient(storageUrl, serviceToken, nil)
 	return &StorageService{
 		Client: client,

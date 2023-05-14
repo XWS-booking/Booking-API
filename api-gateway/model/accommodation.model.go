@@ -1,8 +1,11 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type Pricing struct {
+	Uuid        string    `json:"uuid"`
 	From        time.Time `json:"from"`
 	To          time.Time `json:"to"`
 	Price       float32   `json:"price"`
@@ -31,4 +34,13 @@ type Accommodation struct {
 type AccommodationPage struct {
 	Data       []Accommodation `json:"data"`
 	TotalCount int             `json:"totalCount"`
+}
+
+func (accommodation *Accommodation) FindPricingByUuid(uuid string) *Pricing {
+	for _, price := range accommodation.Pricing {
+		if price.Uuid == uuid {
+			return &price
+		}
+	}
+	return nil
 }
