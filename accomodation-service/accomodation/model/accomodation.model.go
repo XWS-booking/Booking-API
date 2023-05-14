@@ -2,6 +2,7 @@ package model
 
 import (
 	"accomodation_service/shared"
+	"fmt"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
@@ -35,7 +36,6 @@ type Accomodation struct {
 
 func (accomodation *Accomodation) CalculateBookingPrice(interval TimeInterval, guests int32) (float32, *shared.Error) {
 	startingPricing := accomodation.FindStartingPricingInterval(interval)
-
 	if startingPricing == nil {
 		return 0, shared.NoMatchingPricingInterval()
 	}
@@ -80,7 +80,12 @@ func (accomodation *Accomodation) GetTimeIntervalsFromPricing() []TimeInterval {
 
 func (accomodation *Accomodation) FindStartingPricingInterval(interval TimeInterval) *Pricing {
 	for _, pricing := range accomodation.Pricing {
-		if pricing.Interval.IsOverlapping(interval) {
+		fmt.Println(pricing.Interval, interval)
+		fmt.Println((interval.From.After(pricing.Interval.From) || interval.From.Equal(pricing.Interval.From)))
+		fmt.Println((interval.From.Before(pricing.Interval.To) || interval.From.Equal(pricing.Interval.To)))
+		isInside := (interval.From.After(pricing.Interval.From) || interval.From.Equal(pricing.Interval.From)) &&
+			(interval.From.Before(pricing.Interval.To) || interval.From.Equal(pricing.Interval.To))
+		if isInside {
 			return &pricing
 		}
 	}

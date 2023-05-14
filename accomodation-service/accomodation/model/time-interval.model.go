@@ -16,7 +16,8 @@ func (timeInterval *TimeInterval) IsOverlapping(interval TimeInterval) bool {
 }
 
 func (timeInterval *TimeInterval) TryAppendInterval(interval TimeInterval) bool {
-	if timeInterval.To.Equal(interval.From) {
+	endDate := timeInterval.To.Add(time.Hour * 24)
+	if endDate.Equal(interval.From) {
 		timeInterval.To = interval.To
 		return true
 	}

@@ -53,6 +53,7 @@ func (reservationRepository *ReservationRepository) FindAllReservedAccommodation
 			bson.M{"start_date": bson.M{"$lte": endDate}},
 			bson.M{"end_date": bson.M{"$gte": startDate}},
 		},
+		"status": Confirmed,
 	}
 	field := "accommodation_id"
 	distinctValues, err := collection.Distinct(context.TODO(), field, filter)
@@ -142,6 +143,7 @@ func (reservationRepository *ReservationRepository) IsAccommodationAvailable(id 
 		"status": Confirmed}
 
 	count, err := collection.CountDocuments(context.TODO(), filter)
+
 	if err != nil {
 		return false, err
 	}

@@ -93,6 +93,8 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	updatePricingHandler.Init(gwmux)
 	findAllReservationsByAccommodationIdHandler := api.NewFindAllReservationsByAccommodationIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
 	findAllReservationsByAccommodationIdHandler.Init(gwmux)
+	getBookingPriceHandler := api.NewGetBookingPriceHandler(accommodationEndpoint)
+	getBookingPriceHandler.Init(gwmux)
 
 }
 
