@@ -2,6 +2,7 @@ package rating
 
 import (
 	. "context"
+	"github.com/golang/protobuf/ptypes"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -50,4 +51,30 @@ func (ratingController *RatingController) UpdateAccommodationRating(ctx Context,
 		return nil, status.Error(codes.Aborted, e.Message)
 	}
 	return &UpdateAccommodationRatingResponse{}, nil
+}
+
+func (ratingController *RatingController) GetAllAccommodationRatings(ctx Context, req *GetAllAccommodationRatingsRequest) (*GetAllAccommodationRatingsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	id, err := primitive.ObjectIDFromHex(req.GetAccommodationId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	ratings, e := ratingController.RatingService.GetAllAccommodationRatings(id)
+	if e != nil {
+		return nil, status.Error(codes.Aborted, e.Message)
+	}
+	var ratingResponses []*AccommodationRatingItem
+	for _, r := range ratings {
+		time, _ := ptypes.TimestampProto(r.Time)
+		ratingResponses = append(ratingResponses, &AccommodationRatingItem{
+			Id:              r.Id.Hex(),
+			AccommodationId: r.AccommodationId.Hex(),
+			GuestId:         r.GuestId.Hex(),
+			Rating:          r.Rating,
+			Time:            time,
+		})
+	}
+	return &GetAllAccommodationRatingsResponse{Ratings: ratingResponses}, nil
 }

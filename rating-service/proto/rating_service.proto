@@ -1,12 +1,13 @@
 syntax = "proto3";
 
 option go_package = "proto/ratingGrpc";
-
+import "google/protobuf/timestamp.proto";
 
 service RatingService {
   rpc RateAccommodation(RateAccommodationRequest) returns (RateAccommodationResponse) {}
   rpc DeleteAccommodationRating(DeleteAccommodationRatingRequest) returns (DeleteAccommodationRatingResponse) {}
   rpc UpdateAccommodationRating(UpdateAccommodationRatingRequest) returns (UpdateAccommodationRatingResponse) {}
+  rpc GetAllAccommodationRatings(GetAllAccommodationRatingsRequest) returns (GetAllAccommodationRatingsResponse) {}
 }
 
 message RateAccommodationRequest {
@@ -31,3 +32,19 @@ message UpdateAccommodationRatingRequest {
 }
 
 message UpdateAccommodationRatingResponse {}
+
+message GetAllAccommodationRatingsRequest {
+  string AccommodationId = 1;
+}
+
+message GetAllAccommodationRatingsResponse {
+  repeated AccommodationRatingItem ratings = 1;
+}
+
+message AccommodationRatingItem {
+  string Id = 1;
+  string AccommodationId = 2;
+  int32 Rating = 3;
+  string GuestId = 4;
+  google.protobuf.Timestamp Time = 5;
+}

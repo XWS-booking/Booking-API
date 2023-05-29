@@ -47,3 +47,23 @@ func (reservationRepository *RatingRepository) UpdateAccommodationRating(rating 
 	}
 	return nil
 }
+
+func (ratingRepository *RatingRepository) GetAllByAccommodationId(id primitive.ObjectID) ([]AccommodationRating, error) {
+	collection := ratingRepository.getCollection("accommodation_ratings")
+	var ratings []AccommodationRating
+	filter := bson.M{"accommodation_id": id}
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return ratings, err
+	}
+
+	for cur.Next(context.TODO()) {
+		var elem AccommodationRating
+		err := cur.Decode(&elem)
+		if err != nil {
+			return ratings, err
+		}
+		ratings = append(ratings, elem)
+	}
+	return ratings, nil
+}

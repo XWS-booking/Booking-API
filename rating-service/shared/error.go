@@ -11,3 +11,7 @@ func RatingNotDeleted() *Error {
 func RatingNotUpdated() *Error {
 	return &Error{Message: "Rating can't be updated!"}
 }
+
+func ErrorFilteringRatings() *Error {
+	return &Error{Message: "Error when filtering ratings!"}
+}

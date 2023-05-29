@@ -9,4 +9,5 @@ type IRatingRepository interface {
 	CreateAccommodationRating(rating AccommodationRating) (primitive.ObjectID, error)
 	DeleteAccommodationRating(id primitive.ObjectID) error
 	UpdateAccommodationRating(rating AccommodationRating) error
+	GetAllByAccommodationId(id primitive.ObjectID) ([]AccommodationRating, error)
 }

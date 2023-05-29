@@ -106,6 +106,8 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	deleteAccommodationRatingHandler.Init(gwmux)
 	updateAccommodationRatingHandler := api.NewUpdateAccommodationRatingHandler(ratingEndpoint)
 	updateAccommodationRatingHandler.Init(gwmux)
+	findAllAccommodationRatingsHandler := api.NewFindAllAccommodationRatingsHandler(ratingEndpoint, authEndpoint)
+	findAllAccommodationRatingsHandler.Init(gwmux)
 
 }
 

@@ -2,6 +2,7 @@ package model
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 type AccommodationRating struct {
@@ -9,4 +10,5 @@ type AccommodationRating struct {
 	AccommodationId primitive.ObjectID `bson:"accommodation_id" json:"accommodationId"`
 	GuestId         primitive.ObjectID `bson:"guest_id" json:"guestId"`
 	Rating          int32              `bson:"rating" json:"rating"`
+	Time            time.Time          `bson:"time" json:"time"`
 }
