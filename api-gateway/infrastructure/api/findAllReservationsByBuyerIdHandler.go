@@ -62,7 +62,7 @@ func (handler *FindAllReservationsByBuyerIdHandler) FindAll(w http.ResponseWrite
 		endDate, _ := ptypes.Timestamp(r.EndDate)
 		reservationsWithAccommodation = append(reservationsWithAccommodation, model.Reservation{
 			Id:            r.Id,
-			Accommodation: mapper.AccommodationFromAccomodationResponse(accommodation, model.User{}),
+			Accommodation: mapper.AccommodationFromAccomodationResponse(accommodation, model.User{}, 0),
 			BuyerId:       r.BuyerId,
 			StartDate:     startDate,
 			EndDate:       endDate,

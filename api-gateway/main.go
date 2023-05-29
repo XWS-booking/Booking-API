@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"gateway/infrastructure/api"
 	"gateway/proto/gateway"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -47,9 +46,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	authEndpoint := os.Getenv("AUTH_SERVICE_ADDRESS")
 	accommodationEndpoint := os.Getenv("ACCOMODATION_SERVICE_ADDRESS")
 	reservationEndpoint := os.Getenv("RESERVATION_SERVICE_ADDRESS")
-	fmt.Println(reservationEndpoint)
 	ratingEndpoint := os.Getenv("RATING_SERVICE_ADDRESS")
-	fmt.Println(ratingEndpoint)
 	err := gateway.RegisterAuthServiceHandlerFromEndpoint(context.TODO(), gwmux, authEndpoint, opts)
 	if err != nil {
 		panic(err)
@@ -68,7 +65,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	}
 
 	//init custom handlers
-	searchAccommodationsHandler := api.NewSearchAccommodationHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
+	searchAccommodationsHandler := api.NewSearchAccommodationHandler(authEndpoint, accommodationEndpoint, reservationEndpoint, ratingEndpoint)
 	searchAccommodationsHandler.Init(gwmux)
 	deleteProfileHandler := api.NewDeleteProfileHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
 	deleteProfileHandler.Init(gwmux)

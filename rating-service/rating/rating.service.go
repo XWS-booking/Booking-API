@@ -44,3 +44,19 @@ func (ratingService *RatingService) GetAllAccommodationRatings(id primitive.Obje
 	}
 	return ratings, nil
 }
+
+func (ratingService *RatingService) GetAverageAccommodationRating(id primitive.ObjectID) (float64, *shared.Error) {
+	ratings, err := ratingService.RatingRepository.GetAllByAccommodationId(id)
+	if err != nil {
+		return -1, shared.ErrorFilteringRatings()
+	}
+	var avg = 0.0
+	var sum = 0.0
+	if len(ratings) != 0 {
+		for _, r := range ratings {
+			sum += float64(r.Rating)
+		}
+		avg = sum / float64(len(ratings))
+	}
+	return avg, nil
+}

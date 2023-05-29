@@ -29,6 +29,7 @@ type Accommodation struct {
 	PictureUrls     []string  `json:"pictureUrls"`
 	Owner           User      `json:"owner"`
 	Pricing         []Pricing `json:"pricing"`
+	AverageRating   float64   `json:"averageRating"`
 }
 
 type AccommodationPage struct {

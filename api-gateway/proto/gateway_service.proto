@@ -80,6 +80,7 @@ service RatingService {
     rpc DeleteAccommodationRating(DeleteAccommodationRatingRequest) returns (DeleteAccommodationRatingResponse) {}
     rpc UpdateAccommodationRating(UpdateAccommodationRatingRequest) returns (UpdateAccommodationRatingResponse) {}
     rpc GetAllAccommodationRatings(GetAllAccommodationRatingsRequest) returns (GetAllAccommodationRatingsResponse) {}
+    rpc GetAverageAccommodationRating(GetAverageAccommodationRatingRequest) returns (GetAverageAccommodationRatingResponse) {}
 }
 
 //Requests
@@ -453,4 +454,12 @@ message AccommodationRatingItem {
     int32 Rating = 3;
     string GuestId = 4;
     google.protobuf.Timestamp Time = 5;
+}
+
+message GetAverageAccommodationRatingRequest {
+    string AccommodationId = 1;
+}
+
+message GetAverageAccommodationRatingResponse {
+    double Rating = 1;
 }

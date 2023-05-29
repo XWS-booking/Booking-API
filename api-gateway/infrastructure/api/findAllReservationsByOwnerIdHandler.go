@@ -63,7 +63,7 @@ func (handler *FindAllReservationsByOwnerIdHandler) FindAll(w http.ResponseWrite
 			}
 			reservationsWithAccommodation = append(reservationsWithAccommodation, ReservationWithCancellation{
 				Id:                   reservation.Id,
-				Accommodation:        mapper.AccommodationFromAccomodationResponse(accommodation, User{}),
+				Accommodation:        mapper.AccommodationFromAccomodationResponse(accommodation, User{}, 0),
 				BuyerId:              reservation.BuyerId,
 				StartDate:            reservation.StartDate.AsTime(),
 				EndDate:              reservation.EndDate.AsTime(),

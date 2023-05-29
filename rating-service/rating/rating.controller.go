@@ -78,3 +78,19 @@ func (ratingController *RatingController) GetAllAccommodationRatings(ctx Context
 	}
 	return &GetAllAccommodationRatingsResponse{Ratings: ratingResponses}, nil
 }
+
+func (ratingController *RatingController) GetAverageAccommodationRating(ctx Context, req *GetAverageAccommodationRatingRequest) (*GetAverageAccommodationRatingResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	id, err := primitive.ObjectIDFromHex(req.GetAccommodationId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	rating, e := ratingController.RatingService.GetAverageAccommodationRating(id)
+	if e != nil {
+		return nil, status.Error(codes.Aborted, e.Message)
+	}
+
+	return &GetAverageAccommodationRatingResponse{Rating: rating}, nil
+}
