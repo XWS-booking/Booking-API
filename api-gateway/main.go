@@ -47,9 +47,10 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	authEndpoint := os.Getenv("AUTH_SERVICE_ADDRESS")
 	accommodationEndpoint := os.Getenv("ACCOMODATION_SERVICE_ADDRESS")
 	reservationEndpoint := os.Getenv("RESERVATION_SERVICE_ADDRESS")
-
+	fmt.Println(reservationEndpoint)
+	ratingEndpoint := os.Getenv("RATING_SERVICE_ADDRESS")
+	fmt.Println(ratingEndpoint)
 	err := gateway.RegisterAuthServiceHandlerFromEndpoint(context.TODO(), gwmux, authEndpoint, opts)
-	fmt.Println(err)
 	if err != nil {
 		panic(err)
 	}
@@ -58,6 +59,10 @@ func initHandlers(gwmux *runtime.ServeMux) {
 		panic(err)
 	}
 	err = gateway.RegisterReservationServiceHandlerFromEndpoint(context.TODO(), gwmux, reservationEndpoint, opts)
+	if err != nil {
+		panic(err)
+	}
+	err = gateway.RegisterRatingServiceHandlerFromEndpoint(context.TODO(), gwmux, ratingEndpoint, opts)
 	if err != nil {
 		panic(err)
 	}
@@ -95,6 +100,12 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	findAllReservationsByAccommodationIdHandler.Init(gwmux)
 	getBookingPriceHandler := api.NewGetBookingPriceHandler(accommodationEndpoint)
 	getBookingPriceHandler.Init(gwmux)
+	rateAccommodationHandler := api.NewRateAccommodationHandler(ratingEndpoint, reservationEndpoint)
+	rateAccommodationHandler.Init(gwmux)
+	deleteAccommodationRatingHandler := api.NewDeleteAccommodationRatingHandler(ratingEndpoint)
+	deleteAccommodationRatingHandler.Init(gwmux)
+	updateAccommodationRatingHandler := api.NewUpdateAccommodationRatingHandler(ratingEndpoint)
+	updateAccommodationRatingHandler.Init(gwmux)
 
 }
 

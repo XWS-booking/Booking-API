@@ -71,6 +71,16 @@ service ReservationService {
     rpc FindNumberOfBuyersCancellations(NumberOfCancellationRequest) returns (NumberOfCancellationResponse){}
 }
 
+service RatingService {
+    rpc RateAccommodation(RateAccommodationRequest) returns (RateAccommodationResponse) {
+        option (google.api.http) = {
+            post: "/api/rating/accommodation"
+        };
+    }
+    rpc DeleteAccommodationRating(DeleteAccommodationRatingRequest) returns (DeleteAccommodationRatingResponse) {}
+    rpc UpdateAccommodationRating(UpdateAccommodationRatingRequest) returns (UpdateAccommodationRatingResponse) {}
+}
+
 //Requests
 message UpdatePricingRequest {
     string userId = 1;
@@ -404,3 +414,26 @@ message ReservationResponse {
 message GetBookingPriceResponse {
     float price = 1;
 }
+
+message RateAccommodationRequest {
+    string AccommodationId = 1;
+    int32 Rating = 2;
+    string GuestId = 3;
+}
+
+message RateAccommodationResponse {
+    string Id = 1;
+}
+
+message DeleteAccommodationRatingRequest {
+    string Id = 1;
+}
+
+message DeleteAccommodationRatingResponse {}
+
+message UpdateAccommodationRatingRequest {
+    string Id = 1;
+    int32 Rating = 2;
+}
+
+message UpdateAccommodationRatingResponse {}

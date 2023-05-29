@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option go_package = "proto/ratingGrpc";
+
+
+service RatingService {
+  rpc RateAccommodation(RateAccommodationRequest) returns (RateAccommodationResponse) {}
+  rpc DeleteAccommodationRating(DeleteAccommodationRatingRequest) returns (DeleteAccommodationRatingResponse) {}
+  rpc UpdateAccommodationRating(UpdateAccommodationRatingRequest) returns (UpdateAccommodationRatingResponse) {}
+}
+
+message RateAccommodationRequest {
+  string AccommodationId = 1;
+  int32 Rating = 2;
+  string GuestId = 3;
+}
+
+message RateAccommodationResponse {
+  string Id = 1;
+}
+
+message DeleteAccommodationRatingRequest {
+  string Id = 1;
+}
+
+message DeleteAccommodationRatingResponse {}
+
+message UpdateAccommodationRatingRequest {
+  string Id = 1;
+  int32 Rating = 2;
+}
+
+message UpdateAccommodationRatingResponse {}
