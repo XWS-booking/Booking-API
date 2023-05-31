@@ -69,6 +69,20 @@ service ReservationService {
     }
     rpc FindAllByBuyerId(FindAllReservationsByBuyerIdRequest) returns (FindAllReservationsByBuyerIdResponse) {}
     rpc FindNumberOfBuyersCancellations(NumberOfCancellationRequest) returns (NumberOfCancellationResponse){}
+    rpc UpdateReservationRating(UpdateReservationRatingRequest) returns (UpdateReservationRatingResponse){}
+}
+
+service RatingService {
+    rpc RateAccommodation(RateAccommodationRequest) returns (RateAccommodationResponse) {
+        option (google.api.http) = {
+            post: "/api/rating/accommodation"
+        };
+    }
+    rpc DeleteAccommodationRating(DeleteAccommodationRatingRequest) returns (DeleteAccommodationRatingResponse) {}
+    rpc UpdateAccommodationRating(UpdateAccommodationRatingRequest) returns (UpdateAccommodationRatingResponse) {}
+    rpc GetAllAccommodationRatings(GetAllAccommodationRatingsRequest) returns (GetAllAccommodationRatingsResponse) {}
+    rpc GetAverageAccommodationRating(GetAverageAccommodationRatingRequest) returns (GetAverageAccommodationRatingResponse) {}
+    rpc FindAccommodationRatingById(FindAccommodationRatingByIdRequest) returns (FindAccommodationRatingByIdResponse) {}
 }
 
 //Requests
@@ -346,6 +360,7 @@ message FindAllReservationsByBuyerIdRequest{
     string buyerId = 1;
 }
 
+
 //Responses
 message ReservationId{
     string id = 1;
@@ -399,8 +414,76 @@ message ReservationResponse {
     google.protobuf.Timestamp   EndDate = 5;
     int32         Guests = 6;
     int32         Status = 7;
+    string AccommodationRatingId = 8;
 }
+
+message UpdateReservationRatingRequest {
+    string Id = 1;
+    string AccommodationRatingId = 2;
+}
+
+message UpdateReservationRatingResponse {}
 
 message GetBookingPriceResponse {
     float price = 1;
+}
+
+message RateAccommodationRequest {
+    string AccommodationId = 1;
+    int32 Rating = 2;
+    string GuestId = 3;
+}
+
+message RateAccommodationResponse {
+    string Id = 1;
+}
+
+message DeleteAccommodationRatingRequest {
+    string Id = 1;
+    string ReservationId = 2;
+}
+
+message DeleteAccommodationRatingResponse {}
+
+message UpdateAccommodationRatingRequest {
+    string Id = 1;
+    int32 Rating = 2;
+}
+
+message UpdateAccommodationRatingResponse {}
+
+message GetAllAccommodationRatingsRequest {
+    string AccommodationId = 1;
+}
+
+message GetAllAccommodationRatingsResponse {
+    repeated AccommodationRatingItem ratings = 1;
+}
+
+message AccommodationRatingItem {
+    string Id = 1;
+    string AccommodationId = 2;
+    int32 Rating = 3;
+    string GuestId = 4;
+    google.protobuf.Timestamp Time = 5;
+}
+
+message GetAverageAccommodationRatingRequest {
+    string AccommodationId = 1;
+}
+
+message GetAverageAccommodationRatingResponse {
+    double Rating = 1;
+}
+
+message FindAccommodationRatingByIdRequest {
+    string Id = 1;
+}
+
+message FindAccommodationRatingByIdResponse {
+    string Id = 1;
+    string AccommodationId = 2;
+    int32 Rating = 3;
+    string GuestId = 4;
+    google.protobuf.Timestamp Time = 5;
 }

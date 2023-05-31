@@ -10,12 +10,13 @@ func NewReservationResponse(reservation model.Reservation) *reservationGrpc.Rese
 	startDate, _ := ptypes.TimestampProto(reservation.StartDate)
 	endDate, _ := ptypes.TimestampProto(reservation.EndDate)
 	return &reservationGrpc.ReservationResponse{
-		Id:              reservation.Id.Hex(),
-		AccommodationId: reservation.AccommodationId.Hex(),
-		BuyerId:         reservation.BuyerId.Hex(),
-		StartDate:       startDate,
-		EndDate:         endDate,
-		Guests:          reservation.Guests,
-		Status:          int32(reservation.Status),
+		Id:                    reservation.Id.Hex(),
+		AccommodationId:       reservation.AccommodationId.Hex(),
+		BuyerId:               reservation.BuyerId.Hex(),
+		StartDate:             startDate,
+		EndDate:               endDate,
+		Guests:                reservation.Guests,
+		Status:                int32(reservation.Status),
+		AccommodationRatingId: reservation.AccommodationRatingId.Hex(),
 	}
 }

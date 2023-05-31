@@ -33,6 +33,21 @@ services:
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
     networks:
       - network
+  rating_service:
+    image: rating_service
+    container_name: rating_service
+    hostname: rating_service
+    build:
+      context: ./rating-service/
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      PORT: 9000
+      DATABASE_NAME: BOOKING_RATING
+      JWT_SECRET: secret
+      DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+    networks:
+      - network
   auth_service:
     image: auth_service
     container_name: auth_service
@@ -61,6 +76,7 @@ services:
       AUTH_SERVICE_ADDRESS: auth_service:9000
       ACCOMODATION_SERVICE_ADDRESS: accomodation_service:9000
       RESERVATION_SERVICE_ADDRESS: reservation_service:9000
+      RATING_SERVICE_ADDRESS: rating_service:9000
       JWT_SECRET: secret
       GATEWAY_ADDRESS: 8085
     depends_on:

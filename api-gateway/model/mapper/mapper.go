@@ -21,7 +21,7 @@ func UserFromFindUserByIdResponse(resp *gateway.FindUserByIdResponse) model.User
 	}
 }
 
-func AccommodationFromAccomodationResponse(resp *gateway.AccomodationResponse, owner model.User) model.Accommodation {
+func AccommodationFromAccomodationResponse(resp *gateway.AccomodationResponse, owner model.User, averageRating float64) model.Accommodation {
 	return model.Accommodation{
 		Id:             resp.Id,
 		Name:           resp.Name,
@@ -39,6 +39,7 @@ func AccommodationFromAccomodationResponse(resp *gateway.AccomodationResponse, o
 		PictureUrls:    resp.Pictures,
 		Owner:          owner,
 		Pricing:        mapPricingResponseToPricing(resp.Pricing),
+		AverageRating:  averageRating,
 	}
 }
 

@@ -19,13 +19,15 @@ type SearchAccommodationHandler struct {
 	authClientAddress          string
 	accommodationClientAddress string
 	reservationClientAddress   string
+	ratingClientAddress        string
 }
 
-func NewSearchAccommodationHandler(authClientAddress, accommodationClientAddress, reservationClientAddress string) Handler {
+func NewSearchAccommodationHandler(authClientAddress, accommodationClientAddress, reservationClientAddress string, ratingClientAddress string) Handler {
 	return &SearchAccommodationHandler{
 		authClientAddress:          authClientAddress,
 		accommodationClientAddress: accommodationClientAddress,
 		reservationClientAddress:   reservationClientAddress,
+		ratingClientAddress:        ratingClientAddress,
 	}
 }
 
@@ -107,12 +109,17 @@ func (handler *SearchAccommodationHandler) pagination(pageSize int, pageNumber i
 	paginationData := accommodations[startIndex:endIndex]
 	var data []model.Accommodation
 	authClient := services.NewAuthClient(handler.authClientAddress)
+	ratingClient := services.NewRatingClient(handler.ratingClientAddress)
 	for _, e := range paginationData {
 		owner, err := authClient.FindById(context.TODO(), &gateway.FindUserByIdRequest{Id: e.OwnerId})
 		if err != nil {
 			return nil, err
 		}
-		data = append(data, mapper.AccommodationFromAccomodationResponse(&e, mapper.UserFromFindUserByIdResponse(owner)))
+		averageRating, err := ratingClient.GetAverageAccommodationRating(context.TODO(), &gateway.GetAverageAccommodationRatingRequest{AccommodationId: e.Id})
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, mapper.AccommodationFromAccomodationResponse(&e, mapper.UserFromFindUserByIdResponse(owner), averageRating.Rating))
 	}
 	return data, nil
 }

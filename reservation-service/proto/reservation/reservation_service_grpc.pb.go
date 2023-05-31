@@ -31,6 +31,7 @@ const (
 	ReservationService_FindAllByBuyerId_FullMethodName                         = "/ReservationService/FindAllByBuyerId"
 	ReservationService_FindAllByAccommodationId_FullMethodName                 = "/ReservationService/FindAllByAccommodationId"
 	ReservationService_FindNumberOfBuyersCancellations_FullMethodName          = "/ReservationService/FindNumberOfBuyersCancellations"
+	ReservationService_UpdateReservationRating_FullMethodName                  = "/ReservationService/UpdateReservationRating"
 )
 
 // ReservationServiceClient is the client API for ReservationService service.
@@ -49,6 +50,7 @@ type ReservationServiceClient interface {
 	FindAllByBuyerId(ctx context.Context, in *FindAllReservationsByBuyerIdRequest, opts ...grpc.CallOption) (*FindAllReservationsByBuyerIdResponse, error)
 	FindAllByAccommodationId(ctx context.Context, in *FindAllReservationsByAccommodationIdRequest, opts ...grpc.CallOption) (*FindAllReservationsByAccommodationIdResponse, error)
 	FindNumberOfBuyersCancellations(ctx context.Context, in *NumberOfCancellationRequest, opts ...grpc.CallOption) (*NumberOfCancellationResponse, error)
+	UpdateReservationRating(ctx context.Context, in *UpdateReservationRatingRequest, opts ...grpc.CallOption) (*UpdateReservationRatingResponse, error)
 }
 
 type reservationServiceClient struct {
@@ -167,6 +169,15 @@ func (c *reservationServiceClient) FindNumberOfBuyersCancellations(ctx context.C
 	return out, nil
 }
 
+func (c *reservationServiceClient) UpdateReservationRating(ctx context.Context, in *UpdateReservationRatingRequest, opts ...grpc.CallOption) (*UpdateReservationRatingResponse, error) {
+	out := new(UpdateReservationRatingResponse)
+	err := c.cc.Invoke(ctx, ReservationService_UpdateReservationRating_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReservationServiceServer is the server API for ReservationService service.
 // All implementations must embed UnimplementedReservationServiceServer
 // for forward compatibility
@@ -183,6 +194,7 @@ type ReservationServiceServer interface {
 	FindAllByBuyerId(context.Context, *FindAllReservationsByBuyerIdRequest) (*FindAllReservationsByBuyerIdResponse, error)
 	FindAllByAccommodationId(context.Context, *FindAllReservationsByAccommodationIdRequest) (*FindAllReservationsByAccommodationIdResponse, error)
 	FindNumberOfBuyersCancellations(context.Context, *NumberOfCancellationRequest) (*NumberOfCancellationResponse, error)
+	UpdateReservationRating(context.Context, *UpdateReservationRatingRequest) (*UpdateReservationRatingResponse, error)
 	mustEmbedUnimplementedReservationServiceServer()
 }
 
@@ -225,6 +237,9 @@ func (UnimplementedReservationServiceServer) FindAllByAccommodationId(context.Co
 }
 func (UnimplementedReservationServiceServer) FindNumberOfBuyersCancellations(context.Context, *NumberOfCancellationRequest) (*NumberOfCancellationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindNumberOfBuyersCancellations not implemented")
+}
+func (UnimplementedReservationServiceServer) UpdateReservationRating(context.Context, *UpdateReservationRatingRequest) (*UpdateReservationRatingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateReservationRating not implemented")
 }
 func (UnimplementedReservationServiceServer) mustEmbedUnimplementedReservationServiceServer() {}
 
@@ -455,6 +470,24 @@ func _ReservationService_FindNumberOfBuyersCancellations_Handler(srv interface{}
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReservationService_UpdateReservationRating_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateReservationRatingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).UpdateReservationRating(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReservationService_UpdateReservationRating_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).UpdateReservationRating(ctx, req.(*UpdateReservationRatingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ReservationService_ServiceDesc is the grpc.ServiceDesc for ReservationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -509,6 +542,10 @@ var ReservationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindNumberOfBuyersCancellations",
 			Handler:    _ReservationService_FindNumberOfBuyersCancellations_Handler,
+		},
+		{
+			MethodName: "UpdateReservationRating",
+			Handler:    _ReservationService_UpdateReservationRating_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

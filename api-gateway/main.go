@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"gateway/infrastructure/api"
 	"gateway/proto/gateway"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -47,9 +46,8 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	authEndpoint := os.Getenv("AUTH_SERVICE_ADDRESS")
 	accommodationEndpoint := os.Getenv("ACCOMODATION_SERVICE_ADDRESS")
 	reservationEndpoint := os.Getenv("RESERVATION_SERVICE_ADDRESS")
-
+	ratingEndpoint := os.Getenv("RATING_SERVICE_ADDRESS")
 	err := gateway.RegisterAuthServiceHandlerFromEndpoint(context.TODO(), gwmux, authEndpoint, opts)
-	fmt.Println(err)
 	if err != nil {
 		panic(err)
 	}
@@ -61,9 +59,13 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	if err != nil {
 		panic(err)
 	}
+	err = gateway.RegisterRatingServiceHandlerFromEndpoint(context.TODO(), gwmux, ratingEndpoint, opts)
+	if err != nil {
+		panic(err)
+	}
 
 	//init custom handlers
-	searchAccommodationsHandler := api.NewSearchAccommodationHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
+	searchAccommodationsHandler := api.NewSearchAccommodationHandler(authEndpoint, accommodationEndpoint, reservationEndpoint, ratingEndpoint)
 	searchAccommodationsHandler.Init(gwmux)
 	deleteProfileHandler := api.NewDeleteProfileHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
 	deleteProfileHandler.Init(gwmux)
@@ -79,7 +81,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	rejectReservationHandler.Init(gwmux)
 	findAllReservationsByOwnerIdHandler := api.NewFindAllReservationsByOwnerIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
 	findAllReservationsByOwnerIdHandler.Init(gwmux)
-	findAllReservationsByBuyerIdHandler := api.NewFindAllReservationsByBuyerIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
+	findAllReservationsByBuyerIdHandler := api.NewFindAllReservationsByBuyerIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint, ratingEndpoint)
 	findAllReservationsByBuyerIdHandler.Init(gwmux)
 	updatePersonalInfoHandler := api.NewUpdatePersonalInfoHandler(authEndpoint)
 	updatePersonalInfoHandler.Init(gwmux)
@@ -95,6 +97,14 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	findAllReservationsByAccommodationIdHandler.Init(gwmux)
 	getBookingPriceHandler := api.NewGetBookingPriceHandler(accommodationEndpoint)
 	getBookingPriceHandler.Init(gwmux)
+	rateAccommodationHandler := api.NewRateAccommodationHandler(ratingEndpoint, reservationEndpoint)
+	rateAccommodationHandler.Init(gwmux)
+	deleteAccommodationRatingHandler := api.NewDeleteAccommodationRatingHandler(ratingEndpoint, reservationEndpoint)
+	deleteAccommodationRatingHandler.Init(gwmux)
+	updateAccommodationRatingHandler := api.NewUpdateAccommodationRatingHandler(ratingEndpoint)
+	updateAccommodationRatingHandler.Init(gwmux)
+	findAllAccommodationRatingsHandler := api.NewFindAllAccommodationRatingsHandler(ratingEndpoint, authEndpoint)
+	findAllAccommodationRatingsHandler.Init(gwmux)
 
 }
 

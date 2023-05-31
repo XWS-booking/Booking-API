@@ -18,14 +18,15 @@ const (
 )
 
 type Reservation struct {
-	Id              primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	AccommodationId primitive.ObjectID `bson:"accommodation_id" json:"accommodationId"`
-	BuyerId         primitive.ObjectID `bson:"buyer_id" json:"buyerId"`
-	StartDate       time.Time          `bson:"start_date" json:"startDate"`
-	EndDate         time.Time          `bson:"end_date" json:"endDate"`
-	Guests          int32              `bson:"guests" json:"guests"`
-	Price           float32            `bson:"price" json:"price"`
-	Status          Status             `bson:"status" json:"status"`
+	Id                    primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	AccommodationId       primitive.ObjectID `bson:"accommodation_id" json:"accommodationId"`
+	BuyerId               primitive.ObjectID `bson:"buyer_id" json:"buyerId"`
+	StartDate             time.Time          `bson:"start_date" json:"startDate"`
+	EndDate               time.Time          `bson:"end_date" json:"endDate"`
+	Guests                int32              `bson:"guests" json:"guests"`
+	Price                 float32            `bson:"price" json:"price"`
+	Status                Status             `bson:"status" json:"status"`
+	AccommodationRatingId primitive.ObjectID `bson:"accommodation_rating_id" json:"accommodationRatingId"`
 }
 
 func NewReservation(req *CreateReservationRequest) Reservation {

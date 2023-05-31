@@ -31,6 +31,14 @@ func NewReservationClient(address string) ReservationServiceClient {
 	return NewReservationServiceClient(conn)
 }
 
+func NewRatingClient(address string) RatingServiceClient {
+	conn, err := getConnection(address)
+	if err != nil {
+		log.Fatalf("Failed to start gRPC connection to Rating service: %v", err)
+	}
+	return NewRatingServiceClient(conn)
+}
+
 func getConnection(address string) (*grpc.ClientConn, error) {
 	return grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 }

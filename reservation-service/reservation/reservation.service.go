@@ -166,3 +166,16 @@ func (reservationService *ReservationService) FindAllByAccommodationId(id primit
 	}
 	return reservations, nil
 }
+
+func (reservationService *ReservationService) UpdateReservationRating(id primitive.ObjectID, accommodationRatingId primitive.ObjectID) *shared.Error {
+	reservation, err := reservationService.ReservationRepository.FindById(id)
+	if err != nil {
+		return shared.ReservationNotFound()
+	}
+	reservation.AccommodationRatingId = accommodationRatingId
+	err = reservationService.ReservationRepository.UpdateReservation(reservation)
+	if err != nil {
+		return shared.ReservationUpdateFailed()
+	}
+	return nil
+}
