@@ -186,7 +186,6 @@ func (reservationController *ReservationController) FindAllByAccommodationId(ctx
 }
 
 func (reservationController *ReservationController) UpdateReservationRating(ctx Context, req *UpdateReservationRatingRequest) (*UpdateReservationRatingResponse, error) {
-	fmt.Println("udario")
 	fmt.Println(req.Id)
 	fmt.Println(req.AccommodationRatingId)
 	if req == nil {

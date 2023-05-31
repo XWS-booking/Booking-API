@@ -15,11 +15,3 @@ func AccommodationRatingFromRateAccommodationRequest(req *RateAccommodationReque
 		Rating:          req.Rating,
 	}
 }
-
-func AccommodationRatingFromUpdateAccommodationRatingRequest(req *UpdateAccommodationRatingRequest) AccommodationRating {
-	id, _ := primitive.ObjectIDFromHex(req.GetId())
-	return AccommodationRating{
-		Id:     id,
-		Rating: req.Rating,
-	}
-}

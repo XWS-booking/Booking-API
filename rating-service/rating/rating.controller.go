@@ -47,7 +47,7 @@ func (ratingController *RatingController) UpdateAccommodationRating(ctx Context,
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
-	e := ratingController.RatingService.UpdateAccommodationRating(AccommodationRatingFromUpdateAccommodationRatingRequest(req))
+	e := ratingController.RatingService.UpdateAccommodationRating(shared.StringToObjectId(req.Id), req.Rating)
 	if e != nil {
 		return nil, status.Error(codes.Aborted, e.Message)
 	}

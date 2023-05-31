@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"gateway/infrastructure/services"
 	. "gateway/middlewares"
 	"gateway/model"
@@ -62,7 +61,6 @@ func (handler *FindAllReservationsByBuyerIdHandler) FindAll(w http.ResponseWrite
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		fmt.Println(r.AccommodationRatingId)
 		var rating Rating
 		if r.AccommodationRatingId == "000000000000000000000000" {
 			rating = Rating{}

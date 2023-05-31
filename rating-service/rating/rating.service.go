@@ -28,9 +28,14 @@ func (ratingService *RatingService) DeleteAccommodationRating(id primitive.Objec
 	return nil
 }
 
-func (ratingService *RatingService) UpdateAccommodationRating(rating AccommodationRating) *shared.Error {
-	rating.Time = time.Now()
-	err := ratingService.RatingRepository.UpdateAccommodationRating(rating)
+func (ratingService *RatingService) UpdateAccommodationRating(id primitive.ObjectID, rating int32) *shared.Error {
+	res, err := ratingService.RatingRepository.FindAccommodationRatingById(id)
+	if err != nil {
+		return shared.AccommodationRatingNotFound()
+	}
+	res.Time = time.Now()
+	res.Rating = rating
+	err = ratingService.RatingRepository.UpdateAccommodationRating(res)
 	if err != nil {
 		return shared.RatingNotUpdated()
 	}
