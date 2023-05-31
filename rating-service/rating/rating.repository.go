@@ -67,3 +67,14 @@ func (ratingRepository *RatingRepository) GetAllByAccommodationId(id primitive.O
 	}
 	return ratings, nil
 }
+
+func (reservationRepository *RatingRepository) FindAccommodationRatingById(id primitive.ObjectID) (AccommodationRating, error) {
+	collection := reservationRepository.getCollection("accommodation_ratings")
+	var rating AccommodationRating
+	filter := bson.M{"_id": id}
+	err := collection.FindOne(context.TODO(), filter).Decode(&rating)
+	if err != nil {
+		return AccommodationRating{}, err
+	}
+	return rating, nil
+}

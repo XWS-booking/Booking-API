@@ -17,6 +17,7 @@ service ReservationService {
   rpc FindAllByBuyerId(FindAllReservationsByBuyerIdRequest) returns (FindAllReservationsByBuyerIdResponse) {}
   rpc FindAllByAccommodationId(FindAllReservationsByAccommodationIdRequest) returns (FindAllReservationsByAccommodationIdResponse) {}
   rpc FindNumberOfBuyersCancellations(NumberOfCancellationRequest) returns (NumberOfCancellationResponse){}
+  rpc UpdateReservationRating(UpdateReservationRatingRequest) returns (UpdateReservationRatingResponse){}
 }
 
 
@@ -110,8 +111,16 @@ message ReservationResponse {
   google.protobuf.Timestamp   EndDate = 5;
   int32         Guests = 6;
   int32          Status = 7;
+  string AccommodationRatingId = 8;
 }
 
 message NumberOfCancellationResponse {
   int32 cancellationNumber = 1;
 }
+
+message UpdateReservationRatingRequest {
+  string Id = 1;
+  string AccommodationRatingId = 2;
+}
+
+message UpdateReservationRatingResponse {}

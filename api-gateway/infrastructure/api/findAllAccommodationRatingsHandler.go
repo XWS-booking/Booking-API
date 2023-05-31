@@ -14,7 +14,7 @@ import (
 )
 
 type AccommodationRatingDto struct {
-	Id              string     `json:"Id"`
+	Id              string     `json:"id"`
 	AccommodationId string     `json:"accommodationId"`
 	Guest           model.User `json:"guest"`
 	Rating          int32      `json:"rating"`

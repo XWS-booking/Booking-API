@@ -60,3 +60,11 @@ func (ratingService *RatingService) GetAverageAccommodationRating(id primitive.O
 	}
 	return avg, nil
 }
+
+func (ratingService *RatingService) FindAccommodationRatingById(id primitive.ObjectID) (AccommodationRating, *shared.Error) {
+	rating, err := ratingService.RatingRepository.FindAccommodationRatingById(id)
+	if err != nil {
+		return rating, shared.AccommodationRatingNotFound()
+	}
+	return rating, nil
+}

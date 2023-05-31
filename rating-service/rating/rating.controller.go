@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	. "rating_service/proto/rating"
+	"rating_service/shared"
 )
 
 func NewRatingController(ratingService *RatingService) *RatingController {
@@ -24,7 +25,7 @@ func (ratingController *RatingController) RateAccommodation(ctx Context, req *Ra
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
 	id := ratingController.RatingService.CreateAccommdationRating(AccommodationRatingFromRateAccommodationRequest(req))
-	return &RateAccommodationResponse{Id: id.String()}, nil
+	return &RateAccommodationResponse{Id: id.Hex()}, nil
 }
 
 func (ratingController *RatingController) DeleteAccommodationRating(ctx Context, req *DeleteAccommodationRatingRequest) (*DeleteAccommodationRatingResponse, error) {
@@ -93,4 +94,21 @@ func (ratingController *RatingController) GetAverageAccommodationRating(ctx Cont
 	}
 
 	return &GetAverageAccommodationRatingResponse{Rating: rating}, nil
+}
+
+func (ratingController *RatingController) FindAccommodationRatingById(ctx Context, req *FindAccommodationRatingByIdRequest) (*FindAccommodationRatingByIdResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	rating, e := ratingController.RatingService.FindAccommodationRatingById(shared.StringToObjectId(req.Id))
+	if e != nil {
+		return nil, status.Error(codes.Aborted, e.Message)
+	}
+
+	return &FindAccommodationRatingByIdResponse{
+		Id:              rating.Id.Hex(),
+		AccommodationId: rating.AccommodationId.Hex(),
+		GuestId:         rating.GuestId.Hex(),
+		Rating:          rating.Rating,
+	}, nil
 }

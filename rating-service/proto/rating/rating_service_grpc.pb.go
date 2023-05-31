@@ -24,6 +24,7 @@ const (
 	RatingService_UpdateAccommodationRating_FullMethodName     = "/RatingService/UpdateAccommodationRating"
 	RatingService_GetAllAccommodationRatings_FullMethodName    = "/RatingService/GetAllAccommodationRatings"
 	RatingService_GetAverageAccommodationRating_FullMethodName = "/RatingService/GetAverageAccommodationRating"
+	RatingService_FindAccommodationRatingById_FullMethodName   = "/RatingService/FindAccommodationRatingById"
 )
 
 // RatingServiceClient is the client API for RatingService service.
@@ -35,6 +36,7 @@ type RatingServiceClient interface {
 	UpdateAccommodationRating(ctx context.Context, in *UpdateAccommodationRatingRequest, opts ...grpc.CallOption) (*UpdateAccommodationRatingResponse, error)
 	GetAllAccommodationRatings(ctx context.Context, in *GetAllAccommodationRatingsRequest, opts ...grpc.CallOption) (*GetAllAccommodationRatingsResponse, error)
 	GetAverageAccommodationRating(ctx context.Context, in *GetAverageAccommodationRatingRequest, opts ...grpc.CallOption) (*GetAverageAccommodationRatingResponse, error)
+	FindAccommodationRatingById(ctx context.Context, in *FindAccommodationRatingByIdRequest, opts ...grpc.CallOption) (*FindAccommodationRatingByIdResponse, error)
 }
 
 type ratingServiceClient struct {
@@ -90,6 +92,15 @@ func (c *ratingServiceClient) GetAverageAccommodationRating(ctx context.Context,
 	return out, nil
 }
 
+func (c *ratingServiceClient) FindAccommodationRatingById(ctx context.Context, in *FindAccommodationRatingByIdRequest, opts ...grpc.CallOption) (*FindAccommodationRatingByIdResponse, error) {
+	out := new(FindAccommodationRatingByIdResponse)
+	err := c.cc.Invoke(ctx, RatingService_FindAccommodationRatingById_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RatingServiceServer is the server API for RatingService service.
 // All implementations must embed UnimplementedRatingServiceServer
 // for forward compatibility
@@ -99,6 +110,7 @@ type RatingServiceServer interface {
 	UpdateAccommodationRating(context.Context, *UpdateAccommodationRatingRequest) (*UpdateAccommodationRatingResponse, error)
 	GetAllAccommodationRatings(context.Context, *GetAllAccommodationRatingsRequest) (*GetAllAccommodationRatingsResponse, error)
 	GetAverageAccommodationRating(context.Context, *GetAverageAccommodationRatingRequest) (*GetAverageAccommodationRatingResponse, error)
+	FindAccommodationRatingById(context.Context, *FindAccommodationRatingByIdRequest) (*FindAccommodationRatingByIdResponse, error)
 	mustEmbedUnimplementedRatingServiceServer()
 }
 
@@ -120,6 +132,9 @@ func (UnimplementedRatingServiceServer) GetAllAccommodationRatings(context.Conte
 }
 func (UnimplementedRatingServiceServer) GetAverageAccommodationRating(context.Context, *GetAverageAccommodationRatingRequest) (*GetAverageAccommodationRatingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAverageAccommodationRating not implemented")
+}
+func (UnimplementedRatingServiceServer) FindAccommodationRatingById(context.Context, *FindAccommodationRatingByIdRequest) (*FindAccommodationRatingByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindAccommodationRatingById not implemented")
 }
 func (UnimplementedRatingServiceServer) mustEmbedUnimplementedRatingServiceServer() {}
 
@@ -224,6 +239,24 @@ func _RatingService_GetAverageAccommodationRating_Handler(srv interface{}, ctx c
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RatingService_FindAccommodationRatingById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindAccommodationRatingByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RatingServiceServer).FindAccommodationRatingById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RatingService_FindAccommodationRatingById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RatingServiceServer).FindAccommodationRatingById(ctx, req.(*FindAccommodationRatingByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RatingService_ServiceDesc is the grpc.ServiceDesc for RatingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -250,6 +283,10 @@ var RatingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAverageAccommodationRating",
 			Handler:    _RatingService_GetAverageAccommodationRating_Handler,
+		},
+		{
+			MethodName: "FindAccommodationRatingById",
+			Handler:    _RatingService_FindAccommodationRatingById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

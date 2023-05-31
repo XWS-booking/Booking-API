@@ -15,3 +15,7 @@ func RatingNotUpdated() *Error {
 func ErrorFilteringRatings() *Error {
 	return &Error{Message: "Error when filtering ratings!"}
 }
+
+func AccommodationRatingNotFound() *Error {
+	return &Error{Message: "Accommodation rating not found!"}
+}

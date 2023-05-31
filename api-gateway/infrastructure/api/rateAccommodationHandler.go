@@ -7,14 +7,14 @@ import (
 	"gateway/proto/gateway"
 	"gateway/shared"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 )
 
 type RateAccommodationDto struct {
-	AccommodationId primitive.ObjectID `json:"accommodationId"`
-	GuestId         primitive.ObjectID `json:"guestId"`
-	Rating          int32              `json:"rating"`
+	AccommodationId string `json:"accommodationId"`
+	GuestId         string `json:"guestId"`
+	Rating          int32  `json:"rating"`
+	ReservationId   string `json:"reservationId"`
 }
 
 type RateAccommodationHandler struct {
@@ -37,7 +37,7 @@ func (handler *RateAccommodationHandler) Init(mux *runtime.ServeMux) {
 }
 
 func (handler *RateAccommodationHandler) RateAccommodation(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
-	//reservationClient := services.NewReservationClient(handler.reservationClientAddress)
+	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
 	ratingClient := services.NewRatingClient(handler.ratingClientAddress)
 	var body RateAccommodationDto
 	err := DecodeBody(r, &body)
@@ -46,9 +46,14 @@ func (handler *RateAccommodationHandler) RateAccommodation(w http.ResponseWriter
 		return
 	}
 	fmt.Println(body.AccommodationId)
-	res, err := ratingClient.RateAccommodation(context.TODO(), &gateway.RateAccommodationRequest{AccommodationId: body.AccommodationId.Hex(), GuestId: body.GuestId.Hex(), Rating: body.Rating})
+	res, err := ratingClient.RateAccommodation(context.TODO(), &gateway.RateAccommodationRequest{AccommodationId: body.AccommodationId, GuestId: body.GuestId, Rating: body.Rating})
 	if err != nil {
-		http.Error(w, "Failed rating accommodation!", http.StatusBadRequest)
+		shared.BadRequest(w, err.Error())
+		return
+	}
+	_, err2 := reservationClient.UpdateReservationRating(context.TODO(), &gateway.UpdateReservationRatingRequest{Id: body.ReservationId, AccommodationRatingId: res.Id})
+	if err2 != nil {
+		shared.BadRequest(w, err2.Error())
 		return
 	}
 	shared.Ok(&w, res)

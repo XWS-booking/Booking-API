@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"gateway/infrastructure/services"
 	. "gateway/middlewares"
 	"gateway/model"
@@ -18,13 +19,15 @@ type FindAllReservationsByBuyerIdHandler struct {
 	authClientAddress          string
 	accommodationClientAddress string
 	reservationClientAddress   string
+	ratingClientAddress        string
 }
 
-func NewFindAllReservationsByBuyerIdHandler(authClientAddress, accommodationClientAddress, reservationClientAddress string) Handler {
+func NewFindAllReservationsByBuyerIdHandler(authClientAddress, accommodationClientAddress, reservationClientAddress, ratingClientAddress string) Handler {
 	return &FindAllReservationsByBuyerIdHandler{
 		authClientAddress:          authClientAddress,
 		accommodationClientAddress: accommodationClientAddress,
 		reservationClientAddress:   reservationClientAddress,
+		ratingClientAddress:        ratingClientAddress,
 	}
 }
 
@@ -52,22 +55,32 @@ func (handler *FindAllReservationsByBuyerIdHandler) FindAll(w http.ResponseWrite
 
 	var reservationsWithAccommodation []model.Reservation
 	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
+	ratingClient := services.NewRatingClient(handler.ratingClientAddress)
 	for _, r := range reservations.Reservations {
 		accommodation, e := accommodationClient.FindById(context.TODO(), &gateway.FindAccommodationByIdRequest{Id: r.AccommodationId})
 		if e != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		fmt.Println(r.AccommodationRatingId)
+		var rating Rating
+		if r.AccommodationRatingId == "000000000000000000000000" {
+			rating = Rating{}
+		} else {
+			resp, _ := ratingClient.FindAccommodationRatingById(context.TODO(), &gateway.FindAccommodationRatingByIdRequest{Id: r.AccommodationRatingId})
+			rating = Rating{Id: resp.Id, AccommodationId: resp.AccommodationId, GuestId: resp.GuestId, Rating: resp.Rating}
+		}
 		startDate, _ := ptypes.Timestamp(r.StartDate)
 		endDate, _ := ptypes.Timestamp(r.EndDate)
 		reservationsWithAccommodation = append(reservationsWithAccommodation, model.Reservation{
-			Id:            r.Id,
-			Accommodation: mapper.AccommodationFromAccomodationResponse(accommodation, model.User{}, 0),
-			BuyerId:       r.BuyerId,
-			StartDate:     startDate,
-			EndDate:       endDate,
-			Guests:        r.Guests,
-			Status:        r.Status,
+			Id:                  r.Id,
+			Accommodation:       mapper.AccommodationFromAccomodationResponse(accommodation, model.User{}, 0),
+			BuyerId:             r.BuyerId,
+			StartDate:           startDate,
+			EndDate:             endDate,
+			Guests:              r.Guests,
+			Status:              r.Status,
+			AccommodationRating: rating,
 		})
 	}
 	response, err := json.Marshal(reservationsWithAccommodation)

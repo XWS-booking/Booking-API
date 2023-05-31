@@ -2,6 +2,7 @@ package reservation
 
 import (
 	. "context"
+	"fmt"
 	"github.com/golang/protobuf/ptypes"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
@@ -182,4 +183,18 @@ func (reservationController *ReservationController) FindAllByAccommodationId(ctx
 		reservationResponses = append(reservationResponses, NewReservationResponse(r))
 	}
 	return &FindAllReservationsByAccommodationIdResponse{Reservations: reservationResponses}, nil
+}
+
+func (reservationController *ReservationController) UpdateReservationRating(ctx Context, req *UpdateReservationRatingRequest) (*UpdateReservationRatingResponse, error) {
+	fmt.Println("udario")
+	fmt.Println(req.Id)
+	fmt.Println(req.AccommodationRatingId)
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+	e := reservationController.ReservationService.UpdateReservationRating(shared.StringToObjectId(req.Id), shared.StringToObjectId(req.AccommodationRatingId))
+	if e != nil {
+		return &UpdateReservationRatingResponse{}, status.Error(codes.Internal, e.Message)
+	}
+	return &UpdateReservationRatingResponse{}, nil
 }
