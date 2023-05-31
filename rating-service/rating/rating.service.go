@@ -2,6 +2,7 @@ package rating
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"math"
 	. "rating_service/rating/model"
 	"rating_service/shared"
 	"time"
@@ -62,6 +63,7 @@ func (ratingService *RatingService) GetAverageAccommodationRating(id primitive.O
 			sum += float64(r.Rating)
 		}
 		avg = sum / float64(len(ratings))
+		avg = math.Round(avg*100) / 100
 	}
 	return avg, nil
 }

@@ -440,6 +440,7 @@ message RateAccommodationResponse {
 
 message DeleteAccommodationRatingRequest {
     string Id = 1;
+    string ReservationId = 2;
 }
 
 message DeleteAccommodationRatingResponse {}

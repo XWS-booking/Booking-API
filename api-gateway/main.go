@@ -99,7 +99,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	getBookingPriceHandler.Init(gwmux)
 	rateAccommodationHandler := api.NewRateAccommodationHandler(ratingEndpoint, reservationEndpoint)
 	rateAccommodationHandler.Init(gwmux)
-	deleteAccommodationRatingHandler := api.NewDeleteAccommodationRatingHandler(ratingEndpoint)
+	deleteAccommodationRatingHandler := api.NewDeleteAccommodationRatingHandler(ratingEndpoint, reservationEndpoint)
 	deleteAccommodationRatingHandler.Init(gwmux)
 	updateAccommodationRatingHandler := api.NewUpdateAccommodationRatingHandler(ratingEndpoint)
 	updateAccommodationRatingHandler.Init(gwmux)
