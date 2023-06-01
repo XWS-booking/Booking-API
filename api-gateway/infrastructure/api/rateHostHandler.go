@@ -44,20 +44,17 @@ func (handler *RateHostHandler) RateHost(w http.ResponseWriter, r *http.Request,
 	ratingClient := services.NewRatingClient(handler.ratingClientAddress)
 	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
 	var body RateHostDto
-	fmt.Println("stigao 1")
 	err := DecodeBody(r, &body)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("failed to parse form: %s", err.Error()), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("stigao 2")
 
 	res, err := accommodationClient.FindAllAccommodationIdsByOwnerId(context.TODO(), &gateway.FindAllAccommodationIdsByOwnerIdRequest{OwnerId: body.HostId})
 	if err != nil {
 		shared.BadRequest(w, err.Error())
 		return
 	}
-	fmt.Println("stigao 3")
 
 	res2, err2 := reservationClient.CheckIfGuestHasReservationInAccommodations(context.TODO(), &gateway.CheckIfGuestHasReservationInAccommodationsRequest{GuestId: body.GuestId, AccommodationIds: res.Ids})
 	if err2 != nil {
@@ -65,21 +62,18 @@ func (handler *RateHostHandler) RateHost(w http.ResponseWriter, r *http.Request,
 		shared.BadRequest(w, err2.Error())
 		return
 	}
-	fmt.Println("stigao 4")
 
 	if !res2.Res {
-		http.Error(w, fmt.Sprintf("You can't rate this host since you don't have reservation at this host in the past!", err.Error()), http.StatusBadRequest)
+		shared.BadRequest(w, "You can't rate this host since you don't have reservation at this host in the past!")
 		return
 	}
 
 	res3, err3 := ratingClient.RateHost(context.TODO(), &gateway.RateHostRequest{HostId: body.HostId, Rating: body.Rating, GuestId: body.GuestId})
-	fmt.Println("stigao 5", err3)
 
 	if err3 != nil {
 		http.Error(w, fmt.Sprintf("Unsuccessful host rating!", err.Error()), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("stigao 6")
 
 	shared.Ok(&w, res3)
 }

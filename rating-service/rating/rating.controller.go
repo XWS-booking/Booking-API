@@ -2,7 +2,6 @@ package rating
 
 import (
 	. "context"
-	"fmt"
 	"github.com/golang/protobuf/ptypes"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
@@ -115,17 +114,14 @@ func (ratingController *RatingController) FindAccommodationRatingById(ctx Contex
 }
 
 func (ratingController *RatingController) RateHost(ctx Context, req *RateHostRequest) (*RateHostResponse, error) {
-	fmt.Println("udario 1")
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
-	fmt.Println("udario 2")
 
 	res, err := ratingController.RatingService.RateHost(HostRatingFromRateHostRequest(req))
 	if err != nil {
 		return nil, status.Error(codes.Aborted, err.Message)
 	}
-	fmt.Println("udario 3")
 
 	return &RateHostResponse{Id: res.Hex()}, nil
 }
