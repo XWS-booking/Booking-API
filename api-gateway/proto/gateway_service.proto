@@ -85,6 +85,7 @@ service RatingService {
     rpc GetAverageAccommodationRating(GetAverageAccommodationRatingRequest) returns (GetAverageAccommodationRatingResponse) {}
     rpc FindAccommodationRatingById(FindAccommodationRatingByIdRequest) returns (FindAccommodationRatingByIdResponse) {}
     rpc RateHost(RateHostRequest) returns (RateHostResponse) {}
+    rpc UpdateHostRating(UpdateHostRatingRequest) returns (UpdateHostRatingResponse) {}
 }
 
 //Requests
@@ -507,4 +508,16 @@ message RateHostRequest {
 
 message RateHostResponse {
     string Id = 1;
+}
+
+message UpdateHostRatingRequest {
+    string Id = 1;
+    int32 Rating = 2;
+}
+
+message  UpdateHostRatingResponse {
+    string Id = 4;
+    string HostId = 1;
+    int32 Rating = 2;
+    string GuestId = 3;
 }

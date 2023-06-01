@@ -1221,6 +1221,7 @@ const (
 	RatingService_GetAverageAccommodationRating_FullMethodName = "/RatingService/GetAverageAccommodationRating"
 	RatingService_FindAccommodationRatingById_FullMethodName   = "/RatingService/FindAccommodationRatingById"
 	RatingService_RateHost_FullMethodName                      = "/RatingService/RateHost"
+	RatingService_UpdateHostRating_FullMethodName              = "/RatingService/UpdateHostRating"
 )
 
 // RatingServiceClient is the client API for RatingService service.
@@ -1234,6 +1235,7 @@ type RatingServiceClient interface {
 	GetAverageAccommodationRating(ctx context.Context, in *GetAverageAccommodationRatingRequest, opts ...grpc.CallOption) (*GetAverageAccommodationRatingResponse, error)
 	FindAccommodationRatingById(ctx context.Context, in *FindAccommodationRatingByIdRequest, opts ...grpc.CallOption) (*FindAccommodationRatingByIdResponse, error)
 	RateHost(ctx context.Context, in *RateHostRequest, opts ...grpc.CallOption) (*RateHostResponse, error)
+	UpdateHostRating(ctx context.Context, in *UpdateHostRatingRequest, opts ...grpc.CallOption) (*UpdateHostRatingResponse, error)
 }
 
 type ratingServiceClient struct {
@@ -1307,6 +1309,15 @@ func (c *ratingServiceClient) RateHost(ctx context.Context, in *RateHostRequest,
 	return out, nil
 }
 
+func (c *ratingServiceClient) UpdateHostRating(ctx context.Context, in *UpdateHostRatingRequest, opts ...grpc.CallOption) (*UpdateHostRatingResponse, error) {
+	out := new(UpdateHostRatingResponse)
+	err := c.cc.Invoke(ctx, RatingService_UpdateHostRating_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RatingServiceServer is the server API for RatingService service.
 // All implementations must embed UnimplementedRatingServiceServer
 // for forward compatibility
@@ -1318,6 +1329,7 @@ type RatingServiceServer interface {
 	GetAverageAccommodationRating(context.Context, *GetAverageAccommodationRatingRequest) (*GetAverageAccommodationRatingResponse, error)
 	FindAccommodationRatingById(context.Context, *FindAccommodationRatingByIdRequest) (*FindAccommodationRatingByIdResponse, error)
 	RateHost(context.Context, *RateHostRequest) (*RateHostResponse, error)
+	UpdateHostRating(context.Context, *UpdateHostRatingRequest) (*UpdateHostRatingResponse, error)
 	mustEmbedUnimplementedRatingServiceServer()
 }
 
@@ -1345,6 +1357,9 @@ func (UnimplementedRatingServiceServer) FindAccommodationRatingById(context.Cont
 }
 func (UnimplementedRatingServiceServer) RateHost(context.Context, *RateHostRequest) (*RateHostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RateHost not implemented")
+}
+func (UnimplementedRatingServiceServer) UpdateHostRating(context.Context, *UpdateHostRatingRequest) (*UpdateHostRatingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateHostRating not implemented")
 }
 func (UnimplementedRatingServiceServer) mustEmbedUnimplementedRatingServiceServer() {}
 
@@ -1485,6 +1500,24 @@ func _RatingService_RateHost_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RatingService_UpdateHostRating_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateHostRatingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RatingServiceServer).UpdateHostRating(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RatingService_UpdateHostRating_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RatingServiceServer).UpdateHostRating(ctx, req.(*UpdateHostRatingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RatingService_ServiceDesc is the grpc.ServiceDesc for RatingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1519,6 +1552,10 @@ var RatingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RateHost",
 			Handler:    _RatingService_RateHost_Handler,
+		},
+		{
+			MethodName: "UpdateHostRating",
+			Handler:    _RatingService_UpdateHostRating_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
