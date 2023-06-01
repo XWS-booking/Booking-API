@@ -18,6 +18,7 @@ service ReservationService {
   rpc FindAllByAccommodationId(FindAllReservationsByAccommodationIdRequest) returns (FindAllReservationsByAccommodationIdResponse) {}
   rpc FindNumberOfBuyersCancellations(NumberOfCancellationRequest) returns (NumberOfCancellationResponse){}
   rpc UpdateReservationRating(UpdateReservationRatingRequest) returns (UpdateReservationRatingResponse){}
+  rpc CheckIfGuestHasReservationInAccommodations(CheckIfGuestHasReservationInAccommodationsRequest) returns (CheckIfGuestHasReservationInAccommodationsResponse){}
 }
 
 
@@ -124,3 +125,12 @@ message UpdateReservationRatingRequest {
 }
 
 message UpdateReservationRatingResponse {}
+
+message CheckIfGuestHasReservationInAccommodationsRequest{
+  string GuestId = 1;
+  repeated string AccommodationIds = 2;
+}
+
+message CheckIfGuestHasReservationInAccommodationsResponse {
+  bool Res = 1;
+}

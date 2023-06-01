@@ -643,19 +643,20 @@ var AccomodationService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	ReservationService_Delete_FullMethodName                                   = "/ReservationService/Delete"
-	ReservationService_Create_FullMethodName                                   = "/ReservationService/Create"
-	ReservationService_Confirm_FullMethodName                                  = "/ReservationService/Confirm"
-	ReservationService_Reject_FullMethodName                                   = "/ReservationService/Reject"
-	ReservationService_CancelReservation_FullMethodName                        = "/ReservationService/CancelReservation"
-	ReservationService_FindAllReservedAccommodations_FullMethodName            = "/ReservationService/FindAllReservedAccommodations"
-	ReservationService_CheckActiveReservationsForGuest_FullMethodName          = "/ReservationService/CheckActiveReservationsForGuest"
-	ReservationService_CheckActiveReservationsForAccommodations_FullMethodName = "/ReservationService/CheckActiveReservationsForAccommodations"
-	ReservationService_FindAllByAccommodationId_FullMethodName                 = "/ReservationService/FindAllByAccommodationId"
-	ReservationService_IsAccommodationAvailable_FullMethodName                 = "/ReservationService/IsAccommodationAvailable"
-	ReservationService_FindAllByBuyerId_FullMethodName                         = "/ReservationService/FindAllByBuyerId"
-	ReservationService_FindNumberOfBuyersCancellations_FullMethodName          = "/ReservationService/FindNumberOfBuyersCancellations"
-	ReservationService_UpdateReservationRating_FullMethodName                  = "/ReservationService/UpdateReservationRating"
+	ReservationService_Delete_FullMethodName                                     = "/ReservationService/Delete"
+	ReservationService_Create_FullMethodName                                     = "/ReservationService/Create"
+	ReservationService_Confirm_FullMethodName                                    = "/ReservationService/Confirm"
+	ReservationService_Reject_FullMethodName                                     = "/ReservationService/Reject"
+	ReservationService_CancelReservation_FullMethodName                          = "/ReservationService/CancelReservation"
+	ReservationService_FindAllReservedAccommodations_FullMethodName              = "/ReservationService/FindAllReservedAccommodations"
+	ReservationService_CheckActiveReservationsForGuest_FullMethodName            = "/ReservationService/CheckActiveReservationsForGuest"
+	ReservationService_CheckActiveReservationsForAccommodations_FullMethodName   = "/ReservationService/CheckActiveReservationsForAccommodations"
+	ReservationService_FindAllByAccommodationId_FullMethodName                   = "/ReservationService/FindAllByAccommodationId"
+	ReservationService_IsAccommodationAvailable_FullMethodName                   = "/ReservationService/IsAccommodationAvailable"
+	ReservationService_FindAllByBuyerId_FullMethodName                           = "/ReservationService/FindAllByBuyerId"
+	ReservationService_FindNumberOfBuyersCancellations_FullMethodName            = "/ReservationService/FindNumberOfBuyersCancellations"
+	ReservationService_UpdateReservationRating_FullMethodName                    = "/ReservationService/UpdateReservationRating"
+	ReservationService_CheckIfGuestHasReservationInAccommodations_FullMethodName = "/ReservationService/CheckIfGuestHasReservationInAccommodations"
 )
 
 // ReservationServiceClient is the client API for ReservationService service.
@@ -675,6 +676,7 @@ type ReservationServiceClient interface {
 	FindAllByBuyerId(ctx context.Context, in *FindAllReservationsByBuyerIdRequest, opts ...grpc.CallOption) (*FindAllReservationsByBuyerIdResponse, error)
 	FindNumberOfBuyersCancellations(ctx context.Context, in *NumberOfCancellationRequest, opts ...grpc.CallOption) (*NumberOfCancellationResponse, error)
 	UpdateReservationRating(ctx context.Context, in *UpdateReservationRatingRequest, opts ...grpc.CallOption) (*UpdateReservationRatingResponse, error)
+	CheckIfGuestHasReservationInAccommodations(ctx context.Context, in *CheckIfGuestHasReservationInAccommodationsRequest, opts ...grpc.CallOption) (*CheckIfGuestHasReservationInAccommodationsResponse, error)
 }
 
 type reservationServiceClient struct {
@@ -802,6 +804,15 @@ func (c *reservationServiceClient) UpdateReservationRating(ctx context.Context, 
 	return out, nil
 }
 
+func (c *reservationServiceClient) CheckIfGuestHasReservationInAccommodations(ctx context.Context, in *CheckIfGuestHasReservationInAccommodationsRequest, opts ...grpc.CallOption) (*CheckIfGuestHasReservationInAccommodationsResponse, error) {
+	out := new(CheckIfGuestHasReservationInAccommodationsResponse)
+	err := c.cc.Invoke(ctx, ReservationService_CheckIfGuestHasReservationInAccommodations_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReservationServiceServer is the server API for ReservationService service.
 // All implementations must embed UnimplementedReservationServiceServer
 // for forward compatibility
@@ -819,6 +830,7 @@ type ReservationServiceServer interface {
 	FindAllByBuyerId(context.Context, *FindAllReservationsByBuyerIdRequest) (*FindAllReservationsByBuyerIdResponse, error)
 	FindNumberOfBuyersCancellations(context.Context, *NumberOfCancellationRequest) (*NumberOfCancellationResponse, error)
 	UpdateReservationRating(context.Context, *UpdateReservationRatingRequest) (*UpdateReservationRatingResponse, error)
+	CheckIfGuestHasReservationInAccommodations(context.Context, *CheckIfGuestHasReservationInAccommodationsRequest) (*CheckIfGuestHasReservationInAccommodationsResponse, error)
 	mustEmbedUnimplementedReservationServiceServer()
 }
 
@@ -864,6 +876,9 @@ func (UnimplementedReservationServiceServer) FindNumberOfBuyersCancellations(con
 }
 func (UnimplementedReservationServiceServer) UpdateReservationRating(context.Context, *UpdateReservationRatingRequest) (*UpdateReservationRatingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateReservationRating not implemented")
+}
+func (UnimplementedReservationServiceServer) CheckIfGuestHasReservationInAccommodations(context.Context, *CheckIfGuestHasReservationInAccommodationsRequest) (*CheckIfGuestHasReservationInAccommodationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckIfGuestHasReservationInAccommodations not implemented")
 }
 func (UnimplementedReservationServiceServer) mustEmbedUnimplementedReservationServiceServer() {}
 
@@ -1112,6 +1127,24 @@ func _ReservationService_UpdateReservationRating_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReservationService_CheckIfGuestHasReservationInAccommodations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckIfGuestHasReservationInAccommodationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReservationServiceServer).CheckIfGuestHasReservationInAccommodations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReservationService_CheckIfGuestHasReservationInAccommodations_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReservationServiceServer).CheckIfGuestHasReservationInAccommodations(ctx, req.(*CheckIfGuestHasReservationInAccommodationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ReservationService_ServiceDesc is the grpc.ServiceDesc for ReservationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1171,6 +1204,10 @@ var ReservationService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "UpdateReservationRating",
 			Handler:    _ReservationService_UpdateReservationRating_Handler,
 		},
+		{
+			MethodName: "CheckIfGuestHasReservationInAccommodations",
+			Handler:    _ReservationService_CheckIfGuestHasReservationInAccommodations_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "gateway_service.proto",
@@ -1183,6 +1220,7 @@ const (
 	RatingService_GetAllAccommodationRatings_FullMethodName    = "/RatingService/GetAllAccommodationRatings"
 	RatingService_GetAverageAccommodationRating_FullMethodName = "/RatingService/GetAverageAccommodationRating"
 	RatingService_FindAccommodationRatingById_FullMethodName   = "/RatingService/FindAccommodationRatingById"
+	RatingService_RateHost_FullMethodName                      = "/RatingService/RateHost"
 )
 
 // RatingServiceClient is the client API for RatingService service.
@@ -1195,6 +1233,7 @@ type RatingServiceClient interface {
 	GetAllAccommodationRatings(ctx context.Context, in *GetAllAccommodationRatingsRequest, opts ...grpc.CallOption) (*GetAllAccommodationRatingsResponse, error)
 	GetAverageAccommodationRating(ctx context.Context, in *GetAverageAccommodationRatingRequest, opts ...grpc.CallOption) (*GetAverageAccommodationRatingResponse, error)
 	FindAccommodationRatingById(ctx context.Context, in *FindAccommodationRatingByIdRequest, opts ...grpc.CallOption) (*FindAccommodationRatingByIdResponse, error)
+	RateHost(ctx context.Context, in *RateHostRequest, opts ...grpc.CallOption) (*RateHostResponse, error)
 }
 
 type ratingServiceClient struct {
@@ -1259,6 +1298,15 @@ func (c *ratingServiceClient) FindAccommodationRatingById(ctx context.Context, i
 	return out, nil
 }
 
+func (c *ratingServiceClient) RateHost(ctx context.Context, in *RateHostRequest, opts ...grpc.CallOption) (*RateHostResponse, error) {
+	out := new(RateHostResponse)
+	err := c.cc.Invoke(ctx, RatingService_RateHost_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RatingServiceServer is the server API for RatingService service.
 // All implementations must embed UnimplementedRatingServiceServer
 // for forward compatibility
@@ -1269,6 +1317,7 @@ type RatingServiceServer interface {
 	GetAllAccommodationRatings(context.Context, *GetAllAccommodationRatingsRequest) (*GetAllAccommodationRatingsResponse, error)
 	GetAverageAccommodationRating(context.Context, *GetAverageAccommodationRatingRequest) (*GetAverageAccommodationRatingResponse, error)
 	FindAccommodationRatingById(context.Context, *FindAccommodationRatingByIdRequest) (*FindAccommodationRatingByIdResponse, error)
+	RateHost(context.Context, *RateHostRequest) (*RateHostResponse, error)
 	mustEmbedUnimplementedRatingServiceServer()
 }
 
@@ -1293,6 +1342,9 @@ func (UnimplementedRatingServiceServer) GetAverageAccommodationRating(context.Co
 }
 func (UnimplementedRatingServiceServer) FindAccommodationRatingById(context.Context, *FindAccommodationRatingByIdRequest) (*FindAccommodationRatingByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FindAccommodationRatingById not implemented")
+}
+func (UnimplementedRatingServiceServer) RateHost(context.Context, *RateHostRequest) (*RateHostResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RateHost not implemented")
 }
 func (UnimplementedRatingServiceServer) mustEmbedUnimplementedRatingServiceServer() {}
 
@@ -1415,6 +1467,24 @@ func _RatingService_FindAccommodationRatingById_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RatingService_RateHost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RateHostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RatingServiceServer).RateHost(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RatingService_RateHost_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RatingServiceServer).RateHost(ctx, req.(*RateHostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RatingService_ServiceDesc is the grpc.ServiceDesc for RatingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1445,6 +1515,10 @@ var RatingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FindAccommodationRatingById",
 			Handler:    _RatingService_FindAccommodationRatingById_Handler,
+		},
+		{
+			MethodName: "RateHost",
+			Handler:    _RatingService_RateHost_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -70,6 +70,7 @@ service ReservationService {
     rpc FindAllByBuyerId(FindAllReservationsByBuyerIdRequest) returns (FindAllReservationsByBuyerIdResponse) {}
     rpc FindNumberOfBuyersCancellations(NumberOfCancellationRequest) returns (NumberOfCancellationResponse){}
     rpc UpdateReservationRating(UpdateReservationRatingRequest) returns (UpdateReservationRatingResponse){}
+    rpc CheckIfGuestHasReservationInAccommodations(CheckIfGuestHasReservationInAccommodationsRequest) returns (CheckIfGuestHasReservationInAccommodationsResponse){}
 }
 
 service RatingService {
@@ -83,6 +84,7 @@ service RatingService {
     rpc GetAllAccommodationRatings(GetAllAccommodationRatingsRequest) returns (GetAllAccommodationRatingsResponse) {}
     rpc GetAverageAccommodationRating(GetAverageAccommodationRatingRequest) returns (GetAverageAccommodationRatingResponse) {}
     rpc FindAccommodationRatingById(FindAccommodationRatingByIdRequest) returns (FindAccommodationRatingByIdResponse) {}
+    rpc RateHost(RateHostRequest) returns (RateHostResponse) {}
 }
 
 //Requests
@@ -486,4 +488,23 @@ message FindAccommodationRatingByIdResponse {
     int32 Rating = 3;
     string GuestId = 4;
     google.protobuf.Timestamp Time = 5;
+}
+
+message CheckIfGuestHasReservationInAccommodationsRequest{
+    string GuestId = 1;
+    repeated string AccommodationIds = 2;
+}
+
+message CheckIfGuestHasReservationInAccommodationsResponse {
+    bool Res = 1;
+}
+
+message RateHostRequest {
+    string HostId = 1;
+    int32 Rating = 2;
+    string GuestId = 3;
+}
+
+message RateHostResponse {
+    string Id = 1;
 }

@@ -179,3 +179,16 @@ func (reservationService *ReservationService) UpdateReservationRating(id primiti
 	}
 	return nil
 }
+
+func (reservationService *ReservationService) CheckIfGuestHasReservationInAccommodations(guestId primitive.ObjectID, accommodationIds []string) (bool, *shared.Error) {
+	for _, id := range accommodationIds {
+		resId, err := reservationService.ReservationRepository.CheckIfGuestHasReservationInAccommodation(guestId, shared.StringToObjectId(id))
+		if err != nil {
+			return false, shared.SomethingWentWrongWhenFindingReservation()
+		}
+		if resId {
+			return resId, nil
+		}
+	}
+	return false, nil
+}

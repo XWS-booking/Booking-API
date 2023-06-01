@@ -78,3 +78,12 @@ func (reservationRepository *RatingRepository) FindAccommodationRatingById(id pr
 	}
 	return rating, nil
 }
+
+func (reservationRepository *RatingRepository) CreateHostRating(hostRating HostRating) (primitive.ObjectID, error) {
+	collection := reservationRepository.getCollection("host_ratings")
+	res, err := collection.InsertOne(context.TODO(), hostRating)
+	if err != nil {
+		return primitive.ObjectID{}, err
+	}
+	return res.InsertedID.(primitive.ObjectID), nil
+}

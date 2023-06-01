@@ -10,6 +10,7 @@ service RatingService {
   rpc GetAllAccommodationRatings(GetAllAccommodationRatingsRequest) returns (GetAllAccommodationRatingsResponse) {}
   rpc GetAverageAccommodationRating(GetAverageAccommodationRatingRequest) returns (GetAverageAccommodationRatingResponse) {}
   rpc FindAccommodationRatingById(FindAccommodationRatingByIdRequest) returns (FindAccommodationRatingByIdResponse) {}
+  rpc RateHost(RateHostRequest) returns (RateHostResponse) {}
 }
 
 message RateAccommodationRequest {
@@ -69,4 +70,14 @@ message FindAccommodationRatingByIdResponse {
   int32 Rating = 3;
   string GuestId = 4;
   google.protobuf.Timestamp Time = 5;
+}
+
+message RateHostRequest {
+  string HostId = 1;
+  int32 Rating = 2;
+  string GuestId = 3;
+}
+
+message RateHostResponse {
+  string Id = 1;
 }

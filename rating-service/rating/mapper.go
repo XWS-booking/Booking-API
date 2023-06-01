@@ -15,3 +15,13 @@ func AccommodationRatingFromRateAccommodationRequest(req *RateAccommodationReque
 		Rating:          req.Rating,
 	}
 }
+
+func HostRatingFromRateHostRequest(req *RateHostRequest) HostRating {
+	hostId, _ := primitive.ObjectIDFromHex(req.HostId)
+	guestId, _ := primitive.ObjectIDFromHex(req.GuestId)
+	return HostRating{
+		HostId:  hostId,
+		GuestId: guestId,
+		Rating:  req.Rating,
+	}
+}

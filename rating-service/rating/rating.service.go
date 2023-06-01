@@ -75,3 +75,12 @@ func (ratingService *RatingService) FindAccommodationRatingById(id primitive.Obj
 	}
 	return rating, nil
 }
+
+func (ratingService *RatingService) RateHost(hostRating HostRating) (primitive.ObjectID, *shared.Error) {
+	hostRating.Time = time.Now()
+	res, err := ratingService.RatingRepository.CreateHostRating(hostRating)
+	if err != nil {
+		return res, shared.UnsuccessfulHostRating()
+	}
+	return res, nil
+}

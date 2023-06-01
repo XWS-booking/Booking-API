@@ -43,3 +43,7 @@ func ReservationRejectionFailed() *Error {
 func ReservationCancelationTooLate() *Error {
 	return &Error{Message: "Can't cancel later than day before reservation start!"}
 }
+
+func SomethingWentWrongWhenFindingReservation() *Error {
+	return &Error{Message: "Something went wrong when finding reservation!"}
+}
