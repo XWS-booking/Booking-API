@@ -1222,6 +1222,7 @@ const (
 	RatingService_FindAccommodationRatingById_FullMethodName   = "/RatingService/FindAccommodationRatingById"
 	RatingService_RateHost_FullMethodName                      = "/RatingService/RateHost"
 	RatingService_UpdateHostRating_FullMethodName              = "/RatingService/UpdateHostRating"
+	RatingService_DeleteHostRating_FullMethodName              = "/RatingService/DeleteHostRating"
 )
 
 // RatingServiceClient is the client API for RatingService service.
@@ -1236,6 +1237,7 @@ type RatingServiceClient interface {
 	FindAccommodationRatingById(ctx context.Context, in *FindAccommodationRatingByIdRequest, opts ...grpc.CallOption) (*FindAccommodationRatingByIdResponse, error)
 	RateHost(ctx context.Context, in *RateHostRequest, opts ...grpc.CallOption) (*RateHostResponse, error)
 	UpdateHostRating(ctx context.Context, in *UpdateHostRatingRequest, opts ...grpc.CallOption) (*UpdateHostRatingResponse, error)
+	DeleteHostRating(ctx context.Context, in *DeleteHostRatingRequest, opts ...grpc.CallOption) (*DeleteHostRatingResponse, error)
 }
 
 type ratingServiceClient struct {
@@ -1318,6 +1320,15 @@ func (c *ratingServiceClient) UpdateHostRating(ctx context.Context, in *UpdateHo
 	return out, nil
 }
 
+func (c *ratingServiceClient) DeleteHostRating(ctx context.Context, in *DeleteHostRatingRequest, opts ...grpc.CallOption) (*DeleteHostRatingResponse, error) {
+	out := new(DeleteHostRatingResponse)
+	err := c.cc.Invoke(ctx, RatingService_DeleteHostRating_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RatingServiceServer is the server API for RatingService service.
 // All implementations must embed UnimplementedRatingServiceServer
 // for forward compatibility
@@ -1330,6 +1341,7 @@ type RatingServiceServer interface {
 	FindAccommodationRatingById(context.Context, *FindAccommodationRatingByIdRequest) (*FindAccommodationRatingByIdResponse, error)
 	RateHost(context.Context, *RateHostRequest) (*RateHostResponse, error)
 	UpdateHostRating(context.Context, *UpdateHostRatingRequest) (*UpdateHostRatingResponse, error)
+	DeleteHostRating(context.Context, *DeleteHostRatingRequest) (*DeleteHostRatingResponse, error)
 	mustEmbedUnimplementedRatingServiceServer()
 }
 
@@ -1360,6 +1372,9 @@ func (UnimplementedRatingServiceServer) RateHost(context.Context, *RateHostReque
 }
 func (UnimplementedRatingServiceServer) UpdateHostRating(context.Context, *UpdateHostRatingRequest) (*UpdateHostRatingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateHostRating not implemented")
+}
+func (UnimplementedRatingServiceServer) DeleteHostRating(context.Context, *DeleteHostRatingRequest) (*DeleteHostRatingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteHostRating not implemented")
 }
 func (UnimplementedRatingServiceServer) mustEmbedUnimplementedRatingServiceServer() {}
 
@@ -1518,6 +1533,24 @@ func _RatingService_UpdateHostRating_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RatingService_DeleteHostRating_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteHostRatingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RatingServiceServer).DeleteHostRating(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RatingService_DeleteHostRating_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RatingServiceServer).DeleteHostRating(ctx, req.(*DeleteHostRatingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RatingService_ServiceDesc is the grpc.ServiceDesc for RatingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1556,6 +1589,10 @@ var RatingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateHostRating",
 			Handler:    _RatingService_UpdateHostRating_Handler,
+		},
+		{
+			MethodName: "DeleteHostRating",
+			Handler:    _RatingService_DeleteHostRating_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

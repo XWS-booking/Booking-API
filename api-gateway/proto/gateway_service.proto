@@ -86,6 +86,7 @@ service RatingService {
     rpc FindAccommodationRatingById(FindAccommodationRatingByIdRequest) returns (FindAccommodationRatingByIdResponse) {}
     rpc RateHost(RateHostRequest) returns (RateHostResponse) {}
     rpc UpdateHostRating(UpdateHostRatingRequest) returns (UpdateHostRatingResponse) {}
+    rpc DeleteHostRating(DeleteHostRatingRequest) returns (DeleteHostRatingResponse) {}
 }
 
 //Requests
@@ -521,3 +522,9 @@ message  UpdateHostRatingResponse {
     int32 Rating = 2;
     string GuestId = 3;
 }
+
+message DeleteHostRatingRequest {
+    string Id = 1;
+}
+
+message DeleteHostRatingResponse {}

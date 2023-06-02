@@ -23,3 +23,7 @@ func AccommodationRatingNotFound() *Error {
 func UnsuccessfulHostRating() *Error {
 	return &Error{Message: "Unsuccessful host rating!!"}
 }
+
+func HostRatingNotFound() *Error {
+	return &Error{Message: "Host rating not found!"}
+}

@@ -84,3 +84,25 @@ func (ratingService *RatingService) RateHost(hostRating HostRating) (primitive.O
 	}
 	return res, nil
 }
+
+func (ratingService *RatingService) UpdateHostRating(rating HostRating) (HostRating, *shared.Error) {
+	currentRating, err := ratingService.RatingRepository.FindHostRatingById(rating.Id)
+	if err != nil {
+		return HostRating{}, shared.HostRatingNotFound()
+	}
+	currentRating.Rating = rating.Rating
+	currentRating.Time = time.Now()
+	res, err2 := ratingService.RatingRepository.UpdateHostRating(currentRating)
+	if err2 != nil {
+		return HostRating{}, shared.RatingNotUpdated()
+	}
+	return res, nil
+}
+
+func (ratingService *RatingService) DeleteHostRating(id string) *shared.Error {
+	err := ratingService.RatingRepository.DeleteHostRating(shared.StringToObjectId(id))
+	if err != nil {
+		return shared.RatingNotDeleted()
+	}
+	return nil
+}

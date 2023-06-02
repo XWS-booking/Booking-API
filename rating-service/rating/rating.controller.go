@@ -125,3 +125,29 @@ func (ratingController *RatingController) RateHost(ctx Context, req *RateHostReq
 
 	return &RateHostResponse{Id: res.Hex()}, nil
 }
+
+func (ratingController *RatingController) UpdateHostRating(ctx Context, req *UpdateHostRatingRequest) (*UpdateHostRatingResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+
+	res, err := ratingController.RatingService.UpdateHostRating(UpdateHostRatingFromUpdateRateHostRequest(req))
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Message)
+	}
+
+	return &UpdateHostRatingResponse{Id: res.Id.Hex(), HostId: res.HostId.Hex(), GuestId: res.GuestId.Hex(), Rating: res.Rating}, nil
+}
+
+func (ratingController *RatingController) DeleteHostRating(ctx Context, req *DeleteHostRatingRequest) (*DeleteHostRatingResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+
+	err := ratingController.RatingService.DeleteHostRating(req.Id)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Message)
+	}
+
+	return &DeleteHostRatingResponse{}, nil
+}

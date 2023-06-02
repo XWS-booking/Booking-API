@@ -107,6 +107,10 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	findAllAccommodationRatingsHandler.Init(gwmux)
 	rateHostHandler := api.NewRateHostHandler(ratingEndpoint, reservationEndpoint, accommodationEndpoint)
 	rateHostHandler.Init(gwmux)
+	updateHostRateHandler := api.NewUpdateHostRatingHandler(ratingEndpoint)
+	updateHostRateHandler.Init(gwmux)
+	deleteHostRatingHandler := api.NewDeleteHostRatingHandler(ratingEndpoint)
+	deleteHostRatingHandler.Init(gwmux)
 }
 
 func initCors(gwmux *runtime.ServeMux) http.Handler {

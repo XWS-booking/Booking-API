@@ -12,4 +12,7 @@ type IRatingRepository interface {
 	GetAllByAccommodationId(id primitive.ObjectID) ([]AccommodationRating, error)
 	FindAccommodationRatingById(id primitive.ObjectID) (AccommodationRating, error)
 	CreateHostRating(hostRating HostRating) (primitive.ObjectID, error)
+	UpdateHostRating(hostRating HostRating) (HostRating, error)
+	FindHostRatingById(id primitive.ObjectID) (HostRating, error)
+	DeleteHostRating(id primitive.ObjectID) error
 }
