@@ -19,13 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_SignIn_FullMethodName             = "/AuthService/SignIn"
-	AuthService_Register_FullMethodName           = "/AuthService/Register"
-	AuthService_UpdatePersonalInfo_FullMethodName = "/AuthService/UpdatePersonalInfo"
-	AuthService_DeleteProfile_FullMethodName      = "/AuthService/DeleteProfile"
-	AuthService_GetUser_FullMethodName            = "/AuthService/GetUser"
-	AuthService_FindById_FullMethodName           = "/AuthService/FindById"
-	AuthService_ChangePassword_FullMethodName     = "/AuthService/ChangePassword"
+	AuthService_SignIn_FullMethodName                     = "/AuthService/SignIn"
+	AuthService_Register_FullMethodName                   = "/AuthService/Register"
+	AuthService_UpdatePersonalInfo_FullMethodName         = "/AuthService/UpdatePersonalInfo"
+	AuthService_DeleteProfile_FullMethodName              = "/AuthService/DeleteProfile"
+	AuthService_GetUser_FullMethodName                    = "/AuthService/GetUser"
+	AuthService_FindById_FullMethodName                   = "/AuthService/FindById"
+	AuthService_ChangePassword_FullMethodName             = "/AuthService/ChangePassword"
+	AuthService_GetHostRatingWithGuestInfo_FullMethodName = "/AuthService/GetHostRatingWithGuestInfo"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -39,6 +40,7 @@ type AuthServiceClient interface {
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	FindById(ctx context.Context, in *FindUserByIdRequest, opts ...grpc.CallOption) (*FindUserByIdResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
+	GetHostRatingWithGuestInfo(ctx context.Context, in *GetHostRatingWithGuestInfoRequest, opts ...grpc.CallOption) (*GetHostRatingWithGuestInfoResponse, error)
 }
 
 type authServiceClient struct {
@@ -112,6 +114,15 @@ func (c *authServiceClient) ChangePassword(ctx context.Context, in *ChangePasswo
 	return out, nil
 }
 
+func (c *authServiceClient) GetHostRatingWithGuestInfo(ctx context.Context, in *GetHostRatingWithGuestInfoRequest, opts ...grpc.CallOption) (*GetHostRatingWithGuestInfoResponse, error) {
+	out := new(GetHostRatingWithGuestInfoResponse)
+	err := c.cc.Invoke(ctx, AuthService_GetHostRatingWithGuestInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -123,6 +134,7 @@ type AuthServiceServer interface {
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	FindById(context.Context, *FindUserByIdRequest) (*FindUserByIdResponse, error)
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
+	GetHostRatingWithGuestInfo(context.Context, *GetHostRatingWithGuestInfoRequest) (*GetHostRatingWithGuestInfoResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -150,6 +162,9 @@ func (UnimplementedAuthServiceServer) FindById(context.Context, *FindUserByIdReq
 }
 func (UnimplementedAuthServiceServer) ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
+}
+func (UnimplementedAuthServiceServer) GetHostRatingWithGuestInfo(context.Context, *GetHostRatingWithGuestInfoRequest) (*GetHostRatingWithGuestInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetHostRatingWithGuestInfo not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -290,6 +305,24 @@ func _AuthService_ChangePassword_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_GetHostRatingWithGuestInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetHostRatingWithGuestInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GetHostRatingWithGuestInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_GetHostRatingWithGuestInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GetHostRatingWithGuestInfo(ctx, req.(*GetHostRatingWithGuestInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -324,6 +357,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangePassword",
 			Handler:    _AuthService_ChangePassword_Handler,
+		},
+		{
+			MethodName: "GetHostRatingWithGuestInfo",
+			Handler:    _AuthService_GetHostRatingWithGuestInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1223,6 +1260,7 @@ const (
 	RatingService_RateHost_FullMethodName                      = "/RatingService/RateHost"
 	RatingService_UpdateHostRating_FullMethodName              = "/RatingService/UpdateHostRating"
 	RatingService_DeleteHostRating_FullMethodName              = "/RatingService/DeleteHostRating"
+	RatingService_GetHostRatings_FullMethodName                = "/RatingService/GetHostRatings"
 )
 
 // RatingServiceClient is the client API for RatingService service.
@@ -1238,6 +1276,7 @@ type RatingServiceClient interface {
 	RateHost(ctx context.Context, in *RateHostRequest, opts ...grpc.CallOption) (*RateHostResponse, error)
 	UpdateHostRating(ctx context.Context, in *UpdateHostRatingRequest, opts ...grpc.CallOption) (*UpdateHostRatingResponse, error)
 	DeleteHostRating(ctx context.Context, in *DeleteHostRatingRequest, opts ...grpc.CallOption) (*DeleteHostRatingResponse, error)
+	GetHostRatings(ctx context.Context, in *GetHostRatingsRequest, opts ...grpc.CallOption) (*GetHostRatingsResponse, error)
 }
 
 type ratingServiceClient struct {
@@ -1329,6 +1368,15 @@ func (c *ratingServiceClient) DeleteHostRating(ctx context.Context, in *DeleteHo
 	return out, nil
 }
 
+func (c *ratingServiceClient) GetHostRatings(ctx context.Context, in *GetHostRatingsRequest, opts ...grpc.CallOption) (*GetHostRatingsResponse, error) {
+	out := new(GetHostRatingsResponse)
+	err := c.cc.Invoke(ctx, RatingService_GetHostRatings_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RatingServiceServer is the server API for RatingService service.
 // All implementations must embed UnimplementedRatingServiceServer
 // for forward compatibility
@@ -1342,6 +1390,7 @@ type RatingServiceServer interface {
 	RateHost(context.Context, *RateHostRequest) (*RateHostResponse, error)
 	UpdateHostRating(context.Context, *UpdateHostRatingRequest) (*UpdateHostRatingResponse, error)
 	DeleteHostRating(context.Context, *DeleteHostRatingRequest) (*DeleteHostRatingResponse, error)
+	GetHostRatings(context.Context, *GetHostRatingsRequest) (*GetHostRatingsResponse, error)
 	mustEmbedUnimplementedRatingServiceServer()
 }
 
@@ -1375,6 +1424,9 @@ func (UnimplementedRatingServiceServer) UpdateHostRating(context.Context, *Updat
 }
 func (UnimplementedRatingServiceServer) DeleteHostRating(context.Context, *DeleteHostRatingRequest) (*DeleteHostRatingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteHostRating not implemented")
+}
+func (UnimplementedRatingServiceServer) GetHostRatings(context.Context, *GetHostRatingsRequest) (*GetHostRatingsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetHostRatings not implemented")
 }
 func (UnimplementedRatingServiceServer) mustEmbedUnimplementedRatingServiceServer() {}
 
@@ -1551,6 +1603,24 @@ func _RatingService_DeleteHostRating_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RatingService_GetHostRatings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetHostRatingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RatingServiceServer).GetHostRatings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RatingService_GetHostRatings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RatingServiceServer).GetHostRatings(ctx, req.(*GetHostRatingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RatingService_ServiceDesc is the grpc.ServiceDesc for RatingService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1593,6 +1663,10 @@ var RatingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteHostRating",
 			Handler:    _RatingService_DeleteHostRating_Handler,
+		},
+		{
+			MethodName: "GetHostRatings",
+			Handler:    _RatingService_GetHostRatings_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
