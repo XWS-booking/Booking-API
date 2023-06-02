@@ -27,3 +27,8 @@ func UnsuccessfulHostRating() *Error {
 func HostRatingNotFound() *Error {
 	return &Error{Message: "Host rating not found!"}
 }
+
+func ErrorWhenGettingRatings() *Error {
+	return &Error{Message: "Error while getting host ratings!"}
+
+}

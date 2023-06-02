@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 option go_package = "proto/authGrpc";
+import "google/protobuf/timestamp.proto";
 
 service AuthService {
     rpc SignIn(SignInRequest) returns (SignInResponse) {}
@@ -10,9 +11,8 @@ service AuthService {
     rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
     rpc FindById(FindUserByIdRequest) returns (FindUserByIdResponse) {}
     rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
+    rpc GetHostRatingWithGuestInfo(GetHostRatingWithGuestInfoRequest) returns (GetHostRatingWithGuestInfoResponse) {}
 }
-
-
 
 //Requests
 message RegistrationRequest {
@@ -124,4 +124,30 @@ message FindUserByIdResponse {
 
 message ChangePasswordResponse {
 
+}
+
+message HostRatingItem {
+    string Id = 1;
+    string HostId = 2;
+    int32 Rating = 3;
+    string GuestId = 4;
+    google.protobuf.Timestamp Time = 5;
+}
+
+message UpdatedHostRatingItem {
+    string Id = 1;
+    string HostId = 2;
+    int32 Rating = 3;
+    string GuestId = 4;
+    string GuestFirstName = 5;
+    string GuestLastName = 6;
+    google.protobuf.Timestamp Time = 7;
+}
+
+message GetHostRatingWithGuestInfoRequest{
+    repeated HostRatingItem ratings = 1;
+}
+
+message GetHostRatingWithGuestInfoResponse {
+    repeated UpdatedHostRatingItem ratings = 1;
 }

@@ -118,3 +118,23 @@ func (ratingRepository *RatingRepository) DeleteHostRating(id primitive.ObjectID
 	}
 	return nil
 }
+
+func (ratingRepository *RatingRepository) GetHostRatings(hostId primitive.ObjectID) ([]HostRating, error) {
+	collection := ratingRepository.getCollection("host_ratings")
+	var ratings []HostRating
+	filter := bson.M{"host_id": hostId}
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return ratings, err
+	}
+
+	for cur.Next(context.TODO()) {
+		var elem HostRating
+		err := cur.Decode(&elem)
+		if err != nil {
+			return ratings, err
+		}
+		ratings = append(ratings, elem)
+	}
+	return ratings, nil
+}

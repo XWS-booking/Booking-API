@@ -1,6 +1,7 @@
 package rating
 
 import (
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"math"
 	. "rating_service/rating/model"
@@ -105,4 +106,21 @@ func (ratingService *RatingService) DeleteHostRating(id string) *shared.Error {
 		return shared.RatingNotDeleted()
 	}
 	return nil
+}
+
+func (ratingService *RatingService) GetHostRatings(id string) ([]HostRating, *shared.Error) {
+	ratings, err := ratingService.RatingRepository.GetHostRatings(shared.StringToObjectId(id))
+	if err != nil {
+		return []HostRating{}, shared.ErrorWhenGettingRatings()
+	}
+	return ratings, nil
+}
+
+func (ratingService *RatingService) CalculateHostAverageRate(ratings []HostRating) float32 {
+	var averageRate float32 = 0
+	for _, rating := range ratings {
+		averageRate += float32(rating.Rating)
+	}
+	fmt.Println(averageRate / float32(len(ratings)))
+	return averageRate / float32(len(ratings))
 }

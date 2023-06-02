@@ -13,6 +13,7 @@ service RatingService {
   rpc RateHost(RateHostRequest) returns (RateHostResponse) {}
   rpc UpdateHostRating(UpdateHostRatingRequest) returns (UpdateHostRatingResponse) {}
   rpc DeleteHostRating(DeleteHostRatingRequest) returns (DeleteHostRatingResponse) {}
+  rpc GetHostRatings(GetHostRatingsRequest) returns (GetHostRatingsResponse) {}
 }
 
 message RateAccommodationRequest {
@@ -102,3 +103,19 @@ message DeleteHostRatingRequest {
 
 message DeleteHostRatingResponse {}
 
+message GetHostRatingsRequest {
+  string HostId = 1;
+}
+
+message GetHostRatingsResponse {
+  repeated HostRatingItem ratings = 1;
+  double AverageRate = 2;
+}
+
+message HostRatingItem {
+  string Id = 1;
+  string HostId = 2;
+  int32 Rating = 3;
+  string GuestId = 4;
+  google.protobuf.Timestamp Time = 5;
+}

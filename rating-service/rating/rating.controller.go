@@ -151,3 +151,30 @@ func (ratingController *RatingController) DeleteHostRating(ctx Context, req *Del
 
 	return &DeleteHostRatingResponse{}, nil
 }
+
+func (ratingController *RatingController) GetHostRatings(ctx Context, req *GetHostRatingsRequest) (*GetHostRatingsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+
+	ratings, err := ratingController.RatingService.GetHostRatings(req.HostId)
+	averageRate := ratingController.RatingService.CalculateHostAverageRate(ratings)
+
+	var ratingResponses []*HostRatingItem
+	for _, r := range ratings {
+		time, _ := ptypes.TimestampProto(r.Time)
+		ratingResponses = append(ratingResponses, &HostRatingItem{
+			Id:      r.Id.Hex(),
+			HostId:  r.HostId.Hex(),
+			GuestId: r.GuestId.Hex(),
+			Rating:  r.Rating,
+			Time:    time,
+		})
+	}
+	if err != nil {
+		return &GetHostRatingsResponse{Ratings: ratingResponses}, status.Error(codes.Aborted, err.Message)
+	}
+
+	return &GetHostRatingsResponse{Ratings: ratingResponses, AverageRate: float64(averageRate)}, nil
+
+}
