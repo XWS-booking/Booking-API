@@ -19,3 +19,16 @@ func ErrorFilteringRatings() *Error {
 func AccommodationRatingNotFound() *Error {
 	return &Error{Message: "Accommodation rating not found!"}
 }
+
+func UnsuccessfulHostRating() *Error {
+	return &Error{Message: "Unsuccessful host rating!!"}
+}
+
+func HostRatingNotFound() *Error {
+	return &Error{Message: "Host rating not found!"}
+}
+
+func ErrorWhenGettingRatings() *Error {
+	return &Error{Message: "Error while getting host ratings!"}
+
+}

@@ -234,6 +234,27 @@ func (reservationRepository *ReservationRepository) FindAllPendingByAccommodatio
 	return reservations, nil
 }
 
+func (reservationRepository *ReservationRepository) CheckIfGuestHasReservationInAccommodation(guestId primitive.ObjectID, accommodationId primitive.ObjectID) (bool, error) {
+	collection := reservationRepository.getCollection("reservations")
+	filter := bson.M{"accommodation_id": accommodationId, "status": Status(1), "buyer_id": guestId}
+	res, err := collection.Find(context.TODO(), filter)
+	var elem Reservation
+	if err != nil {
+		return false, err
+	}
+
+	for res.Next(context.TODO()) {
+		err := res.Decode(&elem)
+		if err != nil {
+			return false, err
+		}
+		if elem.EndDate.Before(time.Now()) {
+			return true, nil
+		}
+	}
+	return false, nil
+}
+
 func (reservationRepository *ReservationRepository) getCollection(key string) *mongo.Collection {
 	return reservationRepository.DB.Database(os.Getenv("DATABASE_NAME")).Collection(key)
 }

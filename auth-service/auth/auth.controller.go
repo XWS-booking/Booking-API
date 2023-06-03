@@ -169,3 +169,26 @@ func (authController *AuthController) ChangePassword(ctx context.Context, req *C
 	}
 	return &ChangePasswordResponse{}, nil
 }
+
+func (authController *AuthController) GetHostRatingWithGuestInfo(xtc Context, req *GetHostRatingWithGuestInfoRequest) (*GetHostRatingWithGuestInfoResponse, error) {
+	if req == nil {
+		return &GetHostRatingWithGuestInfoResponse{}, status.Error(codes.Aborted, "Something wrong with user data")
+	}
+	var ratingResponses []*UpdatedHostRatingItem
+	for _, rating := range req.Ratings {
+		user, err := authController.AuthService.FindById(shared.StringToObjectId(rating.GuestId))
+		if err != nil {
+			return &GetHostRatingWithGuestInfoResponse{}, status.Error(codes.Aborted, err.Message)
+		}
+		ratingResponses = append(ratingResponses, &UpdatedHostRatingItem{
+			Id:             rating.Id,
+			GuestId:        rating.GuestId,
+			GuestFirstName: user.Name,
+			GuestLastName:  user.Surname,
+			HostId:         rating.HostId,
+			Rating:         rating.Rating,
+			Time:           rating.Time,
+		})
+	}
+	return &GetHostRatingWithGuestInfoResponse{Ratings: ratingResponses}, nil
+}

@@ -21,4 +21,5 @@ type IReservationRepository interface {
 	FindNumberOfBuyersCancellations(id primitive.ObjectID) (int, error)
 	FindAllByAccommodationId(id primitive.ObjectID) ([]Reservation, error)
 	FindAllPendingByAccommodationId(id primitive.ObjectID) ([]Reservation, error)
+	CheckIfGuestHasReservationInAccommodation(guestId primitive.ObjectID, accommodationId primitive.ObjectID) (bool, error)
 }

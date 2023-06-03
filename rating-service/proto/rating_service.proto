@@ -10,6 +10,10 @@ service RatingService {
   rpc GetAllAccommodationRatings(GetAllAccommodationRatingsRequest) returns (GetAllAccommodationRatingsResponse) {}
   rpc GetAverageAccommodationRating(GetAverageAccommodationRatingRequest) returns (GetAverageAccommodationRatingResponse) {}
   rpc FindAccommodationRatingById(FindAccommodationRatingByIdRequest) returns (FindAccommodationRatingByIdResponse) {}
+  rpc RateHost(RateHostRequest) returns (RateHostResponse) {}
+  rpc UpdateHostRating(UpdateHostRatingRequest) returns (UpdateHostRatingResponse) {}
+  rpc DeleteHostRating(DeleteHostRatingRequest) returns (DeleteHostRatingResponse) {}
+  rpc GetHostRatings(GetHostRatingsRequest) returns (GetHostRatingsResponse) {}
 }
 
 message RateAccommodationRequest {
@@ -66,6 +70,51 @@ message FindAccommodationRatingByIdRequest {
 message FindAccommodationRatingByIdResponse {
   string Id = 1;
   string AccommodationId = 2;
+  int32 Rating = 3;
+  string GuestId = 4;
+  google.protobuf.Timestamp Time = 5;
+}
+
+message RateHostRequest {
+  string HostId = 1;
+  int32 Rating = 2;
+  string GuestId = 3;
+}
+
+message RateHostResponse {
+  string Id = 1;
+}
+
+message UpdateHostRatingRequest{
+  string Id = 1;
+  int32 Rating = 2;
+}
+
+message UpdateHostRatingResponse {
+  string Id = 4;
+  string HostId = 1;
+  int32 Rating = 2;
+  string GuestId = 3;
+}
+
+message DeleteHostRatingRequest {
+  string Id = 1;
+}
+
+message DeleteHostRatingResponse {}
+
+message GetHostRatingsRequest {
+  string HostId = 1;
+}
+
+message GetHostRatingsResponse {
+  repeated HostRatingItem ratings = 1;
+  double AverageRate = 2;
+}
+
+message HostRatingItem {
+  string Id = 1;
+  string HostId = 2;
   int32 Rating = 3;
   string GuestId = 4;
   google.protobuf.Timestamp Time = 5;

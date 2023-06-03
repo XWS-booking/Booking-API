@@ -78,3 +78,63 @@ func (reservationRepository *RatingRepository) FindAccommodationRatingById(id pr
 	}
 	return rating, nil
 }
+
+func (ratingRepository *RatingRepository) CreateHostRating(hostRating HostRating) (primitive.ObjectID, error) {
+	collection := ratingRepository.getCollection("host_ratings")
+	res, err := collection.InsertOne(context.TODO(), hostRating)
+	if err != nil {
+		return primitive.ObjectID{}, err
+	}
+	return res.InsertedID.(primitive.ObjectID), nil
+}
+
+func (ratingRepository *RatingRepository) FindHostRatingById(id primitive.ObjectID) (HostRating, error) {
+	collection := ratingRepository.getCollection("host_ratings")
+	var rating HostRating
+	filter := bson.M{"_id": id}
+	err := collection.FindOne(context.TODO(), filter).Decode(&rating)
+	if err != nil {
+		return HostRating{}, err
+	}
+	return rating, nil
+}
+
+func (ratingRepository *RatingRepository) UpdateHostRating(rating HostRating) (HostRating, error) {
+	collection := ratingRepository.getCollection("host_ratings")
+	filter := bson.M{"_id": rating.Id}
+	_, err := collection.UpdateOne(context.TODO(), filter, bson.M{"$set": rating})
+	if err != nil {
+		return HostRating{}, err
+	}
+	return rating, nil
+}
+
+func (ratingRepository *RatingRepository) DeleteHostRating(id primitive.ObjectID) error {
+	collection := ratingRepository.getCollection("host_ratings")
+	filter := bson.M{"_id": id}
+	_, err := collection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ratingRepository *RatingRepository) GetHostRatings(hostId primitive.ObjectID) ([]HostRating, error) {
+	collection := ratingRepository.getCollection("host_ratings")
+	var ratings []HostRating
+	filter := bson.M{"host_id": hostId}
+	cur, err := collection.Find(context.TODO(), filter)
+	if err != nil {
+		return ratings, err
+	}
+
+	for cur.Next(context.TODO()) {
+		var elem HostRating
+		err := cur.Decode(&elem)
+		if err != nil {
+			return ratings, err
+		}
+		ratings = append(ratings, elem)
+	}
+	return ratings, nil
+}

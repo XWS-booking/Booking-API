@@ -1,6 +1,7 @@
 package rating
 
 import (
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"math"
 	. "rating_service/rating/model"
@@ -74,4 +75,52 @@ func (ratingService *RatingService) FindAccommodationRatingById(id primitive.Obj
 		return rating, shared.AccommodationRatingNotFound()
 	}
 	return rating, nil
+}
+
+func (ratingService *RatingService) RateHost(hostRating HostRating) (primitive.ObjectID, *shared.Error) {
+	hostRating.Time = time.Now()
+	res, err := ratingService.RatingRepository.CreateHostRating(hostRating)
+	if err != nil {
+		return res, shared.UnsuccessfulHostRating()
+	}
+	return res, nil
+}
+
+func (ratingService *RatingService) UpdateHostRating(rating HostRating) (HostRating, *shared.Error) {
+	currentRating, err := ratingService.RatingRepository.FindHostRatingById(rating.Id)
+	if err != nil {
+		return HostRating{}, shared.HostRatingNotFound()
+	}
+	currentRating.Rating = rating.Rating
+	currentRating.Time = time.Now()
+	res, err2 := ratingService.RatingRepository.UpdateHostRating(currentRating)
+	if err2 != nil {
+		return HostRating{}, shared.RatingNotUpdated()
+	}
+	return res, nil
+}
+
+func (ratingService *RatingService) DeleteHostRating(id string) *shared.Error {
+	err := ratingService.RatingRepository.DeleteHostRating(shared.StringToObjectId(id))
+	if err != nil {
+		return shared.RatingNotDeleted()
+	}
+	return nil
+}
+
+func (ratingService *RatingService) GetHostRatings(id string) ([]HostRating, *shared.Error) {
+	ratings, err := ratingService.RatingRepository.GetHostRatings(shared.StringToObjectId(id))
+	if err != nil {
+		return []HostRating{}, shared.ErrorWhenGettingRatings()
+	}
+	return ratings, nil
+}
+
+func (ratingService *RatingService) CalculateHostAverageRate(ratings []HostRating) float32 {
+	var averageRate float32 = 0
+	for _, rating := range ratings {
+		averageRate += float32(rating.Rating)
+	}
+	fmt.Println(averageRate / float32(len(ratings)))
+	return averageRate / float32(len(ratings))
 }

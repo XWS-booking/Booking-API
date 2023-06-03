@@ -197,3 +197,15 @@ func (reservationController *ReservationController) UpdateReservationRating(ctx 
 	}
 	return &UpdateReservationRatingResponse{}, nil
 }
+
+func (reservationController *ReservationController) CheckIfGuestHasReservationInAccommodations(ctx Context, req *CheckIfGuestHasReservationInAccommodationsRequest) (*CheckIfGuestHasReservationInAccommodationsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+
+	res, e := reservationController.ReservationService.CheckIfGuestHasReservationInAccommodations(shared.StringToObjectId(req.GuestId), req.AccommodationIds)
+	if e != nil {
+		return &CheckIfGuestHasReservationInAccommodationsResponse{Res: false}, status.Error(codes.Internal, e.Message)
+	}
+	return &CheckIfGuestHasReservationInAccommodationsResponse{Res: res}, nil
+}
