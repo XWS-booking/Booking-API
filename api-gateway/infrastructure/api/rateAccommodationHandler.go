@@ -18,14 +18,18 @@ type RateAccommodationDto struct {
 }
 
 type RateAccommodationHandler struct {
-	ratingClientAddress      string
-	reservationClientAddress string
+	ratingClientAddress        string
+	reservationClientAddress   string
+	notificationClientAddress  string
+	accommodationClientAddress string
 }
 
-func NewRateAccommodationHandler(ratingClientAddress string, reservationClientAddress string) Handler {
+func NewRateAccommodationHandler(ratingClientAddress, reservationClientAddress, notificationClientAddress, accommodationClientAddress string) Handler {
 	return &RateAccommodationHandler{
-		ratingClientAddress:      ratingClientAddress,
-		reservationClientAddress: reservationClientAddress,
+		ratingClientAddress:        ratingClientAddress,
+		reservationClientAddress:   reservationClientAddress,
+		notificationClientAddress:  notificationClientAddress,
+		accommodationClientAddress: accommodationClientAddress,
 	}
 }
 
@@ -39,6 +43,8 @@ func (handler *RateAccommodationHandler) Init(mux *runtime.ServeMux) {
 func (handler *RateAccommodationHandler) RateAccommodation(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
 	ratingClient := services.NewRatingClient(handler.ratingClientAddress)
+	notificationClient := services.NewNotificationClient(handler.notificationClientAddress)
+	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
 	var body RateAccommodationDto
 	err := DecodeBody(r, &body)
 	if err != nil {
@@ -54,6 +60,16 @@ func (handler *RateAccommodationHandler) RateAccommodation(w http.ResponseWriter
 	_, err2 := reservationClient.UpdateReservationRating(context.TODO(), &gateway.UpdateReservationRatingRequest{Id: body.ReservationId, AccommodationRatingId: res.Id})
 	if err2 != nil {
 		shared.BadRequest(w, err2.Error())
+		return
+	}
+	accommodation, err := accommodationClient.FindById(context.TODO(), &gateway.FindAccommodationByIdRequest{Id: body.AccommodationId})
+	if err != nil {
+		shared.BadRequest(w, err.Error())
+		return
+	}
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.NotificationRequest{Recipient: accommodation.OwnerId, Message: "Someone rated your accommodation '" + accommodation.Name + "'"})
+	if err != nil {
+		shared.BadRequest(w, err.Error())
 		return
 	}
 	shared.Ok(&w, res)

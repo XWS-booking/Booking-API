@@ -91,6 +91,16 @@ service RatingService {
     rpc GetHostRatings(GetHostRatingsRequest) returns (GetHostRatingsResponse) {}
 }
 
+service NotificationService {
+    rpc SendNotification(NotificationRequest) returns (NotificationResponse) {
+        option (google.api.http) = {
+            post: "/api/notification",
+            body: "*"
+        };
+    }
+}
+
+
 //Requests
 message UpdatePricingRequest {
     string userId = 1;
@@ -566,4 +576,14 @@ message GetHostRatingWithGuestInfoRequest{
 message GetHostRatingWithGuestInfoResponse {
     repeated UpdatedHostRatingItem ratings = 1;
     double AverageRate = 2;
+}
+
+//NotificationService
+message NotificationRequest {
+    string recipient = 1;
+    string message = 2;
+}
+
+message NotificationResponse {
+    string status = 1;
 }

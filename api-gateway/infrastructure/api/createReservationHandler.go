@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"gateway/infrastructure/services"
-	. "gateway/middlewares"
-	. "gateway/model"
 	"gateway/proto/gateway"
 	"gateway/shared"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -29,18 +27,20 @@ type CreateReservationHandler struct {
 	reservationClientAddress   string
 	accommodationClientAddress string
 	authClientAddress          string
+	notificationClientAddress  string
 }
 
-func NewCreateReservationHandler(reservationClientAddress, authClientAddress, accommodationClientAddress string) Handler {
+func NewCreateReservationHandler(reservationClientAddress, authClientAddress, accommodationClientAddress, notificationClientAddress string) Handler {
 	return &CreateReservationHandler{
 		reservationClientAddress:   reservationClientAddress,
 		accommodationClientAddress: accommodationClientAddress,
 		authClientAddress:          authClientAddress,
+		notificationClientAddress:  notificationClientAddress,
 	}
 }
 
 func (handler *CreateReservationHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("POST", "/api/reservation", TokenValidationMiddleware(RolesMiddleware([]UserRole{0}, UserMiddleware(handler.Create))))
+	err := mux.HandlePath("POST", "/api/reservation", handler.Create)
 	if err != nil {
 		panic(err)
 	}
@@ -49,6 +49,7 @@ func (handler *CreateReservationHandler) Init(mux *runtime.ServeMux) {
 func (handler *CreateReservationHandler) Create(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
 	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
+	notificationClient := services.NewNotificationClient(handler.notificationClientAddress)
 
 	var body CreateReservationDto
 	err := DecodeBody(r, &body)
@@ -91,6 +92,11 @@ func (handler *CreateReservationHandler) Create(w http.ResponseWriter, r *http.R
 		if err != nil {
 			http.Error(w, "Failed to auto confirm!", http.StatusConflict)
 		}
+	}
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.NotificationRequest{Recipient: accommodation.OwnerId, Message: "You have a new reservation in accommodation '" + accommodation.Name + "'"})
+	if err != nil {
+		shared.BadRequest(w, err.Error())
+		return
 	}
 	shared.Ok(&w, res)
 }
