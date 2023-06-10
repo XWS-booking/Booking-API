@@ -46,7 +46,6 @@ func (controller *NotificationController) CreateNotificationPreferences(ctx cont
 	_ = controller.NotificationService.Create(NewNotification(req))
 
 	return &CreateNotificationPreferencesResponse{}, nil
-	return &CreateNotificationPreferencesResponse{}, nil
 }
 
 func (controller *NotificationController) FindById(ctx context.Context, req *FindNotificationPreferencesByIdRequest) (*FindNotificationPreferencesByIdResponse, error) {
@@ -66,4 +65,16 @@ func (controller *NotificationController) FindById(ctx context.Context, req *Fin
 		GuestRatedHost:                     notification.GuestRatedHost,
 		DistinguishedHost:                  notification.DistinguishedHost,
 		HostConfirmedOrRejectedReservation: notification.HostConfirmedOrRejectedReservation}, nil
+}
+
+func (controller *NotificationController) UpdateNotificationPreferences(ctx context.Context, req *CreateNotificationPreferencesRequest) (*CreateNotificationPreferencesResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+
+	err := controller.NotificationService.Update(NewNotification(req))
+	if err != nil {
+		return &CreateNotificationPreferencesResponse{}, status.Error(codes.Internal, err.Message)
+	}
+	return &CreateNotificationPreferencesResponse{}, nil
 }

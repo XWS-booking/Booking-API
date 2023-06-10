@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"gateway/infrastructure/services"
+	. "gateway/middlewares"
+	. "gateway/model"
 	"gateway/proto/gateway"
 	"gateway/shared"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -26,7 +28,7 @@ func NewUpdateAccommodationRatingHandler(ratingClientAddress string) Handler {
 }
 
 func (handler *UpdateAccommodationRatingHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("PATCH", "/api/rating/accommodation", handler.UpdateRating)
+	err := mux.HandlePath("PATCH", "/api/rating/accommodation", TokenValidationMiddleware(RolesMiddleware([]UserRole{0}, UserMiddleware(handler.UpdateRating))))
 	if err != nil {
 		panic(err)
 	}

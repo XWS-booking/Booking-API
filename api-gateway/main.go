@@ -124,6 +124,8 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	registerUserHandler.Init(gwmux)
 	findNotificationPreferencesByUserId := api.NewFindNotificationPreferencesByUserHandler(notificationEndpoint)
 	findNotificationPreferencesByUserId.Init(gwmux)
+	updateNotificationPreferencesHandler := api.NewUpdateNotificationPreferencesHandler(notificationEndpoint)
+	updateNotificationPreferencesHandler.Init(gwmux)
 }
 
 func initCors(gwmux *runtime.ServeMux) http.Handler {

@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"gateway/infrastructure/services"
+	. "gateway/middlewares"
+	. "gateway/model"
 	"gateway/proto/gateway"
 	"gateway/shared"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -34,7 +36,7 @@ func NewRateAccommodationHandler(ratingClientAddress, reservationClientAddress, 
 }
 
 func (handler *RateAccommodationHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("POST", "/api/rating/accommodation", handler.RateAccommodation)
+	err := mux.HandlePath("POST", "/api/rating/accommodation", TokenValidationMiddleware(RolesMiddleware([]UserRole{0}, UserMiddleware(handler.RateAccommodation))))
 	if err != nil {
 		panic(err)
 	}
