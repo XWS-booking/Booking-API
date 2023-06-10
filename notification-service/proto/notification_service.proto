@@ -3,15 +3,46 @@ syntax = "proto3";
 option go_package = "proto/notificationGrpc";
 
 service NotificationService {
-  rpc SendNotification(NotificationRequest) returns (NotificationResponse) {}
+  rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse) {}
+  rpc CreateNotificationPreferences(CreateNotificationPreferencesRequest) returns (CreateNotificationPreferencesResponse) {}
+  rpc UpdateNotificationPreferences(CreateNotificationPreferencesRequest) returns (CreateNotificationPreferencesResponse) {}
+  rpc FindById(FindNotificationPreferencesByIdRequest) returns (FindNotificationPreferencesByIdResponse) {}
 }
 
 
-message NotificationRequest {
+message SendNotificationRequest {
+  string notificationType = 3;
   string userId = 1;
   string message = 2;
 }
 
-message NotificationResponse {
-  string status = 1;
+message SendNotificationResponse {
 }
+
+message CreateNotificationPreferencesRequest {
+  string userId = 1;
+  bool guestCreatedReservationRequest = 2;
+  bool guestCanceledReservation = 3;
+  bool guestRatedHost = 4;
+  bool guestRatedAccommodation = 5;
+  bool distinguishedHost = 6;
+  bool hostConfirmedOrRejectedReservation = 7;
+}
+
+message CreateNotificationPreferencesResponse {
+}
+
+message FindNotificationPreferencesByIdRequest {
+  string userId = 1;
+}
+
+message FindNotificationPreferencesByIdResponse {
+  string userId = 1;
+  bool guestCreatedReservationRequest = 2;
+  bool guestCanceledReservation = 3;
+  bool guestRatedHost = 4;
+  bool guestRatedAccommodation = 5;
+  bool distinguishedHost = 6;
+  bool hostConfirmedOrRejectedReservation = 7;
+}
+

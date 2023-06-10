@@ -77,7 +77,7 @@ func (handler *RateHostHandler) RateHost(w http.ResponseWriter, r *http.Request,
 		http.Error(w, fmt.Sprintf("Unsuccessful host rating!", err.Error()), http.StatusBadRequest)
 		return
 	}
-	_, err = notificationClient.SendNotification(context.TODO(), &gateway.NotificationRequest{UserId: body.HostId, Message: "Someone rated you!"})
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "guest_rated_host", UserId: body.HostId, Message: "Someone rated you!"})
 	if err != nil {
 		shared.BadRequest(w, err.Error())
 		return

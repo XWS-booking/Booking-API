@@ -366,7 +366,7 @@ func local_request_RatingService_RateAccommodation_0(ctx context.Context, marsha
 }
 
 func request_NotificationService_SendNotification_0(ctx context.Context, marshaler runtime.Marshaler, client NotificationServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq NotificationRequest
+	var protoReq SendNotificationRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -383,7 +383,7 @@ func request_NotificationService_SendNotification_0(ctx context.Context, marshal
 }
 
 func local_request_NotificationService_SendNotification_0(ctx context.Context, marshaler runtime.Marshaler, server NotificationServiceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq NotificationRequest
+	var protoReq SendNotificationRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

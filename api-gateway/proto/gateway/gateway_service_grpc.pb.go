@@ -1674,14 +1674,20 @@ var RatingService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	NotificationService_SendNotification_FullMethodName = "/NotificationService/SendNotification"
+	NotificationService_SendNotification_FullMethodName              = "/NotificationService/SendNotification"
+	NotificationService_CreateNotificationPreferences_FullMethodName = "/NotificationService/CreateNotificationPreferences"
+	NotificationService_UpdateNotificationPreferences_FullMethodName = "/NotificationService/UpdateNotificationPreferences"
+	NotificationService_FindById_FullMethodName                      = "/NotificationService/FindById"
 )
 
 // NotificationServiceClient is the client API for NotificationService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NotificationServiceClient interface {
-	SendNotification(ctx context.Context, in *NotificationRequest, opts ...grpc.CallOption) (*NotificationResponse, error)
+	SendNotification(ctx context.Context, in *SendNotificationRequest, opts ...grpc.CallOption) (*SendNotificationResponse, error)
+	CreateNotificationPreferences(ctx context.Context, in *CreateNotificationPreferencesRequest, opts ...grpc.CallOption) (*CreateNotificationPreferencesResponse, error)
+	UpdateNotificationPreferences(ctx context.Context, in *CreateNotificationPreferencesRequest, opts ...grpc.CallOption) (*CreateNotificationPreferencesResponse, error)
+	FindById(ctx context.Context, in *FindNotificationPreferencesByIdRequest, opts ...grpc.CallOption) (*FindNotificationPreferencesByIdResponse, error)
 }
 
 type notificationServiceClient struct {
@@ -1692,9 +1698,36 @@ func NewNotificationServiceClient(cc grpc.ClientConnInterface) NotificationServi
 	return &notificationServiceClient{cc}
 }
 
-func (c *notificationServiceClient) SendNotification(ctx context.Context, in *NotificationRequest, opts ...grpc.CallOption) (*NotificationResponse, error) {
-	out := new(NotificationResponse)
+func (c *notificationServiceClient) SendNotification(ctx context.Context, in *SendNotificationRequest, opts ...grpc.CallOption) (*SendNotificationResponse, error) {
+	out := new(SendNotificationResponse)
 	err := c.cc.Invoke(ctx, NotificationService_SendNotification_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificationServiceClient) CreateNotificationPreferences(ctx context.Context, in *CreateNotificationPreferencesRequest, opts ...grpc.CallOption) (*CreateNotificationPreferencesResponse, error) {
+	out := new(CreateNotificationPreferencesResponse)
+	err := c.cc.Invoke(ctx, NotificationService_CreateNotificationPreferences_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificationServiceClient) UpdateNotificationPreferences(ctx context.Context, in *CreateNotificationPreferencesRequest, opts ...grpc.CallOption) (*CreateNotificationPreferencesResponse, error) {
+	out := new(CreateNotificationPreferencesResponse)
+	err := c.cc.Invoke(ctx, NotificationService_UpdateNotificationPreferences_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificationServiceClient) FindById(ctx context.Context, in *FindNotificationPreferencesByIdRequest, opts ...grpc.CallOption) (*FindNotificationPreferencesByIdResponse, error) {
+	out := new(FindNotificationPreferencesByIdResponse)
+	err := c.cc.Invoke(ctx, NotificationService_FindById_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1705,7 +1738,10 @@ func (c *notificationServiceClient) SendNotification(ctx context.Context, in *No
 // All implementations must embed UnimplementedNotificationServiceServer
 // for forward compatibility
 type NotificationServiceServer interface {
-	SendNotification(context.Context, *NotificationRequest) (*NotificationResponse, error)
+	SendNotification(context.Context, *SendNotificationRequest) (*SendNotificationResponse, error)
+	CreateNotificationPreferences(context.Context, *CreateNotificationPreferencesRequest) (*CreateNotificationPreferencesResponse, error)
+	UpdateNotificationPreferences(context.Context, *CreateNotificationPreferencesRequest) (*CreateNotificationPreferencesResponse, error)
+	FindById(context.Context, *FindNotificationPreferencesByIdRequest) (*FindNotificationPreferencesByIdResponse, error)
 	mustEmbedUnimplementedNotificationServiceServer()
 }
 
@@ -1713,8 +1749,17 @@ type NotificationServiceServer interface {
 type UnimplementedNotificationServiceServer struct {
 }
 
-func (UnimplementedNotificationServiceServer) SendNotification(context.Context, *NotificationRequest) (*NotificationResponse, error) {
+func (UnimplementedNotificationServiceServer) SendNotification(context.Context, *SendNotificationRequest) (*SendNotificationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendNotification not implemented")
+}
+func (UnimplementedNotificationServiceServer) CreateNotificationPreferences(context.Context, *CreateNotificationPreferencesRequest) (*CreateNotificationPreferencesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateNotificationPreferences not implemented")
+}
+func (UnimplementedNotificationServiceServer) UpdateNotificationPreferences(context.Context, *CreateNotificationPreferencesRequest) (*CreateNotificationPreferencesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateNotificationPreferences not implemented")
+}
+func (UnimplementedNotificationServiceServer) FindById(context.Context, *FindNotificationPreferencesByIdRequest) (*FindNotificationPreferencesByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindById not implemented")
 }
 func (UnimplementedNotificationServiceServer) mustEmbedUnimplementedNotificationServiceServer() {}
 
@@ -1730,7 +1775,7 @@ func RegisterNotificationServiceServer(s grpc.ServiceRegistrar, srv Notification
 }
 
 func _NotificationService_SendNotification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NotificationRequest)
+	in := new(SendNotificationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1742,7 +1787,61 @@ func _NotificationService_SendNotification_Handler(srv interface{}, ctx context.
 		FullMethod: NotificationService_SendNotification_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotificationServiceServer).SendNotification(ctx, req.(*NotificationRequest))
+		return srv.(NotificationServiceServer).SendNotification(ctx, req.(*SendNotificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificationService_CreateNotificationPreferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateNotificationPreferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServiceServer).CreateNotificationPreferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationService_CreateNotificationPreferences_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServiceServer).CreateNotificationPreferences(ctx, req.(*CreateNotificationPreferencesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificationService_UpdateNotificationPreferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateNotificationPreferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServiceServer).UpdateNotificationPreferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationService_UpdateNotificationPreferences_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServiceServer).UpdateNotificationPreferences(ctx, req.(*CreateNotificationPreferencesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificationService_FindById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindNotificationPreferencesByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServiceServer).FindById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationService_FindById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServiceServer).FindById(ctx, req.(*FindNotificationPreferencesByIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1757,6 +1856,18 @@ var NotificationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendNotification",
 			Handler:    _NotificationService_SendNotification_Handler,
+		},
+		{
+			MethodName: "CreateNotificationPreferences",
+			Handler:    _NotificationService_CreateNotificationPreferences_Handler,
+		},
+		{
+			MethodName: "UpdateNotificationPreferences",
+			Handler:    _NotificationService_UpdateNotificationPreferences_Handler,
+		},
+		{
+			MethodName: "FindById",
+			Handler:    _NotificationService_FindById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

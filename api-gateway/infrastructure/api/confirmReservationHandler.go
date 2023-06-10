@@ -48,7 +48,7 @@ func (handler *ConfirmReservationHandler) Confirm(w http.ResponseWriter, r *http
 		shared.BadRequest(w, "Error when confirming reservation!")
 		return
 	}
-	_, err = notificationClient.SendNotification(context.TODO(), &gateway.NotificationRequest{UserId: res.BuyerId, Message: "Host confirmed your reservation!"})
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "host_confirmed_or_rejected_reservation", UserId: res.BuyerId, Message: "Host confirmed your reservation!"})
 	if err != nil {
 		shared.BadRequest(w, err.Error())
 		return

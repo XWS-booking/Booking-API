@@ -48,7 +48,7 @@ func (handler *RejectReservationHandler) Reject(w http.ResponseWriter, r *http.R
 		shared.BadRequest(w, "Error when rejecting reservation!")
 		return
 	}
-	_, err = notificationClient.SendNotification(context.TODO(), &gateway.NotificationRequest{UserId: res.BuyerId, Message: "Host rejected your reservation!"})
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "host_confirmed_or_rejected_reservation", UserId: res.BuyerId, Message: "Host rejected your reservation!"})
 	if err != nil {
 		shared.BadRequest(w, err.Error())
 		return

@@ -4,19 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/go-redis/redis/v8"
-	"net/http"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	. "notification_service/proto/notification"
+	"notification_service/shared"
 )
 import "github.com/gorilla/websocket"
 
 var Client *redis.Client
-
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		// Allow all connections by default
-		return true
-	},
-}
 
 func NewNotificationController(notificationService *NotificationService) *NotificationController {
 	controller := &NotificationController{NotificationService: notificationService}
@@ -29,10 +24,46 @@ type NotificationController struct {
 	NotificationService *NotificationService
 }
 
-func (controller *NotificationController) SendNotification(ctx context.Context, notification *NotificationRequest) (*NotificationResponse, error) {
+func (controller *NotificationController) SendNotification(ctx context.Context, notification *SendNotificationRequest) (*SendNotificationResponse, error) {
 	data, err := json.Marshal(notification)
 	if err != nil {
-		return &NotificationResponse{}, err
+		return &SendNotificationResponse{}, err
 	}
-	return &NotificationResponse{Status: "ok"}, Client.Publish(context.Background(), "notification", data).Err()
+	if controller.NotificationService.CanSendNotification(notification.NotificationType, shared.StringToObjectId(notification.UserId)) {
+		_, err = Client.Publish(context.Background(), "notification", data).Result()
+		if err != nil {
+			return &SendNotificationResponse{}, err
+		}
+	}
+	return &SendNotificationResponse{}, nil
+}
+
+func (controller *NotificationController) CreateNotificationPreferences(ctx context.Context, req *CreateNotificationPreferencesRequest) (*CreateNotificationPreferencesResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+
+	_ = controller.NotificationService.Create(NewNotification(req))
+
+	return &CreateNotificationPreferencesResponse{}, nil
+	return &CreateNotificationPreferencesResponse{}, nil
+}
+
+func (controller *NotificationController) FindById(ctx context.Context, req *FindNotificationPreferencesByIdRequest) (*FindNotificationPreferencesByIdResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+
+	notification, err := controller.NotificationService.FindById(shared.StringToObjectId(req.UserId))
+	if err != nil {
+		return &FindNotificationPreferencesByIdResponse{}, status.Error(codes.Internal, err.Message)
+	}
+
+	return &FindNotificationPreferencesByIdResponse{UserId: notification.UserId.Hex(),
+		GuestCreatedReservationRequest:     notification.GuestCreatedReservationRequest,
+		GuestCanceledReservation:           notification.GuestCanceledReservation,
+		GuestRatedAccommodation:            notification.GuestRatedAccommodation,
+		GuestRatedHost:                     notification.GuestRatedHost,
+		DistinguishedHost:                  notification.DistinguishedHost,
+		HostConfirmedOrRejectedReservation: notification.HostConfirmedOrRejectedReservation}, nil
 }

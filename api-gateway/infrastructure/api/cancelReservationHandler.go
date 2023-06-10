@@ -60,7 +60,7 @@ func (handler *CancelReservationHandler) Cancel(w http.ResponseWriter, r *http.R
 		shared.BadRequest(w, err.Error())
 		return
 	}
-	_, err = notificationClient.SendNotification(context.TODO(), &gateway.NotificationRequest{UserId: accommodation.OwnerId, Message: "Someone canceled reservation in'" + accommodation.Name + "'"})
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "guest_canceled_reservation", UserId: accommodation.OwnerId, Message: "Someone canceled reservation in'" + accommodation.Name + "'"})
 	if err != nil {
 		shared.BadRequest(w, err.Error())
 		return
