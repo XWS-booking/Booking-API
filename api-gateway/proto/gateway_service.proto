@@ -56,9 +56,9 @@ service AccomodationService {
 service ReservationService {
     rpc Delete(ReservationId) returns (DeleteReservationResponse){}
     rpc Create(CreateReservationRequest) returns (ReservationId) {}
-    rpc Confirm(ReservationId) returns (ConfirmReservationResponse) {}
-    rpc Reject(ReservationId) returns (RejectReservationResponse) {}
-    rpc CancelReservation(CancelReservationRequest) returns (CancelReservationResponse) {}
+    rpc Confirm(ReservationId) returns (ReservationResponse) {}
+    rpc Reject(ReservationId) returns (ReservationResponse) {}
+    rpc CancelReservation(CancelReservationRequest) returns (ReservationResponse) {}
     rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse){}
     rpc CheckActiveReservationsForGuest(CheckActiveReservationsForGuestRequest) returns (CheckActiveReservationsForGuestResponse) {}
     rpc CheckActiveReservationsForAccommodations(CheckActiveReservationsForAccommodationsRequest) returns (CheckActiveReservationsForAccommodationsResponse) {}
@@ -580,7 +580,7 @@ message GetHostRatingWithGuestInfoResponse {
 
 //NotificationService
 message NotificationRequest {
-    string recipient = 1;
+    string userId = 1;
     string message = 2;
 }
 

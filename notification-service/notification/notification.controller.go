@@ -2,12 +2,14 @@ package notification
 
 import (
 	"context"
+	"encoding/json"
+	"github.com/go-redis/redis/v8"
 	"net/http"
 	. "notification_service/proto/notification"
 )
 import "github.com/gorilla/websocket"
 
-var Client *websocket.Conn = &websocket.Conn{}
+var Client *redis.Client
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -28,10 +30,9 @@ type NotificationController struct {
 }
 
 func (controller *NotificationController) SendNotification(ctx context.Context, notification *NotificationRequest) (*NotificationResponse, error) {
-	err := Client.WriteJSON(notification)
+	data, err := json.Marshal(notification)
 	if err != nil {
-		return &NotificationResponse{Status: "lose"}, err
+		return &NotificationResponse{}, err
 	}
-
-	return &NotificationResponse{Status: "ok"}, nil
+	return &NotificationResponse{Status: "ok"}, Client.Publish(context.Background(), "notification", data).Err()
 }

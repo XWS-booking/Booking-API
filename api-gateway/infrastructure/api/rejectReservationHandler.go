@@ -17,12 +17,14 @@ type RejectReservationDto struct {
 }
 
 type RejectReservationHandler struct {
-	reservationClientAddress string
+	reservationClientAddress  string
+	notificationClientAddress string
 }
 
-func NewRejectReservationHandler(reservationClientAddress string) Handler {
+func NewRejectReservationHandler(reservationClientAddress, notificationClientAddress string) Handler {
 	return &RejectReservationHandler{
-		reservationClientAddress: reservationClientAddress,
+		reservationClientAddress:  reservationClientAddress,
+		notificationClientAddress: notificationClientAddress,
 	}
 }
 
@@ -35,6 +37,7 @@ func (handler *RejectReservationHandler) Init(mux *runtime.ServeMux) {
 
 func (handler *RejectReservationHandler) Reject(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
+	notificationClient := services.NewNotificationClient(handler.notificationClientAddress)
 	id, e := pathParams["id"]
 	if !e {
 		shared.BadRequest(w, "Error with data!")
@@ -43,6 +46,11 @@ func (handler *RejectReservationHandler) Reject(w http.ResponseWriter, r *http.R
 	res, err := reservationClient.Reject(context.TODO(), &gateway.ReservationId{Id: id})
 	if err != nil {
 		shared.BadRequest(w, "Error when rejecting reservation!")
+		return
+	}
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.NotificationRequest{UserId: res.BuyerId, Message: "Host rejected your reservation!"})
+	if err != nil {
+		shared.BadRequest(w, err.Error())
 		return
 	}
 	shared.Ok(&w, res)

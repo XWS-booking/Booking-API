@@ -8,7 +8,7 @@ service NotificationService {
 
 
 message NotificationRequest {
-  string recipient = 1;
+  string userId = 1;
   string message = 2;
 }
 

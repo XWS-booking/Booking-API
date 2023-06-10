@@ -93,7 +93,7 @@ func (handler *CreateReservationHandler) Create(w http.ResponseWriter, r *http.R
 			http.Error(w, "Failed to auto confirm!", http.StatusConflict)
 		}
 	}
-	_, err = notificationClient.SendNotification(context.TODO(), &gateway.NotificationRequest{Recipient: accommodation.OwnerId, Message: "You have a new reservation in accommodation '" + accommodation.Name + "'"})
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.NotificationRequest{UserId: accommodation.OwnerId, Message: "You have a new reservation in accommodation '" + accommodation.Name + "'"})
 	if err != nil {
 		shared.BadRequest(w, err.Error())
 		return

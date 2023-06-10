@@ -75,37 +75,37 @@ func (reservationService *ReservationService) CheckActiveReservationsForAccommod
 	return false, nil
 }
 
-func (reservationService *ReservationService) CancelReservation(reservationId primitive.ObjectID) *shared.Error {
+func (reservationService *ReservationService) CancelReservation(reservationId primitive.ObjectID) (Reservation, *shared.Error) {
 	reservation, err := reservationService.ReservationRepository.FindById(reservationId)
 	if err != nil {
-		return shared.ReservationCancelationFailed()
+		return reservation, shared.ReservationCancelationFailed()
 	}
 	e := reservation.Cancel()
 	if e != nil {
-		return e
+		return reservation, e
 	}
 	reservationService.ReservationRepository.UpdateReservation(reservation)
-	return nil
+	return reservation, nil
 }
 
-func (reservationService *ReservationService) ConfirmReservation(id primitive.ObjectID) *shared.Error {
+func (reservationService *ReservationService) ConfirmReservation(id primitive.ObjectID) (Reservation, *shared.Error) {
 	reservation, err := reservationService.ReservationRepository.FindById(id)
 	if err != nil {
-		return shared.ReservationConfirmationFailed()
+		return reservation, shared.ReservationConfirmationFailed()
 	}
 	e := reservation.Confirm()
 	if e != nil {
-		return e
+		return reservation, e
 	}
 	err = reservationService.ReservationRepository.UpdateReservation(reservation)
 	if err != nil {
-		return shared.ReservationUpdateFailed()
+		return reservation, shared.ReservationUpdateFailed()
 	}
 	e = reservationService.CancelOverlappingReservations(reservation)
 	if e != nil {
-		return e
+		return reservation, e
 	}
-	return nil
+	return reservation, nil
 }
 
 func (reservationService *ReservationService) CancelOverlappingReservations(reservation Reservation) *shared.Error {
@@ -122,17 +122,17 @@ func (reservationService *ReservationService) CancelOverlappingReservations(rese
 	return nil
 }
 
-func (reservationService *ReservationService) RejectReservation(id primitive.ObjectID) *shared.Error {
+func (reservationService *ReservationService) RejectReservation(id primitive.ObjectID) (Reservation, *shared.Error) {
 	reservation, err := reservationService.ReservationRepository.FindById(id)
 	if err != nil {
-		return shared.ReservationRejectionFailed()
+		return reservation, shared.ReservationRejectionFailed()
 	}
 	e := reservation.Reject()
 	if e != nil {
-		return e
+		return reservation, e
 	}
 	reservationService.ReservationRepository.UpdateReservation(reservation)
-	return nil
+	return reservation, nil
 }
 
 func (reservationService *ReservationService) IsAccommodationAvailable(id primitive.ObjectID, startDate time.Time, endDate time.Time) (bool, *shared.Error) {

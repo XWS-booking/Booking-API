@@ -22,13 +22,15 @@ type RateHostHandler struct {
 	ratingClientAddress        string
 	reservationClientAddress   string
 	accommodationClientAddress string
+	notificationClientAddress  string
 }
 
-func NewRateHostHandler(ratingClientAddress string, reservationClientAddress string, accommodationClientAddress string) Handler {
+func NewRateHostHandler(ratingClientAddress string, reservationClientAddress string, accommodationClientAddress string, notificationClientAddress string) Handler {
 	return &RateHostHandler{
 		ratingClientAddress:        ratingClientAddress,
 		reservationClientAddress:   reservationClientAddress,
 		accommodationClientAddress: accommodationClientAddress,
+		notificationClientAddress:  notificationClientAddress,
 	}
 }
 
@@ -43,6 +45,7 @@ func (handler *RateHostHandler) RateHost(w http.ResponseWriter, r *http.Request,
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
 	ratingClient := services.NewRatingClient(handler.ratingClientAddress)
 	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
+	notificationClient := services.NewNotificationClient(handler.notificationClientAddress)
 	var body RateHostDto
 	err := DecodeBody(r, &body)
 	if err != nil {
@@ -74,6 +77,10 @@ func (handler *RateHostHandler) RateHost(w http.ResponseWriter, r *http.Request,
 		http.Error(w, fmt.Sprintf("Unsuccessful host rating!", err.Error()), http.StatusBadRequest)
 		return
 	}
-
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.NotificationRequest{UserId: body.HostId, Message: "Someone rated you!"})
+	if err != nil {
+		shared.BadRequest(w, err.Error())
+		return
+	}
 	shared.Ok(&w, res3)
 }

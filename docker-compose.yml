@@ -78,9 +78,6 @@ services:
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
     networks:
       - network
-    ports:
-      - "8080:8080"
-      - "9000:9000"
 
   api_gateway:
     image: api_gateway
@@ -104,6 +101,15 @@ services:
       - network
     ports:
       - "8085:8085"
+  nodejs_server:
+    build:
+      context: ./socket-io-server2/
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - network
 
 networks:
   network:

@@ -702,9 +702,9 @@ const (
 type ReservationServiceClient interface {
 	Delete(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*DeleteReservationResponse, error)
 	Create(ctx context.Context, in *CreateReservationRequest, opts ...grpc.CallOption) (*ReservationId, error)
-	Confirm(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*ConfirmReservationResponse, error)
-	Reject(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*RejectReservationResponse, error)
-	CancelReservation(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*CancelReservationResponse, error)
+	Confirm(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*ReservationResponse, error)
+	Reject(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*ReservationResponse, error)
+	CancelReservation(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*ReservationResponse, error)
 	FindAllReservedAccommodations(ctx context.Context, in *FindAllReservedAccommodationsRequest, opts ...grpc.CallOption) (*FindAllReservedAccommodationsResponse, error)
 	CheckActiveReservationsForGuest(ctx context.Context, in *CheckActiveReservationsForGuestRequest, opts ...grpc.CallOption) (*CheckActiveReservationsForGuestResponse, error)
 	CheckActiveReservationsForAccommodations(ctx context.Context, in *CheckActiveReservationsForAccommodationsRequest, opts ...grpc.CallOption) (*CheckActiveReservationsForAccommodationsResponse, error)
@@ -742,8 +742,8 @@ func (c *reservationServiceClient) Create(ctx context.Context, in *CreateReserva
 	return out, nil
 }
 
-func (c *reservationServiceClient) Confirm(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*ConfirmReservationResponse, error) {
-	out := new(ConfirmReservationResponse)
+func (c *reservationServiceClient) Confirm(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*ReservationResponse, error) {
+	out := new(ReservationResponse)
 	err := c.cc.Invoke(ctx, ReservationService_Confirm_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -751,8 +751,8 @@ func (c *reservationServiceClient) Confirm(ctx context.Context, in *ReservationI
 	return out, nil
 }
 
-func (c *reservationServiceClient) Reject(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*RejectReservationResponse, error) {
-	out := new(RejectReservationResponse)
+func (c *reservationServiceClient) Reject(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*ReservationResponse, error) {
+	out := new(ReservationResponse)
 	err := c.cc.Invoke(ctx, ReservationService_Reject_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -760,8 +760,8 @@ func (c *reservationServiceClient) Reject(ctx context.Context, in *ReservationId
 	return out, nil
 }
 
-func (c *reservationServiceClient) CancelReservation(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*CancelReservationResponse, error) {
-	out := new(CancelReservationResponse)
+func (c *reservationServiceClient) CancelReservation(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*ReservationResponse, error) {
+	out := new(ReservationResponse)
 	err := c.cc.Invoke(ctx, ReservationService_CancelReservation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -856,9 +856,9 @@ func (c *reservationServiceClient) CheckIfGuestHasReservationInAccommodations(ct
 type ReservationServiceServer interface {
 	Delete(context.Context, *ReservationId) (*DeleteReservationResponse, error)
 	Create(context.Context, *CreateReservationRequest) (*ReservationId, error)
-	Confirm(context.Context, *ReservationId) (*ConfirmReservationResponse, error)
-	Reject(context.Context, *ReservationId) (*RejectReservationResponse, error)
-	CancelReservation(context.Context, *CancelReservationRequest) (*CancelReservationResponse, error)
+	Confirm(context.Context, *ReservationId) (*ReservationResponse, error)
+	Reject(context.Context, *ReservationId) (*ReservationResponse, error)
+	CancelReservation(context.Context, *CancelReservationRequest) (*ReservationResponse, error)
 	FindAllReservedAccommodations(context.Context, *FindAllReservedAccommodationsRequest) (*FindAllReservedAccommodationsResponse, error)
 	CheckActiveReservationsForGuest(context.Context, *CheckActiveReservationsForGuestRequest) (*CheckActiveReservationsForGuestResponse, error)
 	CheckActiveReservationsForAccommodations(context.Context, *CheckActiveReservationsForAccommodationsRequest) (*CheckActiveReservationsForAccommodationsResponse, error)
@@ -881,13 +881,13 @@ func (UnimplementedReservationServiceServer) Delete(context.Context, *Reservatio
 func (UnimplementedReservationServiceServer) Create(context.Context, *CreateReservationRequest) (*ReservationId, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedReservationServiceServer) Confirm(context.Context, *ReservationId) (*ConfirmReservationResponse, error) {
+func (UnimplementedReservationServiceServer) Confirm(context.Context, *ReservationId) (*ReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Confirm not implemented")
 }
-func (UnimplementedReservationServiceServer) Reject(context.Context, *ReservationId) (*RejectReservationResponse, error) {
+func (UnimplementedReservationServiceServer) Reject(context.Context, *ReservationId) (*ReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Reject not implemented")
 }
-func (UnimplementedReservationServiceServer) CancelReservation(context.Context, *CancelReservationRequest) (*CancelReservationResponse, error) {
+func (UnimplementedReservationServiceServer) CancelReservation(context.Context, *CancelReservationRequest) (*ReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelReservation not implemented")
 }
 func (UnimplementedReservationServiceServer) FindAllReservedAccommodations(context.Context, *FindAllReservedAccommodationsRequest) (*FindAllReservedAccommodationsResponse, error) {

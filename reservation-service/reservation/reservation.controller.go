@@ -47,7 +47,7 @@ func (reservationController *ReservationController) Delete(ctx Context, req *Res
 	return &DeleteReservationResponse{Message: "success"}, nil
 }
 
-func (reservationController *ReservationController) Confirm(ctx Context, req *ReservationId) (*ConfirmReservationResponse, error) {
+func (reservationController *ReservationController) Confirm(ctx Context, req *ReservationId) (*ReservationResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -55,14 +55,14 @@ func (reservationController *ReservationController) Confirm(ctx Context, req *Re
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	e := reservationController.ReservationService.ConfirmReservation(reservationId)
+	reservation, e := reservationController.ReservationService.ConfirmReservation(reservationId)
 	if e != nil {
 		return nil, status.Error(codes.Internal, e.Message)
 	}
-	return &ConfirmReservationResponse{}, nil
+	return NewReservationResponse(reservation), nil
 }
 
-func (reservationController *ReservationController) Reject(ctx Context, req *ReservationId) (*RejectReservationResponse, error) {
+func (reservationController *ReservationController) Reject(ctx Context, req *ReservationId) (*ReservationResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -70,11 +70,11 @@ func (reservationController *ReservationController) Reject(ctx Context, req *Res
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	e := reservationController.ReservationService.RejectReservation(reservationId)
+	reservation, e := reservationController.ReservationService.RejectReservation(reservationId)
 	if e != nil {
 		return nil, status.Error(codes.Internal, e.Message)
 	}
-	return &RejectReservationResponse{}, nil
+	return NewReservationResponse(reservation), nil
 }
 
 func (reservationController *ReservationController) FindAllReservedAccommodations(ctx Context, req *FindAllReservedAccommodationsRequest) (*FindAllReservedAccommodationsResponse, error) {
@@ -120,15 +120,15 @@ func (reservationController *ReservationController) CheckActiveReservationsForAc
 	}, nil
 }
 
-func (reservationController *ReservationController) CancelReservation(ctx Context, req *CancelReservationRequest) (*CancelReservationResponse, error) {
+func (reservationController *ReservationController) CancelReservation(ctx Context, req *CancelReservationRequest) (*ReservationResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
-	e := reservationController.ReservationService.CancelReservation(shared.StringToObjectId(req.ReservationId))
+	reservation, e := reservationController.ReservationService.CancelReservation(shared.StringToObjectId(req.ReservationId))
 	if e != nil {
-		return &CancelReservationResponse{}, status.Error(codes.Aborted, e.Message)
+		return &ReservationResponse{}, status.Error(codes.Aborted, e.Message)
 	}
-	return &CancelReservationResponse{}, nil
+	return NewReservationResponse(reservation), nil
 }
 
 func (reservationController *ReservationController) IsAccommodationAvailable(ctx Context, req *IsAccommodationAvailableRequest) (*IsAccommodationAvailableResponse, error) {

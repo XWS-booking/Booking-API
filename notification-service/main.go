@@ -1,8 +1,9 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"github.com/gorilla/websocket"
+	"github.com/go-redis/redis/v8"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	"github.com/sirupsen/logrus"
 	_ "github.com/supabase-community/storage-go"
@@ -10,7 +11,6 @@ import (
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
-	"net/http"
 	. "notification_service/database"
 	. "notification_service/notification"
 	notificationGrpc "notification_service/proto/notification"
@@ -19,48 +19,16 @@ import (
 	"syscall"
 )
 
-var notificationController NotificationController
+func main() {
+	startRedisConnection()
+	go runGRPCServer()
+	fmt.Println("Server started")
 
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		// Allow all connections
-		return true
-	},
-}
+	stopCh := make(chan os.Signal, 1)
+	signal.Notify(stopCh, syscall.SIGINT, syscall.SIGTERM)
+	<-stopCh
 
-func handleWebSocket(w http.ResponseWriter, r *http.Request) {
-	var err error
-	Client, err = upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("Failed to upgrade to WebSocket:", err)
-		return
-	}
-	defer Client.Close()
-
-	// Handle WebSocket messages
-	for {
-		// Read message from the client
-		_, message, err := Client.ReadMessage()
-		if err != nil {
-			log.Println("Failed to read message:", err)
-			break
-		}
-		log.Printf("Received message: %s\n", message)
-		// Send response back to the client
-		err = Client.WriteMessage(websocket.TextMessage, []byte("Server received your message"))
-		if err != nil {
-			log.Println("Failed to send response:", err)
-			break
-		}
-	}
-}
-
-func runWebSocketServer() {
-	http.HandleFunc("/ws", handleWebSocket)
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
-		log.Fatal("WebSocket server error: ", err)
-	}
+	fmt.Println("Server stopped")
 }
 
 func runGRPCServer() {
@@ -96,18 +64,20 @@ func runGRPCServer() {
 	}
 }
 
-func main() {
-	go runWebSocketServer()
-	go runGRPCServer()
-
-	fmt.Println("Server started")
-
-	stopCh := make(chan os.Signal)
-	signal.Notify(stopCh, syscall.SIGTERM)
-
-	<-stopCh
-
-	fmt.Println("Server stopped")
+func startRedisConnection() {
+	options, err := redis.ParseURL("redis://default:f8KuO1PmiIpo4XS5tKUxZ7DbW2YO4JoP@redis-16014.c300.eu-central-1-1.ec2.cloud.redislabs.com:16014")
+	if err != nil {
+		log.Fatal("Failed to parse REDIS_URL:", err)
+	}
+	//Client = redis.NewClient(&redis.Options{
+	//	Addr: "host.docker.internal:6379",
+	//})
+	Client = redis.NewClient(options)
+	pong, err := Client.Ping(context.Background()).Result()
+	if err != nil {
+		log.Fatal("Failed to connect to Redis:", err)
+	}
+	fmt.Println("Connected to Redis:", pong)
 }
 
 func CreateServerLogger() grpc.UnaryServerInterceptor {
