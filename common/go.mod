@@ -1,4 +1,4 @@
-module github.com/XWS-booking/Booking-API/common
+module github.com/XWS-booking/Booking-API/tree/feature/saga-rate-host/common
 
 go 1.20
 

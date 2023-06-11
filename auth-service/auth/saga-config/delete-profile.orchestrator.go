@@ -1,8 +1,8 @@
 package saga_config
 
 import (
-	messaging "github.com/XWS-booking/Booking-API/common/messaging"
-	events "github.com/XWS-booking/Booking-API/common/rate_host"
+	messaging "github.com/XWS-booking/Booking-API/tree/feature/saga-rate-host/common/messaging"
+	events "github.com/XWS-booking/Booking-API/tree/feature/saga-rate-host/common/rate_host"
 )
 
 type DeleteHostOrchestrator struct {
