@@ -39,6 +39,14 @@ func NewRatingClient(address string) RatingServiceClient {
 	return NewRatingServiceClient(conn)
 }
 
+func NewNotificationClient(address string) NotificationServiceClient {
+	conn, err := getConnection(address)
+	if err != nil {
+		log.Fatalf("Failed to start gRPC connection to Rating service: %v", err)
+	}
+	return NewNotificationServiceClient(conn)
+}
+
 func getConnection(address string) (*grpc.ClientConn, error) {
 	return grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 }

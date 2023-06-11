@@ -56,9 +56,9 @@ service AccomodationService {
 service ReservationService {
     rpc Delete(ReservationId) returns (DeleteReservationResponse){}
     rpc Create(CreateReservationRequest) returns (ReservationId) {}
-    rpc Confirm(ReservationId) returns (ConfirmReservationResponse) {}
-    rpc Reject(ReservationId) returns (RejectReservationResponse) {}
-    rpc CancelReservation(CancelReservationRequest) returns (CancelReservationResponse) {}
+    rpc Confirm(ReservationId) returns (ReservationResponse) {}
+    rpc Reject(ReservationId) returns (ReservationResponse) {}
+    rpc CancelReservation(CancelReservationRequest) returns (ReservationResponse) {}
     rpc FindAllReservedAccommodations(FindAllReservedAccommodationsRequest) returns (FindAllReservedAccommodationsResponse){}
     rpc CheckActiveReservationsForGuest(CheckActiveReservationsForGuestRequest) returns (CheckActiveReservationsForGuestResponse) {}
     rpc CheckActiveReservationsForAccommodations(CheckActiveReservationsForAccommodationsRequest) returns (CheckActiveReservationsForAccommodationsResponse) {}
@@ -90,6 +90,19 @@ service RatingService {
     rpc DeleteHostRating(DeleteHostRatingRequest) returns (DeleteHostRatingResponse) {}
     rpc GetHostRatings(GetHostRatingsRequest) returns (GetHostRatingsResponse) {}
 }
+
+service NotificationService {
+    rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse) {
+        option (google.api.http) = {
+            post: "/api/notification",
+            body: "*"
+        };
+    }
+    rpc CreateNotificationPreferences(CreateNotificationPreferencesRequest) returns (CreateNotificationPreferencesResponse) {}
+    rpc UpdateNotificationPreferences(CreateNotificationPreferencesRequest) returns (CreateNotificationPreferencesResponse) {}
+    rpc FindById(FindNotificationPreferencesByIdRequest) returns (FindNotificationPreferencesByIdResponse) {}
+}
+
 
 //Requests
 message UpdatePricingRequest {
@@ -566,4 +579,41 @@ message GetHostRatingWithGuestInfoRequest{
 message GetHostRatingWithGuestInfoResponse {
     repeated UpdatedHostRatingItem ratings = 1;
     double AverageRate = 2;
+}
+
+//NotificationService
+message SendNotificationRequest {
+    string notificationType = 3;
+    string userId = 1;
+    string message = 2;
+}
+
+message SendNotificationResponse {
+}
+
+message CreateNotificationPreferencesRequest {
+    string userId = 1;
+    bool guestCreatedReservationRequest = 2;
+    bool guestCanceledReservation = 3;
+    bool guestRatedHost = 4;
+    bool guestRatedAccommodation = 5;
+    bool distinguishedHost = 6;
+    bool hostConfirmedOrRejectedReservation = 7;
+}
+
+message CreateNotificationPreferencesResponse {
+}
+
+message FindNotificationPreferencesByIdRequest {
+    string userId = 1;
+}
+
+message FindNotificationPreferencesByIdResponse {
+    string userId = 1;
+    bool guestCreatedReservationRequest = 2;
+    bool guestCanceledReservation = 3;
+    bool guestRatedHost = 4;
+    bool guestRatedAccommodation = 5;
+    bool distinguishedHost = 6;
+    bool hostConfirmedOrRejectedReservation = 7;
 }

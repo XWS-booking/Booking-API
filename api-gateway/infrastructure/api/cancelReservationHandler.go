@@ -19,14 +19,16 @@ type CancelReservationDto struct {
 }
 
 type CancelReservationHandler struct {
-	reservationClientAddress string
-	authClientAddress        string
+	reservationClientAddress   string
+	accommodationClientAddress string
+	notificationClientAddress  string
 }
 
-func NewCancelReservationHandler(reservationClientAddress, authClientAddress string) Handler {
+func NewCancelReservationHandler(reservationClientAddress, accommodationClientAddress, notificationClientAddress string) Handler {
 	return &CancelReservationHandler{
-		reservationClientAddress: reservationClientAddress,
-		authClientAddress:        authClientAddress,
+		reservationClientAddress:   reservationClientAddress,
+		accommodationClientAddress: accommodationClientAddress,
+		notificationClientAddress:  notificationClientAddress,
 	}
 }
 
@@ -39,6 +41,8 @@ func (handler *CancelReservationHandler) Init(mux *runtime.ServeMux) {
 
 func (handler *CancelReservationHandler) Cancel(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
+	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
+	notificationClient := services.NewNotificationClient(handler.notificationClientAddress)
 	var body CancelReservationDto
 	err := DecodeBody(r, &body)
 	if err != nil {
@@ -48,6 +52,17 @@ func (handler *CancelReservationHandler) Cancel(w http.ResponseWriter, r *http.R
 	res, err := reservationClient.CancelReservation(context.TODO(), &gateway.CancelReservationRequest{Token: "", ReservationId: body.ReservationId.Hex()})
 	if err != nil {
 		shared.BadRequest(w, "Error when canceling reservation!")
+		return
+	}
+
+	accommodation, err := accommodationClient.FindById(context.TODO(), &gateway.FindAccommodationByIdRequest{Id: res.AccommodationId})
+	if err != nil {
+		shared.BadRequest(w, err.Error())
+		return
+	}
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "guest_canceled_reservation", UserId: accommodation.OwnerId, Message: "Someone canceled reservation in'" + accommodation.Name + "'"})
+	if err != nil {
+		shared.BadRequest(w, err.Error())
 		return
 	}
 	shared.Ok(&w, res)

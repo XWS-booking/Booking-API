@@ -17,12 +17,14 @@ type ConfirmReservationDto struct {
 }
 
 type ConfirmReservationHandler struct {
-	reservationClientAddress string
+	reservationClientAddress  string
+	notificationClientAddress string
 }
 
-func NewConfirmReservationHandler(reservationClientAddress string) Handler {
+func NewConfirmReservationHandler(reservationClientAddress, notificationClientAddress string) Handler {
 	return &ConfirmReservationHandler{
-		reservationClientAddress: reservationClientAddress,
+		reservationClientAddress:  reservationClientAddress,
+		notificationClientAddress: notificationClientAddress,
 	}
 }
 
@@ -35,6 +37,7 @@ func (handler *ConfirmReservationHandler) Init(mux *runtime.ServeMux) {
 
 func (handler *ConfirmReservationHandler) Confirm(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
+	notificationClient := services.NewNotificationClient(handler.notificationClientAddress)
 	id, e := pathParams["id"]
 	if !e {
 		shared.BadRequest(w, "Error with data!")
@@ -43,6 +46,11 @@ func (handler *ConfirmReservationHandler) Confirm(w http.ResponseWriter, r *http
 	res, err := reservationClient.Confirm(context.TODO(), &gateway.ReservationId{Id: id})
 	if err != nil {
 		shared.BadRequest(w, "Error when confirming reservation!")
+		return
+	}
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "host_confirmed_or_rejected_reservation", UserId: res.BuyerId, Message: "Host confirmed your reservation!"})
+	if err != nil {
+		shared.BadRequest(w, err.Error())
 		return
 	}
 	shared.Ok(&w, res)

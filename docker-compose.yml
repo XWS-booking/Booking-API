@@ -63,6 +63,21 @@ services:
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
     networks:
       - network
+  notification_service:
+    image: notification_service
+    container_name: notification_service
+    hostname: notification_service
+    build:
+      context: ./notification-service/
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      PORT: 9000
+      DATABASE_NAME: BOOKING_NOTIFICATION
+      JWT_SECRET: secret
+      DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+    networks:
+      - network
 
   api_gateway:
     image: api_gateway
@@ -77,6 +92,7 @@ services:
       ACCOMODATION_SERVICE_ADDRESS: accomodation_service:9000
       RESERVATION_SERVICE_ADDRESS: reservation_service:9000
       RATING_SERVICE_ADDRESS: rating_service:9000
+      NOTIFICATION_SERVICE_ADDRESS: notification_service:9000
       JWT_SECRET: secret
       GATEWAY_ADDRESS: 8085
     depends_on:
@@ -85,6 +101,15 @@ services:
       - network
     ports:
       - "8085:8085"
+  nodejs_server:
+    build:
+      context: ./socket-io-server2/
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - network
 
 networks:
   network:

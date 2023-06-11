@@ -702,9 +702,9 @@ const (
 type ReservationServiceClient interface {
 	Delete(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*DeleteReservationResponse, error)
 	Create(ctx context.Context, in *CreateReservationRequest, opts ...grpc.CallOption) (*ReservationId, error)
-	Confirm(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*ConfirmReservationResponse, error)
-	Reject(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*RejectReservationResponse, error)
-	CancelReservation(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*CancelReservationResponse, error)
+	Confirm(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*ReservationResponse, error)
+	Reject(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*ReservationResponse, error)
+	CancelReservation(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*ReservationResponse, error)
 	FindAllReservedAccommodations(ctx context.Context, in *FindAllReservedAccommodationsRequest, opts ...grpc.CallOption) (*FindAllReservedAccommodationsResponse, error)
 	CheckActiveReservationsForGuest(ctx context.Context, in *CheckActiveReservationsForGuestRequest, opts ...grpc.CallOption) (*CheckActiveReservationsForGuestResponse, error)
 	CheckActiveReservationsForAccommodations(ctx context.Context, in *CheckActiveReservationsForAccommodationsRequest, opts ...grpc.CallOption) (*CheckActiveReservationsForAccommodationsResponse, error)
@@ -742,8 +742,8 @@ func (c *reservationServiceClient) Create(ctx context.Context, in *CreateReserva
 	return out, nil
 }
 
-func (c *reservationServiceClient) Confirm(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*ConfirmReservationResponse, error) {
-	out := new(ConfirmReservationResponse)
+func (c *reservationServiceClient) Confirm(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*ReservationResponse, error) {
+	out := new(ReservationResponse)
 	err := c.cc.Invoke(ctx, ReservationService_Confirm_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -751,8 +751,8 @@ func (c *reservationServiceClient) Confirm(ctx context.Context, in *ReservationI
 	return out, nil
 }
 
-func (c *reservationServiceClient) Reject(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*RejectReservationResponse, error) {
-	out := new(RejectReservationResponse)
+func (c *reservationServiceClient) Reject(ctx context.Context, in *ReservationId, opts ...grpc.CallOption) (*ReservationResponse, error) {
+	out := new(ReservationResponse)
 	err := c.cc.Invoke(ctx, ReservationService_Reject_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -760,8 +760,8 @@ func (c *reservationServiceClient) Reject(ctx context.Context, in *ReservationId
 	return out, nil
 }
 
-func (c *reservationServiceClient) CancelReservation(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*CancelReservationResponse, error) {
-	out := new(CancelReservationResponse)
+func (c *reservationServiceClient) CancelReservation(ctx context.Context, in *CancelReservationRequest, opts ...grpc.CallOption) (*ReservationResponse, error) {
+	out := new(ReservationResponse)
 	err := c.cc.Invoke(ctx, ReservationService_CancelReservation_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -856,9 +856,9 @@ func (c *reservationServiceClient) CheckIfGuestHasReservationInAccommodations(ct
 type ReservationServiceServer interface {
 	Delete(context.Context, *ReservationId) (*DeleteReservationResponse, error)
 	Create(context.Context, *CreateReservationRequest) (*ReservationId, error)
-	Confirm(context.Context, *ReservationId) (*ConfirmReservationResponse, error)
-	Reject(context.Context, *ReservationId) (*RejectReservationResponse, error)
-	CancelReservation(context.Context, *CancelReservationRequest) (*CancelReservationResponse, error)
+	Confirm(context.Context, *ReservationId) (*ReservationResponse, error)
+	Reject(context.Context, *ReservationId) (*ReservationResponse, error)
+	CancelReservation(context.Context, *CancelReservationRequest) (*ReservationResponse, error)
 	FindAllReservedAccommodations(context.Context, *FindAllReservedAccommodationsRequest) (*FindAllReservedAccommodationsResponse, error)
 	CheckActiveReservationsForGuest(context.Context, *CheckActiveReservationsForGuestRequest) (*CheckActiveReservationsForGuestResponse, error)
 	CheckActiveReservationsForAccommodations(context.Context, *CheckActiveReservationsForAccommodationsRequest) (*CheckActiveReservationsForAccommodationsResponse, error)
@@ -881,13 +881,13 @@ func (UnimplementedReservationServiceServer) Delete(context.Context, *Reservatio
 func (UnimplementedReservationServiceServer) Create(context.Context, *CreateReservationRequest) (*ReservationId, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
-func (UnimplementedReservationServiceServer) Confirm(context.Context, *ReservationId) (*ConfirmReservationResponse, error) {
+func (UnimplementedReservationServiceServer) Confirm(context.Context, *ReservationId) (*ReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Confirm not implemented")
 }
-func (UnimplementedReservationServiceServer) Reject(context.Context, *ReservationId) (*RejectReservationResponse, error) {
+func (UnimplementedReservationServiceServer) Reject(context.Context, *ReservationId) (*ReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Reject not implemented")
 }
-func (UnimplementedReservationServiceServer) CancelReservation(context.Context, *CancelReservationRequest) (*CancelReservationResponse, error) {
+func (UnimplementedReservationServiceServer) CancelReservation(context.Context, *CancelReservationRequest) (*ReservationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelReservation not implemented")
 }
 func (UnimplementedReservationServiceServer) FindAllReservedAccommodations(context.Context, *FindAllReservedAccommodationsRequest) (*FindAllReservedAccommodationsResponse, error) {
@@ -1667,6 +1667,207 @@ var RatingService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetHostRatings",
 			Handler:    _RatingService_GetHostRatings_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "gateway_service.proto",
+}
+
+const (
+	NotificationService_SendNotification_FullMethodName              = "/NotificationService/SendNotification"
+	NotificationService_CreateNotificationPreferences_FullMethodName = "/NotificationService/CreateNotificationPreferences"
+	NotificationService_UpdateNotificationPreferences_FullMethodName = "/NotificationService/UpdateNotificationPreferences"
+	NotificationService_FindById_FullMethodName                      = "/NotificationService/FindById"
+)
+
+// NotificationServiceClient is the client API for NotificationService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type NotificationServiceClient interface {
+	SendNotification(ctx context.Context, in *SendNotificationRequest, opts ...grpc.CallOption) (*SendNotificationResponse, error)
+	CreateNotificationPreferences(ctx context.Context, in *CreateNotificationPreferencesRequest, opts ...grpc.CallOption) (*CreateNotificationPreferencesResponse, error)
+	UpdateNotificationPreferences(ctx context.Context, in *CreateNotificationPreferencesRequest, opts ...grpc.CallOption) (*CreateNotificationPreferencesResponse, error)
+	FindById(ctx context.Context, in *FindNotificationPreferencesByIdRequest, opts ...grpc.CallOption) (*FindNotificationPreferencesByIdResponse, error)
+}
+
+type notificationServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewNotificationServiceClient(cc grpc.ClientConnInterface) NotificationServiceClient {
+	return &notificationServiceClient{cc}
+}
+
+func (c *notificationServiceClient) SendNotification(ctx context.Context, in *SendNotificationRequest, opts ...grpc.CallOption) (*SendNotificationResponse, error) {
+	out := new(SendNotificationResponse)
+	err := c.cc.Invoke(ctx, NotificationService_SendNotification_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificationServiceClient) CreateNotificationPreferences(ctx context.Context, in *CreateNotificationPreferencesRequest, opts ...grpc.CallOption) (*CreateNotificationPreferencesResponse, error) {
+	out := new(CreateNotificationPreferencesResponse)
+	err := c.cc.Invoke(ctx, NotificationService_CreateNotificationPreferences_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificationServiceClient) UpdateNotificationPreferences(ctx context.Context, in *CreateNotificationPreferencesRequest, opts ...grpc.CallOption) (*CreateNotificationPreferencesResponse, error) {
+	out := new(CreateNotificationPreferencesResponse)
+	err := c.cc.Invoke(ctx, NotificationService_UpdateNotificationPreferences_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificationServiceClient) FindById(ctx context.Context, in *FindNotificationPreferencesByIdRequest, opts ...grpc.CallOption) (*FindNotificationPreferencesByIdResponse, error) {
+	out := new(FindNotificationPreferencesByIdResponse)
+	err := c.cc.Invoke(ctx, NotificationService_FindById_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// NotificationServiceServer is the server API for NotificationService service.
+// All implementations must embed UnimplementedNotificationServiceServer
+// for forward compatibility
+type NotificationServiceServer interface {
+	SendNotification(context.Context, *SendNotificationRequest) (*SendNotificationResponse, error)
+	CreateNotificationPreferences(context.Context, *CreateNotificationPreferencesRequest) (*CreateNotificationPreferencesResponse, error)
+	UpdateNotificationPreferences(context.Context, *CreateNotificationPreferencesRequest) (*CreateNotificationPreferencesResponse, error)
+	FindById(context.Context, *FindNotificationPreferencesByIdRequest) (*FindNotificationPreferencesByIdResponse, error)
+	mustEmbedUnimplementedNotificationServiceServer()
+}
+
+// UnimplementedNotificationServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedNotificationServiceServer struct {
+}
+
+func (UnimplementedNotificationServiceServer) SendNotification(context.Context, *SendNotificationRequest) (*SendNotificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendNotification not implemented")
+}
+func (UnimplementedNotificationServiceServer) CreateNotificationPreferences(context.Context, *CreateNotificationPreferencesRequest) (*CreateNotificationPreferencesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateNotificationPreferences not implemented")
+}
+func (UnimplementedNotificationServiceServer) UpdateNotificationPreferences(context.Context, *CreateNotificationPreferencesRequest) (*CreateNotificationPreferencesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateNotificationPreferences not implemented")
+}
+func (UnimplementedNotificationServiceServer) FindById(context.Context, *FindNotificationPreferencesByIdRequest) (*FindNotificationPreferencesByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindById not implemented")
+}
+func (UnimplementedNotificationServiceServer) mustEmbedUnimplementedNotificationServiceServer() {}
+
+// UnsafeNotificationServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to NotificationServiceServer will
+// result in compilation errors.
+type UnsafeNotificationServiceServer interface {
+	mustEmbedUnimplementedNotificationServiceServer()
+}
+
+func RegisterNotificationServiceServer(s grpc.ServiceRegistrar, srv NotificationServiceServer) {
+	s.RegisterService(&NotificationService_ServiceDesc, srv)
+}
+
+func _NotificationService_SendNotification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendNotificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServiceServer).SendNotification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationService_SendNotification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServiceServer).SendNotification(ctx, req.(*SendNotificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificationService_CreateNotificationPreferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateNotificationPreferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServiceServer).CreateNotificationPreferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationService_CreateNotificationPreferences_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServiceServer).CreateNotificationPreferences(ctx, req.(*CreateNotificationPreferencesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificationService_UpdateNotificationPreferences_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateNotificationPreferencesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServiceServer).UpdateNotificationPreferences(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationService_UpdateNotificationPreferences_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServiceServer).UpdateNotificationPreferences(ctx, req.(*CreateNotificationPreferencesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificationService_FindById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindNotificationPreferencesByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServiceServer).FindById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NotificationService_FindById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServiceServer).FindById(ctx, req.(*FindNotificationPreferencesByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// NotificationService_ServiceDesc is the grpc.ServiceDesc for NotificationService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var NotificationService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "NotificationService",
+	HandlerType: (*NotificationServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SendNotification",
+			Handler:    _NotificationService_SendNotification_Handler,
+		},
+		{
+			MethodName: "CreateNotificationPreferences",
+			Handler:    _NotificationService_CreateNotificationPreferences_Handler,
+		},
+		{
+			MethodName: "UpdateNotificationPreferences",
+			Handler:    _NotificationService_UpdateNotificationPreferences_Handler,
+		},
+		{
+			MethodName: "FindById",
+			Handler:    _NotificationService_FindById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"gateway/infrastructure/api"
 	"gateway/proto/gateway"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -47,6 +48,8 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	accommodationEndpoint := os.Getenv("ACCOMODATION_SERVICE_ADDRESS")
 	reservationEndpoint := os.Getenv("RESERVATION_SERVICE_ADDRESS")
 	ratingEndpoint := os.Getenv("RATING_SERVICE_ADDRESS")
+	notificationEndpoint := os.Getenv("NOTIFICATION_SERVICE_ADDRESS")
+	fmt.Println(notificationEndpoint)
 	err := gateway.RegisterAuthServiceHandlerFromEndpoint(context.TODO(), gwmux, authEndpoint, opts)
 	if err != nil {
 		panic(err)
@@ -63,6 +66,10 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	if err != nil {
 		panic(err)
 	}
+	err = gateway.RegisterNotificationServiceHandlerFromEndpoint(context.TODO(), gwmux, notificationEndpoint, opts)
+	if err != nil {
+		panic(err)
+	}
 
 	//init custom handlers
 	searchAccommodationsHandler := api.NewSearchAccommodationHandler(authEndpoint, accommodationEndpoint, reservationEndpoint, ratingEndpoint)
@@ -71,13 +78,13 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	deleteProfileHandler.Init(gwmux)
 	createAccommodationHandler := api.NewCreateAccomodationHandler(accommodationEndpoint, authEndpoint)
 	createAccommodationHandler.Init(gwmux)
-	cancelReservationHandler := api.NewCancelReservationHandler(reservationEndpoint, authEndpoint)
+	cancelReservationHandler := api.NewCancelReservationHandler(reservationEndpoint, accommodationEndpoint, notificationEndpoint)
 	cancelReservationHandler.Init(gwmux)
-	createReservationHandler := api.NewCreateReservationHandler(reservationEndpoint, authEndpoint, accommodationEndpoint)
+	createReservationHandler := api.NewCreateReservationHandler(reservationEndpoint, authEndpoint, accommodationEndpoint, notificationEndpoint)
 	createReservationHandler.Init(gwmux)
-	confirmReservationHandler := api.NewConfirmReservationHandler(reservationEndpoint)
+	confirmReservationHandler := api.NewConfirmReservationHandler(reservationEndpoint, notificationEndpoint)
 	confirmReservationHandler.Init(gwmux)
-	rejectReservationHandler := api.NewRejectReservationHandler(reservationEndpoint)
+	rejectReservationHandler := api.NewRejectReservationHandler(reservationEndpoint, notificationEndpoint)
 	rejectReservationHandler.Init(gwmux)
 	findAllReservationsByOwnerIdHandler := api.NewFindAllReservationsByOwnerIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
 	findAllReservationsByOwnerIdHandler.Init(gwmux)
@@ -97,7 +104,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	findAllReservationsByAccommodationIdHandler.Init(gwmux)
 	getBookingPriceHandler := api.NewGetBookingPriceHandler(accommodationEndpoint)
 	getBookingPriceHandler.Init(gwmux)
-	rateAccommodationHandler := api.NewRateAccommodationHandler(ratingEndpoint, reservationEndpoint)
+	rateAccommodationHandler := api.NewRateAccommodationHandler(ratingEndpoint, reservationEndpoint, notificationEndpoint, accommodationEndpoint)
 	rateAccommodationHandler.Init(gwmux)
 	deleteAccommodationRatingHandler := api.NewDeleteAccommodationRatingHandler(ratingEndpoint, reservationEndpoint)
 	deleteAccommodationRatingHandler.Init(gwmux)
@@ -105,7 +112,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	updateAccommodationRatingHandler.Init(gwmux)
 	findAllAccommodationRatingsHandler := api.NewFindAllAccommodationRatingsHandler(ratingEndpoint, authEndpoint)
 	findAllAccommodationRatingsHandler.Init(gwmux)
-	rateHostHandler := api.NewRateHostHandler(ratingEndpoint, reservationEndpoint, accommodationEndpoint)
+	rateHostHandler := api.NewRateHostHandler(ratingEndpoint, reservationEndpoint, accommodationEndpoint, notificationEndpoint)
 	rateHostHandler.Init(gwmux)
 	updateHostRateHandler := api.NewUpdateHostRatingHandler(ratingEndpoint)
 	updateHostRateHandler.Init(gwmux)
@@ -113,6 +120,12 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	deleteHostRatingHandler.Init(gwmux)
 	getHostRatingsHandler := api.NewGetHostRatingsHandler(ratingEndpoint, authEndpoint)
 	getHostRatingsHandler.Init(gwmux)
+	registerUserHandler := api.NewRegisterUserHandler(authEndpoint, notificationEndpoint)
+	registerUserHandler.Init(gwmux)
+	findNotificationPreferencesByUserId := api.NewFindNotificationPreferencesByUserHandler(notificationEndpoint)
+	findNotificationPreferencesByUserId.Init(gwmux)
+	updateNotificationPreferencesHandler := api.NewUpdateNotificationPreferencesHandler(notificationEndpoint)
+	updateNotificationPreferencesHandler.Init(gwmux)
 }
 
 func initCors(gwmux *runtime.ServeMux) http.Handler {
