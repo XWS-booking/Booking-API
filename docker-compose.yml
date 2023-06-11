@@ -16,6 +16,12 @@ services:
       STORAGE_SERVICE_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeXJ6ZmxobmZncHl6ZmR6YWxjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY4MDYzODU0NSwiZXhwIjoxOTk2MjE0NTQ1fQ.CJURcOscoWrsZ1A0tkCLbjK854YUvvzYRFoO7Q-gRs8
       STORAGE_MAIN_BUCKET: pictures
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+      DELETE_HOST_COMMAND_SUBJECT: ${DELETE_HOST_COMMAND_SUBJECT}
+      DELETE_HOST_REPLY_SUBJECT: ${DELETE_HOST_REPLY_SUBJECT}
     networks:
       - network
   reservation_service:
@@ -31,6 +37,12 @@ services:
       DATABASE_NAME: BOOKING_RESERVATION
       JWT_SECRET: secret
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+      DELETE_HOST_COMMAND_SUBJECT: ${DELETE_HOST_COMMAND_SUBJECT}
+      DELETE_HOST_REPLY_SUBJECT: ${DELETE_HOST_REPLY_SUBJECT}
     networks:
       - network
   rating_service:
@@ -61,6 +73,12 @@ services:
       DATABASE_NAME: BOOKING_AUTH
       JWT_SECRET: secret
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+      DELETE_HOST_COMMAND_SUBJECT: ${DELETE_HOST_COMMAND_SUBJECT}
+      DELETE_HOST_REPLY_SUBJECT: ${DELETE_HOST_REPLY_SUBJECT}
     networks:
       - network
   notification_service:
@@ -108,6 +126,13 @@ services:
     restart: always
     ports:
       - "8080:8080"
+    networks:
+      - network
+
+  nats:
+    image: nats
+    container_name: nats
+    restart: on-failure
     networks:
       - network
 
