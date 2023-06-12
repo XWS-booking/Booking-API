@@ -12,6 +12,7 @@ service AuthService {
     rpc FindById(FindUserByIdRequest) returns (FindUserByIdResponse) {}
     rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
     rpc GetHostRatingWithGuestInfo(GetHostRatingWithGuestInfoRequest) returns (GetHostRatingWithGuestInfoResponse) {}
+    rpc ProfileDeletion(ProfileDeletionRequest) returns (ProfileDeletionResponse) {}
 }
 
 //Requests
@@ -61,6 +62,10 @@ message ChangePasswordRequest {
     string id = 1;
     string oldPassword = 2;
     string newPassword = 3;
+}
+
+message ProfileDeletionRequest {
+    string id = 1;
 }
 
 //Responses
@@ -120,6 +125,7 @@ message FindUserByIdResponse {
     string city = 8;
     string zipcode = 9;
     string country = 10;
+    int64 status = 11;
 }
 
 message ChangePasswordResponse {
@@ -150,4 +156,18 @@ message GetHostRatingWithGuestInfoRequest{
 
 message GetHostRatingWithGuestInfoResponse {
     repeated UpdatedHostRatingItem ratings = 1;
+}
+
+message ProfileDeletionResponse {
+    string id = 1;
+    string name = 2;
+    string surname = 3;
+    string email = 4;
+    int32 role = 5;
+    string street = 6;
+    string streetNumber = 7;
+    string city = 8;
+    string zipcode = 9;
+    string country = 10;
+    string deleteStatus = 11;
 }

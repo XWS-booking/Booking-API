@@ -10,10 +10,17 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"reservation_service/common/messaging"
+	"reservation_service/common/messaging/nats"
 	. "reservation_service/database"
 	reservationGrpc "reservation_service/proto/reservation"
 	. "reservation_service/reservation"
+	"reservation_service/reservation/handlers"
 	"syscall"
+)
+
+const (
+	QueueGroup = "reservation_service"
 )
 
 func main() {
@@ -50,6 +57,10 @@ func main() {
 	reservationController := NewReservationController(reservationService)
 	reservationGrpc.RegisterReservationServiceServer(grpcServer, reservationController)
 
+	commandSubscriber := initSubscriber(os.Getenv("DELETE_HOST_COMMAND_SUBJECT"), QueueGroup)
+	replyPublisher := initPublisher(os.Getenv("DELETE_HOST_REPLY_SUBJECT"))
+	initDeleteHostProfileHandler(reservationService, replyPublisher, commandSubscriber)
+
 	go func() {
 		if err := grpcServer.Serve(listener); err != nil {
 			log.Fatal("server error: ", err)
@@ -68,4 +79,31 @@ func CreateServerLogger() grpc.UnaryServerInterceptor {
 	logger.SetLevel(logrus.InfoLevel)
 	entry := logrus.NewEntry(logger)
 	return grpc_logrus.UnaryServerInterceptor(entry, grpc_logrus.WithLevels(grpc_logrus.DefaultCodeToLevel))
+}
+
+func initPublisher(subject string) messaging.Publisher {
+	publisher, err := nats.NewNATSPublisher(
+		os.Getenv("NATS_HOST"), os.Getenv("NATS_PORT"),
+		os.Getenv("NATS_USER"), os.Getenv("NATS_PASS"), subject)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return publisher
+}
+
+func initSubscriber(subject, queueGroup string) messaging.Subscriber {
+	subscriber, err := nats.NewNATSSubscriber(
+		os.Getenv("NATS_HOST"), os.Getenv("NATS_PORT"),
+		os.Getenv("NATS_USER"), os.Getenv("NATS_PASS"), subject, queueGroup)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return subscriber
+}
+
+func initDeleteHostProfileHandler(service *ReservationService, publisher messaging.Publisher, subscriber messaging.Subscriber) {
+	_, err := handlers.NewDeleteHostCommandHandler(service, publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

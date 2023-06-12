@@ -85,7 +85,7 @@ func (handler *CreateAccomodationHandler) Create(w http.ResponseWriter, r *http.
 	var pricing []PricingDto
 	err = json.Unmarshal([]byte(r.FormValue("pricing")), &pricing)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("problem with pricing"), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf(err.Error()), http.StatusBadRequest)
 		return
 	}
 

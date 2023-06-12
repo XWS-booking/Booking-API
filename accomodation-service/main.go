@@ -2,7 +2,10 @@ package main
 
 import (
 	. "accomodation_service/accomodation"
+	"accomodation_service/accomodation/handlers"
 	"accomodation_service/accomodation/services/storage"
+	"accomodation_service/common/messaging"
+	"accomodation_service/common/messaging/nats"
 	. "accomodation_service/database"
 	accomodationGrpc "accomodation_service/proto/accomodation"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
@@ -15,6 +18,10 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+)
+
+const (
+	QueueGroup = "accommodation_service"
 )
 
 func main() {
@@ -51,6 +58,9 @@ func main() {
 	}
 	accomodationController := NewAccomodationController(accomodationService, storageService)
 	accomodationGrpc.RegisterAccomodationServiceServer(grpcServer, accomodationController)
+	commandSubscriber := initSubscriber(os.Getenv("DELETE_HOST_COMMAND_SUBJECT"), QueueGroup)
+	replyPublisher := initPublisher(os.Getenv("DELETE_HOST_REPLY_SUBJECT"))
+	initDeleteHostProfileHandler(accomodationService, replyPublisher, commandSubscriber)
 
 	go func() {
 		if err := grpcServer.Serve(listener); err != nil {
@@ -70,4 +80,31 @@ func CreateServerLogger() grpc.UnaryServerInterceptor {
 	logger.SetLevel(logrus.InfoLevel)
 	entry := logrus.NewEntry(logger)
 	return grpc_logrus.UnaryServerInterceptor(entry, grpc_logrus.WithLevels(grpc_logrus.DefaultCodeToLevel))
+}
+
+func initPublisher(subject string) messaging.Publisher {
+	publisher, err := nats.NewNATSPublisher(
+		os.Getenv("NATS_HOST"), os.Getenv("NATS_PORT"),
+		os.Getenv("NATS_USER"), os.Getenv("NATS_PASS"), subject)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return publisher
+}
+
+func initSubscriber(subject, queueGroup string) messaging.Subscriber {
+	subscriber, err := nats.NewNATSSubscriber(
+		os.Getenv("NATS_HOST"), os.Getenv("NATS_PORT"),
+		os.Getenv("NATS_USER"), os.Getenv("NATS_PASS"), subject, queueGroup)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return subscriber
+}
+
+func initDeleteHostProfileHandler(service *AccomodationService, publisher messaging.Publisher, subscriber messaging.Subscriber) {
+	_, err := handlers.NewDeleteHostCommandHandler(service, publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

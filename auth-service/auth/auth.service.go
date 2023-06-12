@@ -2,6 +2,7 @@ package auth
 
 import (
 	. "auth_service/auth/model"
+	sagaConfig "auth_service/auth/saga-config"
 	. "auth_service/shared"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
@@ -14,7 +15,8 @@ import (
 )
 
 type AuthService struct {
-	UserRepository IUserRepository
+	UserRepository         IUserRepository
+	DeleteHostOrchestrator *sagaConfig.DeleteHostOrchestrator
 }
 
 func (authService *AuthService) Register(user User) (User, *Error) {
@@ -67,6 +69,7 @@ func (authService *AuthService) UpdatePersonalInfo(user User) (User, *Error) {
 	foundUser.ZipCode = user.ZipCode
 	foundUser.Country = user.Country
 	foundUser.Username = user.Username
+	foundUser.DeleteStatus = user.DeleteStatus
 	updatedUser, err := authService.UserRepository.UpdatePersonalInfo(foundUser)
 	fmt.Println(err)
 	if err != nil {
@@ -161,6 +164,24 @@ func validateToken(bearerToken string) (*jwt.Token, *Error) {
 func (authService *AuthService) FindById(id primitive.ObjectID) (User, *Error) {
 	user, err := authService.UserRepository.FindById(id)
 	if err != nil {
+		return user, UserNotFoundError()
+	}
+	return user, nil
+}
+
+func (authService *AuthService) InitiateProfileDeletion(id primitive.ObjectID) (User, *Error) {
+	user, err := authService.UserRepository.FindById(id)
+
+	if err != nil {
+		return User{}, UserNotFoundError()
+	}
+	user.DeleteStatus = PENDING
+	authService.UserRepository.UpdatePersonalInfo(user)
+	fmt.Println("orch", authService.DeleteHostOrchestrator)
+	err = authService.DeleteHostOrchestrator.Start(id.Hex())
+	if err != nil {
+		user.DeleteStatus = ACTIVE
+		authService.UserRepository.UpdatePersonalInfo(user)
 		return user, UserNotFoundError()
 	}
 	return user, nil
