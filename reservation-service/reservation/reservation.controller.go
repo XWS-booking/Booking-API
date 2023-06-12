@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	. "reservation_service/opentelementry"
 	. "reservation_service/proto/reservation"
 	"reservation_service/reservation/model"
 	"reservation_service/shared"
@@ -23,6 +24,8 @@ type ReservationController struct {
 }
 
 func (reservationController *ReservationController) Create(ctx Context, req *CreateReservationRequest) (*ReservationId, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "create")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -33,6 +36,8 @@ func (reservationController *ReservationController) Create(ctx Context, req *Cre
 }
 
 func (reservationController *ReservationController) Delete(ctx Context, req *ReservationId) (*DeleteReservationResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "delete")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -48,6 +53,8 @@ func (reservationController *ReservationController) Delete(ctx Context, req *Res
 }
 
 func (reservationController *ReservationController) Confirm(ctx Context, req *ReservationId) (*ReservationResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "confirm")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -63,6 +70,8 @@ func (reservationController *ReservationController) Confirm(ctx Context, req *Re
 }
 
 func (reservationController *ReservationController) Reject(ctx Context, req *ReservationId) (*ReservationResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "reject")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -78,6 +87,8 @@ func (reservationController *ReservationController) Reject(ctx Context, req *Res
 }
 
 func (reservationController *ReservationController) FindAllReservedAccommodations(ctx Context, req *FindAllReservedAccommodationsRequest) (*FindAllReservedAccommodationsResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "findAllReservedAccommodations")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -91,6 +102,8 @@ func (reservationController *ReservationController) FindAllReservedAccommodation
 }
 
 func (reservationController *ReservationController) CheckActiveReservationsForGuest(ctx Context, req *CheckActiveReservationsForGuestRequest) (*CheckActiveReservationsForGuestResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "checkActiveReservationsForGuest")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -108,6 +121,8 @@ func (reservationController *ReservationController) CheckActiveReservationsForGu
 }
 
 func (reservationController *ReservationController) CheckActiveReservationsForAccommodations(ctx Context, req *CheckActiveReservationsForAccommodationsRequest) (*CheckActiveReservationsForAccommodationsResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "checkActiveReservationsForAccommodations")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -121,6 +136,8 @@ func (reservationController *ReservationController) CheckActiveReservationsForAc
 }
 
 func (reservationController *ReservationController) CancelReservation(ctx Context, req *CancelReservationRequest) (*ReservationResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "cancelReservation")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -132,6 +149,8 @@ func (reservationController *ReservationController) CancelReservation(ctx Contex
 }
 
 func (reservationController *ReservationController) IsAccommodationAvailable(ctx Context, req *IsAccommodationAvailableRequest) (*IsAccommodationAvailableResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "isAccommodationAvailable")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -145,6 +164,8 @@ func (reservationController *ReservationController) IsAccommodationAvailable(ctx
 }
 
 func (reservationController *ReservationController) FindAllByBuyerId(ctx Context, req *FindAllReservationsByBuyerIdRequest) (*FindAllReservationsByBuyerIdResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "findAllByBuyerId")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -160,6 +181,8 @@ func (reservationController *ReservationController) FindAllByBuyerId(ctx Context
 }
 
 func (reservationController *ReservationController) FindNumberOfBuyersCancellations(ctx Context, req *NumberOfCancellationRequest) (*NumberOfCancellationResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "findNumberOfBuyersCancellations")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -171,6 +194,8 @@ func (reservationController *ReservationController) FindNumberOfBuyersCancellati
 }
 
 func (reservationController *ReservationController) FindAllByAccommodationId(ctx Context, req *FindAllReservationsByAccommodationIdRequest) (*FindAllReservationsByAccommodationIdResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "findAllByAccommodationId")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -186,6 +211,8 @@ func (reservationController *ReservationController) FindAllByAccommodationId(ctx
 }
 
 func (reservationController *ReservationController) UpdateReservationRating(ctx Context, req *UpdateReservationRatingRequest) (*UpdateReservationRatingResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "updateReservationRating")
+	defer func() { span.End() }()
 	fmt.Println(req.Id)
 	fmt.Println(req.AccommodationRatingId)
 	if req == nil {
@@ -199,6 +226,8 @@ func (reservationController *ReservationController) UpdateReservationRating(ctx 
 }
 
 func (reservationController *ReservationController) CheckIfGuestHasReservationInAccommodations(ctx Context, req *CheckIfGuestHasReservationInAccommodationsRequest) (*CheckIfGuestHasReservationInAccommodationsResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "checkIfGuestHasReservationInAccommodations")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}

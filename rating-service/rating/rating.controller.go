@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	. "rating_service/opentelementry"
 	. "rating_service/proto/rating"
 	"rating_service/shared"
 )
@@ -21,6 +22,8 @@ type RatingController struct {
 }
 
 func (ratingController *RatingController) RateAccommodation(ctx Context, req *RateAccommodationRequest) (*RateAccommodationResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "rateAccommodation")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -29,6 +32,8 @@ func (ratingController *RatingController) RateAccommodation(ctx Context, req *Ra
 }
 
 func (ratingController *RatingController) DeleteAccommodationRating(ctx Context, req *DeleteAccommodationRatingRequest) (*DeleteAccommodationRatingResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "deleteAccommodationRating")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -44,6 +49,8 @@ func (ratingController *RatingController) DeleteAccommodationRating(ctx Context,
 }
 
 func (ratingController *RatingController) UpdateAccommodationRating(ctx Context, req *UpdateAccommodationRatingRequest) (*UpdateAccommodationRatingResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "updateAccommodationRating")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -55,6 +62,8 @@ func (ratingController *RatingController) UpdateAccommodationRating(ctx Context,
 }
 
 func (ratingController *RatingController) GetAllAccommodationRatings(ctx Context, req *GetAllAccommodationRatingsRequest) (*GetAllAccommodationRatingsResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "getAllAccommodationRatings")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -81,6 +90,8 @@ func (ratingController *RatingController) GetAllAccommodationRatings(ctx Context
 }
 
 func (ratingController *RatingController) GetAverageAccommodationRating(ctx Context, req *GetAverageAccommodationRatingRequest) (*GetAverageAccommodationRatingResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "getAverageAccommodationRating")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -97,6 +108,8 @@ func (ratingController *RatingController) GetAverageAccommodationRating(ctx Cont
 }
 
 func (ratingController *RatingController) FindAccommodationRatingById(ctx Context, req *FindAccommodationRatingByIdRequest) (*FindAccommodationRatingByIdResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "findAccommodationRatingById")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -114,6 +127,8 @@ func (ratingController *RatingController) FindAccommodationRatingById(ctx Contex
 }
 
 func (ratingController *RatingController) RateHost(ctx Context, req *RateHostRequest) (*RateHostResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "rateHost")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -127,6 +142,8 @@ func (ratingController *RatingController) RateHost(ctx Context, req *RateHostReq
 }
 
 func (ratingController *RatingController) UpdateHostRating(ctx Context, req *UpdateHostRatingRequest) (*UpdateHostRatingResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "updateHostRating")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -140,6 +157,8 @@ func (ratingController *RatingController) UpdateHostRating(ctx Context, req *Upd
 }
 
 func (ratingController *RatingController) DeleteHostRating(ctx Context, req *DeleteHostRatingRequest) (*DeleteHostRatingResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "deleteHostRating")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -153,6 +172,8 @@ func (ratingController *RatingController) DeleteHostRating(ctx Context, req *Del
 }
 
 func (ratingController *RatingController) GetHostRatings(ctx Context, req *GetHostRatingsRequest) (*GetHostRatingsResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "getHostRatings")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
