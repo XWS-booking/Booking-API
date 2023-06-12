@@ -6,6 +6,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	. "notification_service/opentelementry"
 	. "notification_service/proto/notification"
 	"notification_service/shared"
 )
@@ -25,6 +26,8 @@ type NotificationController struct {
 }
 
 func (controller *NotificationController) SendNotification(ctx context.Context, notification *SendNotificationRequest) (*SendNotificationResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "sendNotificion")
+	defer func() { span.End() }()
 	data, err := json.Marshal(notification)
 	if err != nil {
 		return &SendNotificationResponse{}, err
@@ -39,6 +42,8 @@ func (controller *NotificationController) SendNotification(ctx context.Context, 
 }
 
 func (controller *NotificationController) CreateNotificationPreferences(ctx context.Context, req *CreateNotificationPreferencesRequest) (*CreateNotificationPreferencesResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "createNotification")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -49,6 +54,8 @@ func (controller *NotificationController) CreateNotificationPreferences(ctx cont
 }
 
 func (controller *NotificationController) FindById(ctx context.Context, req *FindNotificationPreferencesByIdRequest) (*FindNotificationPreferencesByIdResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "findById")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -68,6 +75,8 @@ func (controller *NotificationController) FindById(ctx context.Context, req *Fin
 }
 
 func (controller *NotificationController) UpdateNotificationPreferences(ctx context.Context, req *CreateNotificationPreferencesRequest) (*CreateNotificationPreferencesResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "updateNotificationPreferences")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}

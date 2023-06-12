@@ -16,6 +16,7 @@ services:
       STORAGE_SERVICE_TOKEN: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhjeXJ6ZmxobmZncHl6ZmR6YWxjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY4MDYzODU0NSwiZXhwIjoxOTk2MjE0NTQ1fQ.CJURcOscoWrsZ1A0tkCLbjK854YUvvzYRFoO7Q-gRs8
       STORAGE_MAIN_BUCKET: pictures
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     networks:
       - network
       - monitoring
@@ -32,6 +33,7 @@ services:
       DATABASE_NAME: BOOKING_RESERVATION
       JWT_SECRET: secret
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     networks:
       - network
       - monitoring
@@ -65,6 +67,7 @@ services:
       DATABASE_NAME: BOOKING_AUTH
       JWT_SECRET: secret
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     networks:
       - network
       - monitoring
@@ -81,6 +84,7 @@ services:
       DATABASE_NAME: BOOKING_NOTIFICATION
       JWT_SECRET: secret
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     networks:
       - network
       - monitoring
