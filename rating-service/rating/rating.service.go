@@ -22,40 +22,40 @@ func (ratingService *RatingService) CreateAccommdationRating(rating Accommodatio
 	return created
 }
 
-func (ratingService *RatingService) DeleteAccommodationRating(id primitive.ObjectID) *shared.Error {
+func (ratingService *RatingService) DeleteAccommodationRating(id primitive.ObjectID) error {
 	e := ratingService.RatingRepository.DeleteAccommodationRating(id)
 	if e != nil {
-		return shared.RatingNotDeleted()
+		return e
 	}
 	return nil
 }
 
-func (ratingService *RatingService) UpdateAccommodationRating(id primitive.ObjectID, rating int32) *shared.Error {
+func (ratingService *RatingService) UpdateAccommodationRating(id primitive.ObjectID, rating int32) error {
 	res, err := ratingService.RatingRepository.FindAccommodationRatingById(id)
 	if err != nil {
-		return shared.AccommodationRatingNotFound()
+		return err
 	}
 	res.Time = time.Now()
 	res.Rating = rating
 	err = ratingService.RatingRepository.UpdateAccommodationRating(res)
 	if err != nil {
-		return shared.RatingNotUpdated()
+		return err
 	}
 	return nil
 }
 
-func (ratingService *RatingService) GetAllAccommodationRatings(id primitive.ObjectID) ([]AccommodationRating, *shared.Error) {
+func (ratingService *RatingService) GetAllAccommodationRatings(id primitive.ObjectID) ([]AccommodationRating, error) {
 	ratings, err := ratingService.RatingRepository.GetAllByAccommodationId(id)
 	if err != nil {
-		return nil, shared.ErrorFilteringRatings()
+		return nil, err
 	}
 	return ratings, nil
 }
 
-func (ratingService *RatingService) GetAverageAccommodationRating(id primitive.ObjectID) (float64, *shared.Error) {
+func (ratingService *RatingService) GetAverageAccommodationRating(id primitive.ObjectID) (float64, error) {
 	ratings, err := ratingService.RatingRepository.GetAllByAccommodationId(id)
 	if err != nil {
-		return -1, shared.ErrorFilteringRatings()
+		return -1, err
 	}
 	var avg = 0.0
 	var sum = 0.0
@@ -69,49 +69,49 @@ func (ratingService *RatingService) GetAverageAccommodationRating(id primitive.O
 	return avg, nil
 }
 
-func (ratingService *RatingService) FindAccommodationRatingById(id primitive.ObjectID) (AccommodationRating, *shared.Error) {
+func (ratingService *RatingService) FindAccommodationRatingById(id primitive.ObjectID) (AccommodationRating, error) {
 	rating, err := ratingService.RatingRepository.FindAccommodationRatingById(id)
 	if err != nil {
-		return rating, shared.AccommodationRatingNotFound()
+		return rating, err
 	}
 	return rating, nil
 }
 
-func (ratingService *RatingService) RateHost(hostRating HostRating) (primitive.ObjectID, *shared.Error) {
+func (ratingService *RatingService) RateHost(hostRating HostRating) (primitive.ObjectID, error) {
 	hostRating.Time = time.Now()
 	res, err := ratingService.RatingRepository.CreateHostRating(hostRating)
 	if err != nil {
-		return res, shared.UnsuccessfulHostRating()
+		return res, err
 	}
 	return res, nil
 }
 
-func (ratingService *RatingService) UpdateHostRating(rating HostRating) (HostRating, *shared.Error) {
+func (ratingService *RatingService) UpdateHostRating(rating HostRating) (HostRating, error) {
 	currentRating, err := ratingService.RatingRepository.FindHostRatingById(rating.Id)
 	if err != nil {
-		return HostRating{}, shared.HostRatingNotFound()
+		return HostRating{}, err
 	}
 	currentRating.Rating = rating.Rating
 	currentRating.Time = time.Now()
 	res, err2 := ratingService.RatingRepository.UpdateHostRating(currentRating)
 	if err2 != nil {
-		return HostRating{}, shared.RatingNotUpdated()
+		return HostRating{}, err
 	}
 	return res, nil
 }
 
-func (ratingService *RatingService) DeleteHostRating(id string) *shared.Error {
+func (ratingService *RatingService) DeleteHostRating(id string) error {
 	err := ratingService.RatingRepository.DeleteHostRating(shared.StringToObjectId(id))
 	if err != nil {
-		return shared.RatingNotDeleted()
+		return err
 	}
 	return nil
 }
 
-func (ratingService *RatingService) GetHostRatings(id string) ([]HostRating, *shared.Error) {
+func (ratingService *RatingService) GetHostRatings(id string) ([]HostRating, error) {
 	ratings, err := ratingService.RatingRepository.GetHostRatings(shared.StringToObjectId(id))
 	if err != nil {
-		return []HostRating{}, shared.ErrorWhenGettingRatings()
+		return []HostRating{}, err
 	}
 	return ratings, nil
 }

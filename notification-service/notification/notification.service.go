@@ -3,56 +3,55 @@ package notification
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	. "notification_service/notification/model"
-	"notification_service/shared"
 )
 
 type NotificationService struct {
 	NotificationRepository INotificationRepository
 }
 
-func (notificationService *NotificationService) Create(notification Notification) primitive.ObjectID {
-	created, error := notificationService.NotificationRepository.Create(notification)
-	if error != nil {
-		return created
+func (notificationService *NotificationService) Create(notification Notification) (primitive.ObjectID, error) {
+	created, err := notificationService.NotificationRepository.Create(notification)
+	if err != nil {
+		return created, err
 	}
-	return created
+	return created, nil
 }
 
-func (notificationService *NotificationService) CanSendNotification(notificationType string, id primitive.ObjectID) bool {
+func (notificationService *NotificationService) CanSendNotification(notificationType string, id primitive.ObjectID) (bool, error) {
 	notification, err := notificationService.NotificationRepository.FindById(id)
 	if err != nil {
-		return false
+		return false, err
 	}
 	switch notificationType {
 	case "guest_created_reservation_request":
-		return notification.GuestCreatedReservationRequest
+		return notification.GuestCreatedReservationRequest, nil
 	case "guest_canceled_reservation":
-		return notification.GuestCanceledReservation
+		return notification.GuestCanceledReservation, nil
 	case "guest_rated_host":
-		return notification.GuestRatedHost
+		return notification.GuestRatedHost, nil
 	case "guest_rated_accommodation":
-		return notification.GuestRatedAccommodation
+		return notification.GuestRatedAccommodation, nil
 	case "distinguished_host":
-		return notification.DistinguishedHost
+		return notification.DistinguishedHost, nil
 	case "host_confirmed_or_rejected_reservation":
-		return notification.HostConfirmedOrRejectedReservation
+		return notification.HostConfirmedOrRejectedReservation, nil
 	default:
-		return true
+		return true, nil
 	}
 }
 
-func (notificationService *NotificationService) Update(notification Notification) *shared.Error {
-	error := notificationService.NotificationRepository.Update(notification)
-	if error != nil {
-		return shared.NotificationPreferencesNotUpdated()
+func (notificationService *NotificationService) Update(notification Notification) error {
+	err := notificationService.NotificationRepository.Update(notification)
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
-func (notificationService *NotificationService) FindById(id primitive.ObjectID) (Notification, *shared.Error) {
-	notification, error := notificationService.NotificationRepository.FindById(id)
-	if error != nil {
-		return Notification{}, shared.NotificationPreferencesNotFound()
+func (notificationService *NotificationService) FindById(id primitive.ObjectID) (Notification, error) {
+	notification, err := notificationService.NotificationRepository.FindById(id)
+	if err != nil {
+		return Notification{}, err
 	}
 	return notification, nil
 }

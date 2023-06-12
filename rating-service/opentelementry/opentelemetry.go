@@ -1,6 +1,7 @@
 package opentelementry
 
 import (
+	"go.opentelemetry.io/otel/codes"
 	"log"
 	"os"
 
@@ -9,6 +10,7 @@ import (
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
+	otelTrace "go.opentelemetry.io/otel/trace"
 )
 
 var Tp *trace.TracerProvider
@@ -56,4 +58,10 @@ func initJaegerTracer(url string) (*trace.TracerProvider, error) {
 			semconv.ServiceNameKey.String(ServiceName),
 		)),
 	), nil
+}
+
+func HttpError(err error, span otelTrace.Span, status int) {
+	log.Println(err.Error())
+	span.RecordError(err)
+	span.SetStatus(codes.Error, err.Error())
 }

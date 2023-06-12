@@ -2,15 +2,19 @@ package main
 
 import (
 	"context"
+	"github.com/gin-gonic/gin"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	"github.com/sirupsen/logrus"
 	_ "github.com/supabase-community/storage-go"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	. "rating_service/database"
@@ -86,4 +90,19 @@ func CreateServerLogger() grpc.UnaryServerInterceptor {
 	logger.SetLevel(logrus.InfoLevel)
 	entry := logrus.NewEntry(logger)
 	return grpc_logrus.UnaryServerInterceptor(entry, grpc_logrus.WithLevels(grpc_logrus.DefaultCodeToLevel))
+}
+
+func httpErrorBadRequest(err error, span trace.Span, ctx *gin.Context) {
+	httpError(err, span, ctx, http.StatusBadRequest)
+}
+
+func httpErrorInternalServerError(err error, span trace.Span, ctx *gin.Context) {
+	httpError(err, span, ctx, http.StatusInternalServerError)
+}
+
+func httpError(err error, span trace.Span, ctx *gin.Context, status int) {
+	log.Println(err.Error())
+	span.RecordError(err)
+	span.SetStatus(codes.Error, err.Error())
+	ctx.String(status, err.Error())
 }

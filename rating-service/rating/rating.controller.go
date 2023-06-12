@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"net/http"
 	. "rating_service/opentelementry"
 	. "rating_service/proto/rating"
 	"rating_service/shared"
@@ -39,11 +40,13 @@ func (ratingController *RatingController) DeleteAccommodationRating(ctx Context,
 	}
 	id, err := primitive.ObjectIDFromHex(req.GetId())
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		HttpError(err, span, http.StatusBadRequest)
+		return nil, status.Error(http.StatusBadRequest, err.Error())
 	}
 	e := ratingController.RatingService.DeleteAccommodationRating(id)
 	if e != nil {
-		return nil, status.Error(codes.Aborted, e.Message)
+		HttpError(err, span, http.StatusInternalServerError)
+		return nil, status.Error(http.StatusInternalServerError, e.Error())
 	}
 	return &DeleteAccommodationRatingResponse{}, nil
 }
@@ -56,7 +59,8 @@ func (ratingController *RatingController) UpdateAccommodationRating(ctx Context,
 	}
 	e := ratingController.RatingService.UpdateAccommodationRating(shared.StringToObjectId(req.Id), req.Rating)
 	if e != nil {
-		return nil, status.Error(codes.Aborted, e.Message)
+		HttpError(e, span, http.StatusInternalServerError)
+		return nil, status.Error(http.StatusInternalServerError, e.Error())
 	}
 	return &UpdateAccommodationRatingResponse{}, nil
 }
@@ -69,11 +73,13 @@ func (ratingController *RatingController) GetAllAccommodationRatings(ctx Context
 	}
 	id, err := primitive.ObjectIDFromHex(req.GetAccommodationId())
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		HttpError(err, span, http.StatusBadRequest)
+		return nil, status.Error(http.StatusBadRequest, err.Error())
 	}
 	ratings, e := ratingController.RatingService.GetAllAccommodationRatings(id)
 	if e != nil {
-		return nil, status.Error(codes.Aborted, e.Message)
+		HttpError(e, span, http.StatusInternalServerError)
+		return nil, status.Error(codes.Aborted, e.Error())
 	}
 	var ratingResponses []*AccommodationRatingItem
 	for _, r := range ratings {
@@ -97,11 +103,13 @@ func (ratingController *RatingController) GetAverageAccommodationRating(ctx Cont
 	}
 	id, err := primitive.ObjectIDFromHex(req.GetAccommodationId())
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+		HttpError(err, span, http.StatusBadRequest)
+		return nil, status.Error(http.StatusBadRequest, err.Error())
 	}
 	rating, e := ratingController.RatingService.GetAverageAccommodationRating(id)
 	if e != nil {
-		return nil, status.Error(codes.Aborted, e.Message)
+		HttpError(e, span, http.StatusInternalServerError)
+		return nil, status.Error(http.StatusInternalServerError, e.Error())
 	}
 
 	return &GetAverageAccommodationRatingResponse{Rating: rating}, nil
@@ -115,7 +123,8 @@ func (ratingController *RatingController) FindAccommodationRatingById(ctx Contex
 	}
 	rating, e := ratingController.RatingService.FindAccommodationRatingById(shared.StringToObjectId(req.Id))
 	if e != nil {
-		return nil, status.Error(codes.Aborted, e.Message)
+		HttpError(e, span, http.StatusInternalServerError)
+		return nil, status.Error(http.StatusInternalServerError, e.Error())
 	}
 
 	return &FindAccommodationRatingByIdResponse{
@@ -135,7 +144,8 @@ func (ratingController *RatingController) RateHost(ctx Context, req *RateHostReq
 
 	res, err := ratingController.RatingService.RateHost(HostRatingFromRateHostRequest(req))
 	if err != nil {
-		return nil, status.Error(codes.Aborted, err.Message)
+		HttpError(err, span, http.StatusInternalServerError)
+		return nil, status.Error(http.StatusInternalServerError, err.Error())
 	}
 
 	return &RateHostResponse{Id: res.Hex()}, nil
@@ -150,7 +160,8 @@ func (ratingController *RatingController) UpdateHostRating(ctx Context, req *Upd
 
 	res, err := ratingController.RatingService.UpdateHostRating(UpdateHostRatingFromUpdateRateHostRequest(req))
 	if err != nil {
-		return nil, status.Error(codes.Aborted, err.Message)
+		HttpError(err, span, http.StatusInternalServerError)
+		return nil, status.Error(http.StatusInternalServerError, err.Error())
 	}
 
 	return &UpdateHostRatingResponse{Id: res.Id.Hex(), HostId: res.HostId.Hex(), GuestId: res.GuestId.Hex(), Rating: res.Rating}, nil
@@ -165,7 +176,8 @@ func (ratingController *RatingController) DeleteHostRating(ctx Context, req *Del
 
 	err := ratingController.RatingService.DeleteHostRating(req.Id)
 	if err != nil {
-		return nil, status.Error(codes.Aborted, err.Message)
+		HttpError(err, span, http.StatusInternalServerError)
+		return nil, status.Error(http.StatusInternalServerError, err.Error())
 	}
 
 	return &DeleteHostRatingResponse{}, nil
@@ -193,7 +205,8 @@ func (ratingController *RatingController) GetHostRatings(ctx Context, req *GetHo
 		})
 	}
 	if err != nil {
-		return &GetHostRatingsResponse{Ratings: ratingResponses}, status.Error(codes.Aborted, err.Message)
+		HttpError(err, span, http.StatusInternalServerError)
+		return &GetHostRatingsResponse{Ratings: ratingResponses}, status.Error(http.StatusInternalServerError, err.Error())
 	}
 
 	return &GetHostRatingsResponse{Ratings: ratingResponses, AverageRate: float64(averageRate)}, nil
