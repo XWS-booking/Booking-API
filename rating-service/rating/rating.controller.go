@@ -212,3 +212,19 @@ func (ratingController *RatingController) GetHostRatings(ctx Context, req *GetHo
 	return &GetHostRatingsResponse{Ratings: ratingResponses, AverageRate: float64(averageRate)}, nil
 
 }
+
+func (ratingController *RatingController) GetHostAverageRating(ctx Context, req *GetAverageHostRatingRequest) (*GetAverageHostRatingResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+
+	ratings, err := ratingController.RatingService.GetHostRatings(req.HostId)
+	averageRating := ratingController.RatingService.CalculateHostAverageRate(ratings)
+
+	if err != nil {
+		return &GetAverageHostRatingResponse{Rating: 0}, status.Error(codes.Aborted, err.Message)
+	}
+
+	return &GetAverageHostRatingResponse{Rating: float64(averageRating)}, nil
+
+}

@@ -86,7 +86,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	confirmReservationHandler.Init(gwmux)
 	rejectReservationHandler := api.NewRejectReservationHandler(reservationEndpoint, notificationEndpoint)
 	rejectReservationHandler.Init(gwmux)
-	findAllReservationsByOwnerIdHandler := api.NewFindAllReservationsByOwnerIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
+	findAllReservationsByOwnerIdHandler := api.NewFindAllReservationsByOwnerIdHandler(accommodationEndpoint, reservationEndpoint)
 	findAllReservationsByOwnerIdHandler.Init(gwmux)
 	findAllReservationsByBuyerIdHandler := api.NewFindAllReservationsByBuyerIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint, ratingEndpoint)
 	findAllReservationsByBuyerIdHandler.Init(gwmux)

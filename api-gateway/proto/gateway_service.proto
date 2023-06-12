@@ -90,6 +90,7 @@ service RatingService {
     rpc UpdateHostRating(UpdateHostRatingRequest) returns (UpdateHostRatingResponse) {}
     rpc DeleteHostRating(DeleteHostRatingRequest) returns (DeleteHostRatingResponse) {}
     rpc GetHostRatings(GetHostRatingsRequest) returns (GetHostRatingsResponse) {}
+    rpc GetAverageHostRating(GetAverageHostRatingRequest) returns (GetAverageHostRatingResponse) {}
 }
 
 service NotificationService {
@@ -110,6 +111,9 @@ message UpdatePricingRequest {
     string userId = 1;
     string id = 2;
     repeated Pricing pricing = 3;
+}
+message GetAverageHostRatingRequest {
+    string HostId = 1;
 }
 message RegistrationRequest {
     string name = 1;
@@ -186,6 +190,9 @@ message RegistrationResponse {
     string email = 4;
     string role = 5;
     string username = 6;
+}
+message GetAverageHostRatingResponse {
+    double Rating = 1;
 }
 message SignInResponse {
     string access_token = 1;

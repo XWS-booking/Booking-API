@@ -14,14 +14,12 @@ import (
 )
 
 type FindAllReservationsByOwnerIdHandler struct {
-	authClientAddress          string
 	accommodationClientAddress string
 	reservationClientAddress   string
 }
 
-func NewFindAllReservationsByOwnerIdHandler(authClientAddress, accommodationClientAddress, reservationClientAddress string) Handler {
+func NewFindAllReservationsByOwnerIdHandler(accommodationClientAddress, reservationClientAddress string) Handler {
 	return &FindAllReservationsByOwnerIdHandler{
-		authClientAddress:          authClientAddress,
 		accommodationClientAddress: accommodationClientAddress,
 		reservationClientAddress:   reservationClientAddress,
 	}
