@@ -10,20 +10,25 @@ import (
 	"gateway/shared"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"net/http"
+	"strconv"
 )
 
 type UpdateRateHostDto struct {
-	Id     string `json:"id"`
-	Rating int32  `json:"rating"`
+	Id        string `json:"id"`
+	Rating    int32  `json:"rating"`
+	HostId    string `json:"hostId"`
+	OldRating int32  `json:"oldRating"`
 }
 
 type UpdateHostRatingHandler struct {
-	ratingClientAddress string
+	ratingClientAddress       string
+	notificationClientAddress string
 }
 
-func NewUpdateHostRatingHandler(ratingClientAddress string) Handler {
+func NewUpdateHostRatingHandler(ratingClientAddress, notificationClient string) Handler {
 	return &UpdateHostRatingHandler{
-		ratingClientAddress: ratingClientAddress,
+		ratingClientAddress:       ratingClientAddress,
+		notificationClientAddress: notificationClient,
 	}
 }
 
@@ -36,6 +41,7 @@ func (handler *UpdateHostRatingHandler) Init(mux *runtime.ServeMux) {
 
 func (handler *UpdateHostRatingHandler) UpdateHostRate(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 	ratingClient := services.NewRatingClient(handler.ratingClientAddress)
+	notificationClient := services.NewNotificationClient(handler.notificationClientAddress)
 	var body UpdateRateHostDto
 	err := DecodeBody(r, &body)
 	if err != nil {
@@ -48,6 +54,10 @@ func (handler *UpdateHostRatingHandler) UpdateHostRate(w http.ResponseWriter, r 
 		shared.BadRequest(w, err.Error())
 		return
 	}
-
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "guest_rated_host", UserId: body.HostId, Message: "Someone changed your rating from " + strconv.Itoa(int(body.OldRating)) + " to " + strconv.Itoa(int(body.Rating))})
+	if err != nil {
+		shared.BadRequest(w, err.Error())
+		return
+	}
 	shared.Ok(&w, res)
 }
