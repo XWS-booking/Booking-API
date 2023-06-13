@@ -108,13 +108,13 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	rateAccommodationHandler.Init(gwmux)
 	deleteAccommodationRatingHandler := api.NewDeleteAccommodationRatingHandler(ratingEndpoint, reservationEndpoint)
 	deleteAccommodationRatingHandler.Init(gwmux)
-	updateAccommodationRatingHandler := api.NewUpdateAccommodationRatingHandler(ratingEndpoint)
+	updateAccommodationRatingHandler := api.NewUpdateAccommodationRatingHandler(ratingEndpoint, accommodationEndpoint, notificationEndpoint)
 	updateAccommodationRatingHandler.Init(gwmux)
 	findAllAccommodationRatingsHandler := api.NewFindAllAccommodationRatingsHandler(ratingEndpoint, authEndpoint)
 	findAllAccommodationRatingsHandler.Init(gwmux)
 	rateHostHandler := api.NewRateHostHandler(ratingEndpoint, reservationEndpoint, accommodationEndpoint, notificationEndpoint)
 	rateHostHandler.Init(gwmux)
-	updateHostRateHandler := api.NewUpdateHostRatingHandler(ratingEndpoint)
+	updateHostRateHandler := api.NewUpdateHostRatingHandler(ratingEndpoint, notificationEndpoint)
 	updateHostRateHandler.Init(gwmux)
 	deleteHostRatingHandler := api.NewDeleteHostRatingHandler(ratingEndpoint)
 	deleteHostRatingHandler.Init(gwmux)
@@ -130,7 +130,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 
 func initCors(gwmux *runtime.ServeMux) http.Handler {
 	return cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   []string{"http://localhost:3001"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "PATCH"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization", "Access-Control-Allow-Origin"},
 		AllowCredentials: true,

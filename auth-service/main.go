@@ -2,24 +2,26 @@ package main
 
 import (
 	. "auth_service/auth"
+	"auth_service/auth/handlers"
+	"auth_service/auth/saga-config"
 	"auth_service/common/messaging"
 	"auth_service/common/messaging/nats"
 	. "auth_service/database"
+	"auth_service/opentelementry"
 	authGrpc "auth_service/proto/auth"
+	"context"
 	"fmt"
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
-
-	"auth_service/auth/handlers"
-	"auth_service/auth/saga-config"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
 const (
@@ -27,6 +29,20 @@ const (
 )
 
 func main() {
+	// OpenTelemetry
+	var err error
+	opentelementry.Tp, err = opentelementry.InitTracer()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		if err := opentelementry.Tp.Shutdown(context.Background()); err != nil {
+			log.Printf("Error shutting down tracer provider: %v", err)
+		}
+	}()
+	otel.SetTracerProvider(opentelementry.Tp)
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+
 	listener, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
 
 	if err != nil {

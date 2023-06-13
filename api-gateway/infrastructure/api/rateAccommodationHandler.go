@@ -10,6 +10,7 @@ import (
 	"gateway/shared"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"net/http"
+	"strconv"
 )
 
 type RateAccommodationDto struct {
@@ -69,7 +70,7 @@ func (handler *RateAccommodationHandler) RateAccommodation(w http.ResponseWriter
 		shared.BadRequest(w, err.Error())
 		return
 	}
-	_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "guest_rated_accommodation", UserId: accommodation.OwnerId, Message: "Someone rated your accommodation '" + accommodation.Name + "'"})
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "guest_rated_accommodation", UserId: accommodation.OwnerId, Message: "Someone rated your accommodation '" + accommodation.Name + "' with " + strconv.Itoa(int(body.Rating))})
 	if err != nil {
 		shared.BadRequest(w, err.Error())
 		return

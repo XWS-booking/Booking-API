@@ -22,8 +22,10 @@ services:
       NATS_PASS: ${NATS_PASS}
       DELETE_HOST_COMMAND_SUBJECT: ${DELETE_HOST_COMMAND_SUBJECT}
       DELETE_HOST_REPLY_SUBJECT: ${DELETE_HOST_REPLY_SUBJECT}
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     networks:
       - network
+      - monitoring
   reservation_service:
     image: reservation_service
     container_name: reservation_service
@@ -43,8 +45,10 @@ services:
       NATS_PASS: ${NATS_PASS}
       DELETE_HOST_COMMAND_SUBJECT: ${DELETE_HOST_COMMAND_SUBJECT}
       DELETE_HOST_REPLY_SUBJECT: ${DELETE_HOST_REPLY_SUBJECT}
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     networks:
       - network
+      - monitoring
   rating_service:
     image: rating_service
     container_name: rating_service
@@ -58,8 +62,10 @@ services:
       DATABASE_NAME: BOOKING_RATING
       JWT_SECRET: secret
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     networks:
       - network
+      - monitoring
   auth_service:
     image: auth_service
     container_name: auth_service
@@ -79,8 +85,10 @@ services:
       NATS_PASS: ${NATS_PASS}
       DELETE_HOST_COMMAND_SUBJECT: ${DELETE_HOST_COMMAND_SUBJECT}
       DELETE_HOST_REPLY_SUBJECT: ${DELETE_HOST_REPLY_SUBJECT}
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     networks:
       - network
+      - monitoring
   notification_service:
     image: notification_service
     container_name: notification_service
@@ -94,8 +102,10 @@ services:
       DATABASE_NAME: BOOKING_NOTIFICATION
       JWT_SECRET: secret
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
+      JAEGER_ENDPOINT: http://jaeger:14268/api/traces
     networks:
       - network
+      - monitoring
 
   api_gateway:
     image: api_gateway
@@ -117,6 +127,7 @@ services:
       - auth_service
     networks:
       - network
+      - monitoring
     ports:
       - "8085:8085"
   nodejs_server:
@@ -128,6 +139,7 @@ services:
       - "8080:8080"
     networks:
       - network
+      - monitoring
 
   nats:
     image: nats
@@ -139,3 +151,5 @@ services:
 networks:
   network:
     driver: bridge
+  monitoring:
+    external: true

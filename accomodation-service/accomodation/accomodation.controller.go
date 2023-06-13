@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 
+	. "accomodation_service/opentelementry"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -30,6 +31,8 @@ type AccomodationController struct {
 }
 
 func (accomodationController *AccomodationController) Create(ctx Context, req *CreateAccomodationRequest) (*CreateAccomodationResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "create")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with accomodation data")
 	}
@@ -88,6 +91,8 @@ func (accomodationController *AccomodationController) Create(ctx Context, req *C
 }
 
 func (accomodationController *AccomodationController) FindAll(ctx Context, req *FindAllAccomodationRequest) (*FindAllAccomodationResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "findAll")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -103,6 +108,8 @@ func (accomodationController *AccomodationController) FindAll(ctx Context, req *
 }
 
 func (accomodationController *AccomodationController) FindAllAccommodationIdsByOwnerId(ctx Context, req *FindAllAccommodationIdsByOwnerIdRequest) (*FindAllAccommodationIdsByOwnerIdResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "findAllAccommodationIdsByOwnerId")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -122,6 +129,8 @@ func (accomodationController *AccomodationController) FindAllAccommodationIdsByO
 }
 
 func (accomodationController *AccomodationController) DeleteByOwnerId(ctx Context, req *DeleteByOwnerIdRequest) (*DeleteByOwnerIdResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "deleteByOwnerId")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -137,6 +146,9 @@ func (accomodationController *AccomodationController) DeleteByOwnerId(ctx Contex
 }
 
 func (accomodationController *AccomodationController) FindById(ctx Context, req *FindAccommodationByIdRequest) (*AccomodationResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "findById")
+	defer func() { span.End() }()
+
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
@@ -152,6 +164,8 @@ func (accomodationController *AccomodationController) FindById(ctx Context, req 
 }
 
 func (accomodationController *AccomodationController) UpdatePricing(ctx Context, req *UpdatePricingRequest) (*UpdatePricingResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "updatePricing")
+	defer func() { span.End() }()
 
 	id := shared.StringToObjectId(req.Id)
 	pricing := make([]model.Pricing, 0)
@@ -173,6 +187,9 @@ func (accomodationController *AccomodationController) UpdatePricing(ctx Context,
 }
 
 func (accomodationController *AccomodationController) GetBookingPrice(ctx Context, req *GetBookingPriceRequest) (*GetBookingPriceResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "getBookingPrice")
+	defer func() { span.End() }()
+
 	from := time.Unix(req.From.Seconds, int64(req.From.Nanos)).UTC()
 	to := time.Unix(req.To.Seconds, int64(req.To.Nanos)).UTC()
 	interval := model.TimeInterval{From: from, To: to}

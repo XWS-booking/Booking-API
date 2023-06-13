@@ -1,6 +1,7 @@
 package auth
 
 import (
+	. "auth_service/opentelementry"
 	. "auth_service/proto/auth"
 	"auth_service/shared"
 	"context"
@@ -23,6 +24,8 @@ type AuthController struct {
 }
 
 func (authController *AuthController) SignIn(ctx Context, req *SignInRequest) (*SignInResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "signIn")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with user data")
 	}
@@ -42,6 +45,8 @@ func (authController *AuthController) SignIn(ctx Context, req *SignInRequest) (*
 }
 
 func (authController *AuthController) Register(ctx context.Context, req *RegistrationRequest) (*RegistrationResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "register")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with user data")
 	}
@@ -64,6 +69,8 @@ func (authController *AuthController) Register(ctx context.Context, req *Registr
 }
 
 func (authController *AuthController) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "getUser")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with user data")
 	}
@@ -99,6 +106,8 @@ func (authController *AuthController) GetUser(ctx context.Context, req *GetUserR
 }
 
 func (authController *AuthController) UpdatePersonalInfo(ctx context.Context, req *UpdatePersonalInfoRequest) (*UpdatePersonalInfoResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "updatePersonalInfo")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with user data")
 	}
@@ -124,6 +133,8 @@ func (authController *AuthController) UpdatePersonalInfo(ctx context.Context, re
 
 }
 func (authController *AuthController) DeleteProfile(ctx context.Context, req *DeleteProfileRequest) (*DeleteProfileResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "deleteProfile")
+	defer func() { span.End() }()
 	id, err := primitive.ObjectIDFromHex(req.GetId())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -136,6 +147,8 @@ func (authController *AuthController) DeleteProfile(ctx context.Context, req *De
 }
 
 func (authController *AuthController) FindById(ctx context.Context, req *FindUserByIdRequest) (*FindUserByIdResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "findById")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with user data")
 	}
@@ -161,6 +174,8 @@ func (authController *AuthController) FindById(ctx context.Context, req *FindUse
 }
 
 func (authController *AuthController) ChangePassword(ctx context.Context, req *ChangePasswordRequest) (*ChangePasswordResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "changePassword")
+	defer func() { span.End() }()
 	if req == nil {
 		return &ChangePasswordResponse{}, status.Error(codes.Aborted, "Something wrong with user data")
 	}
@@ -171,7 +186,9 @@ func (authController *AuthController) ChangePassword(ctx context.Context, req *C
 	return &ChangePasswordResponse{}, nil
 }
 
-func (authController *AuthController) GetHostRatingWithGuestInfo(xtc Context, req *GetHostRatingWithGuestInfoRequest) (*GetHostRatingWithGuestInfoResponse, error) {
+func (authController *AuthController) GetHostRatingWithGuestInfo(ctx Context, req *GetHostRatingWithGuestInfoRequest) (*GetHostRatingWithGuestInfoResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "getHostRatingWithGuestInfo")
+	defer func() { span.End() }()
 	if req == nil {
 		return &GetHostRatingWithGuestInfoResponse{}, status.Error(codes.Aborted, "Something wrong with user data")
 	}

@@ -10,6 +10,7 @@ import (
 	"gateway/shared"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"net/http"
+	"strconv"
 )
 
 type RateHostDto struct {
@@ -77,7 +78,7 @@ func (handler *RateHostHandler) RateHost(w http.ResponseWriter, r *http.Request,
 		http.Error(w, fmt.Sprintf("Unsuccessful host rating!", err.Error()), http.StatusBadRequest)
 		return
 	}
-	_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "guest_rated_host", UserId: body.HostId, Message: "Someone rated you!"})
+	_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "guest_rated_host", UserId: body.HostId, Message: "Someone rated you with " + strconv.Itoa(int(body.Rating))})
 	if err != nil {
 		shared.BadRequest(w, err.Error())
 		return
