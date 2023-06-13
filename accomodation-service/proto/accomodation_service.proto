@@ -12,6 +12,7 @@ service AccomodationService {
   rpc FindById(FindAccommodationByIdRequest) returns (AccomodationResponse) {}
   rpc GetBookingPrice(GetBookingPriceRequest) returns (GetBookingPriceResponse) {}
   rpc UpdatePricing(UpdatePricingRequest) returns (UpdatePricingResponse) {}
+  rpc SearchAndFilter(SearchAndFilterRequest) returns (SearchAndFilterResponse) {}
 }
 
 
@@ -77,6 +78,21 @@ message Pricing {
   string uuid = 5;
 }
 
+message PriceRange {
+  float From = 1;
+  float To = 2;
+}
+
+message SearchAndFilterRequest {
+  int32 Page = 1;
+  int32 Limit = 2;
+  string City = 3;
+  int32 Guests = 4;
+  repeated string filters = 5;
+  PriceRange price = 6;
+  repeated string includingIds = 7;
+}
+
 //Response
 message CreateAccomodationResponse {
   string id = 14;
@@ -134,3 +150,7 @@ message GetBookingPriceResponse {
 }
 
 message UpdatePricingResponse{}
+message SearchAndFilterResponse{
+  repeated AccomodationResponse data = 1;
+  int32 totalCount = 2;
+}

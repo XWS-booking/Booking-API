@@ -52,6 +52,7 @@ service AccomodationService {
     }
     rpc GetBookingPrice(GetBookingPriceRequest) returns (GetBookingPriceResponse) {}
     rpc UpdatePricing(UpdatePricingRequest) returns (UpdatePricingResponse) {}
+    rpc SearchAndFilter(SearchAndFilterRequest) returns (SearchAndFilterResponse) {}
 }
 
 service ReservationService {
@@ -176,6 +177,21 @@ message GetBookingPriceRequest {
 
 message ProfileDeletionRequest {
     string id = 1;
+}
+
+message PriceRange {
+    float From = 1;
+    float To = 2;
+}
+
+message SearchAndFilterRequest {
+    int32 Page = 1;
+    int32 Limit = 2;
+    string City = 3;
+    int32 Guests = 4;
+    repeated string filters = 5;
+    PriceRange price = 6;
+    repeated string includingIds = 7;
 }
 
 //Responses
@@ -636,4 +652,9 @@ message FindNotificationPreferencesByIdResponse {
      string zipcode = 9;
      string country = 10;
      string deleteStatus = 11;
+}
+
+message SearchAndFilterResponse {
+    repeated AccomodationResponse data = 1;
+    int32 totalCount = 2;
 }

@@ -209,3 +209,27 @@ func (accomodationController *AccomodationController) GetBookingPrice(ctx Contex
 		Price: price,
 	}, nil
 }
+
+func (accomodationController *AccomodationController) SearchAndFilter(ctx Context, req *SearchAndFilterRequest) (*SearchAndFilterResponse, error) {
+
+	params := dtos.SearchDto{
+		Limit:   req.Limit,
+		Page:    req.Page,
+		Filters: req.Filters,
+		Guests:  req.Guests,
+		Price: dtos.PriceRange{
+			From: float64(req.Price.From),
+			To:   float64(req.Price.To),
+		},
+		IncludingIds: req.IncludingIds,
+		City:         req.City,
+	}
+
+	results, err := accomodationController.AccomodationService.SearchAndFilter(params)
+
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Message)
+	}
+
+	return MapSearchAndFilterResponse(results.Data, results.TotalCount), nil
+}
