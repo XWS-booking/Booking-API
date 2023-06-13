@@ -168,8 +168,8 @@ func createSearchAndFilterPipeline(params dtos.SearchDto) bson.A {
 	}
 
 	if params.Guests != -1 {
-		searchFilters["$match.min_guests"] = bson.M{"$lte": params.Guests}
-		searchFilters["$match.max_guests"] = bson.M{"$gte": params.Guests}
+		searchFilters["$match"].(bson.M)["min_guests"] = bson.M{"$lte": params.Guests}
+		searchFilters["$match"].(bson.M)["max_guests"] = bson.M{"$gte": params.Guests}
 	}
 
 	if len(params.IncludingIds) > 0 {
