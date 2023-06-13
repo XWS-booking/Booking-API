@@ -1,13 +1,17 @@
 package accomodation
 
 import (
+	"accomodation_service/accomodation/dtos"
 	. "accomodation_service/accomodation/model"
 	"context"
+	"fmt"
+	"log"
+	"os"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"log"
-	"os"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type AccomodationRepository struct {
@@ -93,6 +97,53 @@ func (accommodationRepository *AccomodationRepository) FindById(id primitive.Obj
 	return accommodation, nil
 }
 
+func (accomodationRepository *AccomodationRepository) SearchAndFilter(params dtos.SearchDto) ([]Accomodation, error) {
+	collection := accomodationRepository.getCollection("accomodations")
+	opts := options.Find()
+	opts.SetLimit(int64(params.Limit))
+	opts.SetSkip(int64((params.Page - 1) * params.Limit))
+	fmt.Println(params.Filters)
+	pipeline := createSearchAndFilterPipeline(params)
+	pipeline = append(pipeline, bson.M{"$skip": (params.Page - 1) * params.Limit})
+	pipeline = append(pipeline, bson.M{"$limit": params.Limit})
+	fmt.Println(pipeline)
+
+	cur, err := collection.Aggregate(context.TODO(), pipeline)
+	var result = make([]Accomodation, 0)
+
+	if err != nil {
+		return result, err
+	}
+
+	for cur.Next(context.TODO()) {
+		var acc Accomodation
+		err := cur.Decode(&acc)
+		if err != nil {
+			return result, err
+		}
+		result = append(result, acc)
+	}
+
+	return result, nil
+}
+
+func (accommodationRepository *AccomodationRepository) CountTotalForSearchAndFilter(params dtos.SearchDto) int32 {
+	collection := accommodationRepository.getCollection("accomodations")
+	pipeline := createSearchAndFilterPipeline(params)
+	pipeline = append(pipeline, bson.M{"$count": "total_count"})
+
+	cursor, _ := collection.Aggregate(context.TODO(), pipeline)
+
+	var result []bson.M
+	if err := cursor.All(context.TODO(), &result); err != nil {
+		log.Fatal(err)
+	}
+
+	// Extract the total count
+	totalCount := result[0]["total_count"].(int32)
+	return totalCount
+}
+
 func (accomodationRepository *AccomodationRepository) getCollection(key string) *mongo.Collection {
 	return accomodationRepository.DB.Database(os.Getenv("DATABASE_NAME")).Collection(key)
 }
@@ -107,4 +158,50 @@ func (accomodationRepository *AccomodationRepository) UpdatePricing(accomodation
 		return err
 	}
 	return nil
+}
+
+func createSearchAndFilterPipeline(params dtos.SearchDto) bson.A {
+	searchFilters := bson.M{
+		"$match": bson.M{
+			"city": bson.M{"$regex": "(?i).*" + params.City + ".*"},
+		},
+	}
+
+	if params.Guests != -1 {
+		searchFilters["$match"].(bson.M)["min_guests"] = bson.M{"$lte": params.Guests}
+		searchFilters["$match"].(bson.M)["max_guests"] = bson.M{"$gte": params.Guests}
+	}
+
+	if len(params.IncludingIds) > 0 {
+		searchFilters["$match._id"] = bson.M{"$in": params.IncludingIds}
+	}
+
+	filters := bson.M{
+		"$match": bson.M{
+			"pricing": bson.M{
+				"$elemMatch": bson.M{
+					"price": bson.M{
+						"$gte": params.Price.From,
+						"$lte": params.Price.To,
+					},
+				},
+			},
+		},
+	}
+
+	optional := bson.A{}
+	for _, f := range params.Filters {
+		optionalFilter := bson.M{}
+		optionalFilter[f] = true
+		optional = append(optional, optionalFilter)
+	}
+
+	pipeline := bson.A{
+		searchFilters,
+		filters,
+	}
+	if len(optional) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"$or": optional}})
+	}
+	return pipeline
 }

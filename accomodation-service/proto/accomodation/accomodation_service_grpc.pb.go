@@ -26,6 +26,7 @@ const (
 	AccomodationService_FindById_FullMethodName                         = "/AccomodationService/FindById"
 	AccomodationService_GetBookingPrice_FullMethodName                  = "/AccomodationService/GetBookingPrice"
 	AccomodationService_UpdatePricing_FullMethodName                    = "/AccomodationService/UpdatePricing"
+	AccomodationService_SearchAndFilter_FullMethodName                  = "/AccomodationService/SearchAndFilter"
 )
 
 // AccomodationServiceClient is the client API for AccomodationService service.
@@ -39,6 +40,7 @@ type AccomodationServiceClient interface {
 	FindById(ctx context.Context, in *FindAccommodationByIdRequest, opts ...grpc.CallOption) (*AccomodationResponse, error)
 	GetBookingPrice(ctx context.Context, in *GetBookingPriceRequest, opts ...grpc.CallOption) (*GetBookingPriceResponse, error)
 	UpdatePricing(ctx context.Context, in *UpdatePricingRequest, opts ...grpc.CallOption) (*UpdatePricingResponse, error)
+	SearchAndFilter(ctx context.Context, in *SearchAndFilterRequest, opts ...grpc.CallOption) (*SearchAndFilterResponse, error)
 }
 
 type accomodationServiceClient struct {
@@ -112,6 +114,15 @@ func (c *accomodationServiceClient) UpdatePricing(ctx context.Context, in *Updat
 	return out, nil
 }
 
+func (c *accomodationServiceClient) SearchAndFilter(ctx context.Context, in *SearchAndFilterRequest, opts ...grpc.CallOption) (*SearchAndFilterResponse, error) {
+	out := new(SearchAndFilterResponse)
+	err := c.cc.Invoke(ctx, AccomodationService_SearchAndFilter_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccomodationServiceServer is the server API for AccomodationService service.
 // All implementations must embed UnimplementedAccomodationServiceServer
 // for forward compatibility
@@ -123,6 +134,7 @@ type AccomodationServiceServer interface {
 	FindById(context.Context, *FindAccommodationByIdRequest) (*AccomodationResponse, error)
 	GetBookingPrice(context.Context, *GetBookingPriceRequest) (*GetBookingPriceResponse, error)
 	UpdatePricing(context.Context, *UpdatePricingRequest) (*UpdatePricingResponse, error)
+	SearchAndFilter(context.Context, *SearchAndFilterRequest) (*SearchAndFilterResponse, error)
 	mustEmbedUnimplementedAccomodationServiceServer()
 }
 
@@ -150,6 +162,9 @@ func (UnimplementedAccomodationServiceServer) GetBookingPrice(context.Context, *
 }
 func (UnimplementedAccomodationServiceServer) UpdatePricing(context.Context, *UpdatePricingRequest) (*UpdatePricingResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePricing not implemented")
+}
+func (UnimplementedAccomodationServiceServer) SearchAndFilter(context.Context, *SearchAndFilterRequest) (*SearchAndFilterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchAndFilter not implemented")
 }
 func (UnimplementedAccomodationServiceServer) mustEmbedUnimplementedAccomodationServiceServer() {}
 
@@ -290,6 +305,24 @@ func _AccomodationService_UpdatePricing_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AccomodationService_SearchAndFilter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchAndFilterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccomodationServiceServer).SearchAndFilter(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AccomodationService_SearchAndFilter_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccomodationServiceServer).SearchAndFilter(ctx, req.(*SearchAndFilterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AccomodationService_ServiceDesc is the grpc.ServiceDesc for AccomodationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -324,6 +357,10 @@ var AccomodationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdatePricing",
 			Handler:    _AccomodationService_UpdatePricing_Handler,
+		},
+		{
+			MethodName: "SearchAndFilter",
+			Handler:    _AccomodationService_SearchAndFilter_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -2,17 +2,18 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"gateway/infrastructure/services"
 	"gateway/model"
 	"gateway/model/mapper"
 	"gateway/proto/gateway"
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/timestamp"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"gateway/shared"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/golang/protobuf/ptypes"
+	"github.com/golang/protobuf/ptypes/timestamp"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
 type SearchAccommodationHandler struct {
@@ -20,6 +21,19 @@ type SearchAccommodationHandler struct {
 	accommodationClientAddress string
 	reservationClientAddress   string
 	ratingClientAddress        string
+}
+type PriceParams struct {
+	From int32 `json:"from"`
+	To   int32 `json:"to"`
+}
+
+type FilterParams struct {
+	Price     PriceParams `json:"price"`
+	Additions []string    `json:"additions"`
+}
+type SearchResult struct {
+	Data       []model.Accommodation `json:"data"`
+	TotalCount int32                 `json:"totalCount"`
 }
 
 func NewSearchAccommodationHandler(authClientAddress, accommodationClientAddress, reservationClientAddress string, ratingClientAddress string) Handler {
@@ -32,7 +46,7 @@ func NewSearchAccommodationHandler(authClientAddress, accommodationClientAddress
 }
 
 func (handler *SearchAccommodationHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("GET", "/api/accommodations/search/{city}/{guests}/{startDate}/{endDate}/{pageSize}/{pageNumber}", handler.Search)
+	err := mux.HandlePath("POST", "/api/accommodations/search/{city}/{guests}/{startDate}/{endDate}/{pageSize}/{pageNumber}", handler.Search)
 	if err != nil {
 		panic(err)
 	}
@@ -40,55 +54,59 @@ func (handler *SearchAccommodationHandler) Init(mux *runtime.ServeMux) {
 
 func (handler *SearchAccommodationHandler) Search(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 	city, guests, startDate, endDate, pageSize, pageNumber, err := handlePathParams(pathParams)
+	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
+	authClient := services.NewAuthClient(handler.authClientAddress)
+	ratingClient := services.NewRatingClient(handler.ratingClientAddress)
+	var filterParams FilterParams
+	shared.DecodeBody(r, &filterParams)
+
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	accommodations, err := handler.SearchByCityAndGuests(city, guests)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	reservedAccommodationIds, err := handler.FindAllReservedAccommodations(startDate, endDate)
+	includingIds, err := handler.FindAllReservedAccommodations(startDate, endDate)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	removeIds := make(map[string]bool)
-	for _, id := range reservedAccommodationIds {
-		removeIds[id] = true
+	request := &gateway.SearchAndFilterRequest{
+		City:         city,
+		Guests:       int32(guests),
+		IncludingIds: includingIds,
+		Page:         int32(pageNumber),
+		Limit:        int32(pageSize),
+		Price: &gateway.PriceRange{
+			From: float32(filterParams.Price.From),
+			To:   float32(filterParams.Price.To),
+		},
+		Filters: filterParams.Additions,
 	}
+	filtered, err := accommodationClient.SearchAndFilter(context.TODO(), request)
 
-	availableAccommodations := []gateway.AccomodationResponse{}
-	for _, obj := range accommodations.AccomodationResponses {
-		if !removeIds[obj.Id] {
-			availableAccommodations = append(availableAccommodations, *obj)
+	data := make([]model.Accommodation, 0)
+
+	for _, single := range filtered.Data {
+		owner, err := authClient.FindById(context.TODO(), &gateway.FindUserByIdRequest{Id: single.OwnerId})
+		if err != nil {
+			shared.BadRequest(w, "Something wrong with capturing owner")
+			return
 		}
+		averageRating, err := ratingClient.GetAverageAccommodationRating(context.TODO(), &gateway.GetAverageAccommodationRatingRequest{AccommodationId: single.Id})
+		if err != nil {
+			shared.BadRequest(w, "Something wrong with capturing rating")
+			return
+		}
+		data = append(data, mapper.AccommodationFromAccomodationResponse(single, mapper.UserFromFindUserByIdResponse(owner), averageRating.Rating))
 	}
 
-	data, err := handler.pagination(pageSize, pageNumber, availableAccommodations)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		shared.BadRequest(w, err.Error())
 		return
 	}
 
-	response, err := json.Marshal(model.AccommodationPage{Data: data, TotalCount: len(availableAccommodations)})
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write(response)
-}
-
-func (handler *SearchAccommodationHandler) SearchByCityAndGuests(city string, guests int) (*gateway.FindAllAccomodationResponse, error) {
-	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
-	accommodations, err := accommodationClient.FindAll(context.TODO(), &gateway.FindAllAccomodationRequest{City: city, Guests: int32(guests)})
-	if err != nil {
-		return &gateway.FindAllAccomodationResponse{}, err
-	}
-	return accommodations, nil
+	shared.Ok(&w, SearchResult{Data: data, TotalCount: filtered.TotalCount})
+	return
 }
 
 func (handler *SearchAccommodationHandler) FindAllReservedAccommodations(startDate, endDate *timestamp.Timestamp) ([]string, error) {
@@ -98,30 +116,6 @@ func (handler *SearchAccommodationHandler) FindAllReservedAccommodations(startDa
 		return nil, err
 	}
 	return ids.Ids, nil
-}
-
-func (handler *SearchAccommodationHandler) pagination(pageSize int, pageNumber int, accommodations []gateway.AccomodationResponse) ([]model.Accommodation, error) {
-	startIndex := (pageNumber - 1) * pageSize
-	endIndex := startIndex + pageSize
-	if endIndex > len(accommodations) {
-		endIndex = len(accommodations)
-	}
-	paginationData := accommodations[startIndex:endIndex]
-	var data []model.Accommodation
-	authClient := services.NewAuthClient(handler.authClientAddress)
-	ratingClient := services.NewRatingClient(handler.ratingClientAddress)
-	for _, e := range paginationData {
-		owner, err := authClient.FindById(context.TODO(), &gateway.FindUserByIdRequest{Id: e.OwnerId})
-		if err != nil {
-			return nil, err
-		}
-		averageRating, err := ratingClient.GetAverageAccommodationRating(context.TODO(), &gateway.GetAverageAccommodationRatingRequest{AccommodationId: e.Id})
-		if err != nil {
-			return nil, err
-		}
-		data = append(data, mapper.AccommodationFromAccomodationResponse(&e, mapper.UserFromFindUserByIdResponse(owner), averageRating.Rating))
-	}
-	return data, nil
 }
 
 func handlePathParams(pathParams map[string]string) (string, int, *timestamp.Timestamp, *timestamp.Timestamp, int, int, error) {

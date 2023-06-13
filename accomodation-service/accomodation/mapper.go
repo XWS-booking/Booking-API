@@ -76,3 +76,43 @@ func mapAccomodationPricing(pricing []model.Pricing) []*accomodationGrpc.Pricing
 	}
 	return result
 }
+
+func MapSearchAndFilterResponse(accomodations []model.Accomodation, count int32) *proto.SearchAndFilterResponse {
+	mapped := make([]*proto.AccomodationResponse, 0)
+
+	for _, acc := range accomodations {
+
+		pricingMapped := make([]*proto.Pricing, 0)
+		for _, pricing := range acc.Pricing {
+			singlePricing := &proto.Pricing{
+				Uuid:        pricing.Uuid,
+				Price:       pricing.Price,
+				PricingType: int32(pricing.PricingType),
+				To:          timestamppb.New(pricing.Interval.To),
+				From:        timestamppb.New(pricing.Interval.From),
+			}
+			pricingMapped = append(pricingMapped, singlePricing)
+		}
+
+		single := &proto.AccomodationResponse{
+			Id:              acc.Id.Hex(),
+			City:            acc.City,
+			ZipCode:         acc.ZipCode,
+			Country:         acc.Country,
+			Wifi:            acc.Wifi,
+			Kitchen:         acc.Kitchen,
+			AirConditioner:  acc.AirConditioner,
+			AutoReservation: acc.AutoReservation,
+			FreeParking:     acc.FreeParking,
+			MinGuests:       acc.MinGuests,
+			MaxGuests:       acc.MaxGuests,
+			OwnerId:         acc.OwnerId.Hex(),
+			Pricing:         pricingMapped,
+		}
+		mapped = append(mapped, single)
+	}
+	return &proto.SearchAndFilterResponse{
+		Data:       mapped,
+		TotalCount: count,
+	}
+}
