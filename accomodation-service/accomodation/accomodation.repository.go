@@ -5,12 +5,13 @@ import (
 	. "accomodation_service/accomodation/model"
 	"context"
 	"fmt"
+	"log"
+	"os"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
-	"os"
 )
 
 type AccomodationRepository struct {
@@ -101,7 +102,7 @@ func (accomodationRepository *AccomodationRepository) SearchAndFilter(params dto
 	opts := options.Find()
 	opts.SetLimit(int64(params.Limit))
 	opts.SetSkip(int64((params.Page - 1) * params.Limit))
-
+	fmt.Println(params.Filters)
 	pipeline := createSearchAndFilterPipeline(params)
 	pipeline = append(pipeline, bson.M{"$skip": (params.Page - 1) * params.Limit})
 	pipeline = append(pipeline, bson.M{"$limit": params.Limit})

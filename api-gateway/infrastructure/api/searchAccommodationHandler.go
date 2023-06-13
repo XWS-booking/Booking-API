@@ -7,12 +7,13 @@ import (
 	"gateway/model/mapper"
 	"gateway/proto/gateway"
 	"gateway/shared"
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/timestamp"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/golang/protobuf/ptypes"
+	"github.com/golang/protobuf/ptypes/timestamp"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
 type SearchAccommodationHandler struct {
@@ -28,7 +29,7 @@ type PriceParams struct {
 
 type FilterParams struct {
 	Price     PriceParams `json:"price"`
-	Additions []string    `json:"filters"`
+	Additions []string    `json:"additions"`
 }
 type SearchResult struct {
 	Data       []model.Accommodation `json:"data"`
