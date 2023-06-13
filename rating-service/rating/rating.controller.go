@@ -213,7 +213,9 @@ func (ratingController *RatingController) GetHostRatings(ctx Context, req *GetHo
 
 }
 
-func (ratingController *RatingController) GetHostAverageRating(ctx Context, req *GetAverageHostRatingRequest) (*GetAverageHostRatingResponse, error) {
+func (ratingController *RatingController) GetAverageHostRating(ctx Context, req *GetAverageHostRatingRequest) (*GetAverageHostRatingResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "getHostAverageRating")
+	defer func() { span.End() }()
 	if req == nil {
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}

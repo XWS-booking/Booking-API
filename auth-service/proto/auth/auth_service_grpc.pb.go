@@ -19,15 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_SignIn_FullMethodName                     = "/AuthService/SignIn"
-	AuthService_Register_FullMethodName                   = "/AuthService/Register"
-	AuthService_UpdatePersonalInfo_FullMethodName         = "/AuthService/UpdatePersonalInfo"
-	AuthService_DeleteProfile_FullMethodName              = "/AuthService/DeleteProfile"
-	AuthService_GetUser_FullMethodName                    = "/AuthService/GetUser"
-	AuthService_FindById_FullMethodName                   = "/AuthService/FindById"
-	AuthService_ChangePassword_FullMethodName             = "/AuthService/ChangePassword"
-	AuthService_GetHostRatingWithGuestInfo_FullMethodName = "/AuthService/GetHostRatingWithGuestInfo"
-	AuthService_ProfileDeletion_FullMethodName            = "/AuthService/ProfileDeletion"
+	AuthService_SignIn_FullMethodName                        = "/AuthService/SignIn"
+	AuthService_Register_FullMethodName                      = "/AuthService/Register"
+	AuthService_UpdatePersonalInfo_FullMethodName            = "/AuthService/UpdatePersonalInfo"
+	AuthService_DeleteProfile_FullMethodName                 = "/AuthService/DeleteProfile"
+	AuthService_GetUser_FullMethodName                       = "/AuthService/GetUser"
+	AuthService_FindById_FullMethodName                      = "/AuthService/FindById"
+	AuthService_ChangePassword_FullMethodName                = "/AuthService/ChangePassword"
+	AuthService_GetHostRatingWithGuestInfo_FullMethodName    = "/AuthService/GetHostRatingWithGuestInfo"
+	AuthService_ProfileDeletion_FullMethodName               = "/AuthService/ProfileDeletion"
+	AuthService_ChangeHostDistinguishedStatus_FullMethodName = "/AuthService/ChangeHostDistinguishedStatus"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -43,6 +44,7 @@ type AuthServiceClient interface {
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
 	GetHostRatingWithGuestInfo(ctx context.Context, in *GetHostRatingWithGuestInfoRequest, opts ...grpc.CallOption) (*GetHostRatingWithGuestInfoResponse, error)
 	ProfileDeletion(ctx context.Context, in *ProfileDeletionRequest, opts ...grpc.CallOption) (*ProfileDeletionResponse, error)
+	ChangeHostDistinguishedStatus(ctx context.Context, in *ChangeHostDistinguishedStatusRequest, opts ...grpc.CallOption) (*ChangeHostDistinguishedStatusResponse, error)
 }
 
 type authServiceClient struct {
@@ -134,6 +136,15 @@ func (c *authServiceClient) ProfileDeletion(ctx context.Context, in *ProfileDele
 	return out, nil
 }
 
+func (c *authServiceClient) ChangeHostDistinguishedStatus(ctx context.Context, in *ChangeHostDistinguishedStatusRequest, opts ...grpc.CallOption) (*ChangeHostDistinguishedStatusResponse, error) {
+	out := new(ChangeHostDistinguishedStatusResponse)
+	err := c.cc.Invoke(ctx, AuthService_ChangeHostDistinguishedStatus_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -147,6 +158,7 @@ type AuthServiceServer interface {
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
 	GetHostRatingWithGuestInfo(context.Context, *GetHostRatingWithGuestInfoRequest) (*GetHostRatingWithGuestInfoResponse, error)
 	ProfileDeletion(context.Context, *ProfileDeletionRequest) (*ProfileDeletionResponse, error)
+	ChangeHostDistinguishedStatus(context.Context, *ChangeHostDistinguishedStatusRequest) (*ChangeHostDistinguishedStatusResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -180,6 +192,9 @@ func (UnimplementedAuthServiceServer) GetHostRatingWithGuestInfo(context.Context
 }
 func (UnimplementedAuthServiceServer) ProfileDeletion(context.Context, *ProfileDeletionRequest) (*ProfileDeletionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ProfileDeletion not implemented")
+}
+func (UnimplementedAuthServiceServer) ChangeHostDistinguishedStatus(context.Context, *ChangeHostDistinguishedStatusRequest) (*ChangeHostDistinguishedStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeHostDistinguishedStatus not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -356,6 +371,24 @@ func _AuthService_ProfileDeletion_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_ChangeHostDistinguishedStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeHostDistinguishedStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).ChangeHostDistinguishedStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_ChangeHostDistinguishedStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).ChangeHostDistinguishedStatus(ctx, req.(*ChangeHostDistinguishedStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -398,6 +431,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ProfileDeletion",
 			Handler:    _AuthService_ProfileDeletion_Handler,
+		},
+		{
+			MethodName: "ChangeHostDistinguishedStatus",
+			Handler:    _AuthService_ChangeHostDistinguishedStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

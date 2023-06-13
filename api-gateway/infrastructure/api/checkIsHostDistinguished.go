@@ -2,58 +2,79 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"gateway/infrastructure/services"
-	. "gateway/middlewares"
 	. "gateway/model"
 	"gateway/model/mapper"
 	"gateway/proto/gateway"
-	ctx "github.com/gorilla/context"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"net/http"
+	"math"
+	"time"
 )
 
-type CheckIsHostDistinguishedHandler struct {
+type HostDistinguishedChecker struct {
 	ratingClientAddress        string
 	accommodationClientAddress string
 	reservationClientAddress   string
+	authClientAddress          string
+	notificationClientAddress  string
 }
 
-func newCheckIsHostDistinguishedHandler(ratingClientAddress string, reservationClientAddress string, accommodationClientAddress string) Handler {
-	return &CheckIsHostDistinguishedHandler{
+func NewIsHostDistinguishedFunc(notificationClientAddress string, authClientAddress string, ratingClientAddress string, reservationClientAddress string, accommodationClientAddress string) *HostDistinguishedChecker {
+	return &HostDistinguishedChecker{
 		ratingClientAddress:        ratingClientAddress,
-		reservationClientAddress:   reservationClientAddress,
 		accommodationClientAddress: accommodationClientAddress,
+		reservationClientAddress:   reservationClientAddress,
+		notificationClientAddress:  notificationClientAddress,
+		authClientAddress:          authClientAddress,
 	}
 }
 
-func (handler *CheckIsHostDistinguishedHandler) Init(mux *runtime.ServeMux) {
-	err := mux.HandlePath("GET", "/api/check/distinguished-host", TokenValidationMiddleware(RolesMiddleware([]UserRole{0}, UserMiddleware(handler.CheckIsHostDistinguished))))
+func (checker *HostDistinguishedChecker) CheckIsHostDistinguishedFunc(id string) (*bool, error) {
+	ratingClient := services.NewRatingClient(checker.ratingClientAddress)
+	authClient := services.NewAuthClient(checker.authClientAddress)
+	notificationClient := services.NewNotificationClient(checker.notificationClientAddress)
+	host, err := authClient.FindById(context.TODO(), &gateway.FindUserByIdRequest{Id: id})
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-}
+	hostOldDistinguishedStatus := host.Distinguished
+	reservations, err := checker.FindAllReservationsByOwner(id)
 
-func (handler *CheckIsHostDistinguishedHandler) CheckIsHostDistinguished(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
-	id := ctx.Get(r, "id").(string)
-	ratingClient := services.NewRatingClient(handler.ratingClientAddress)
-	reservations := handler.FindAllReservationsByOwner(id)
+	if err != nil {
+		return nil, err
+	}
 	hostRating, e := ratingClient.GetAverageHostRating(context.TODO(), &gateway.GetAverageHostRatingRequest{HostId: id})
 	if e != nil {
-		http.Error(w, "Problem with finding host average rating!", http.StatusBadRequest)
+		return nil, err
 	}
-	isThereLessThan5PercentCanceledReservations := handler.CheckIsThereLessThan5PercentCanceledReservations(reservations)
-	isThereMoreThan50DaysOfReservations := handler.CheckIsThereMoreThan50DaysOfReservations(reservations)
-	isThereMoreThan5Reservations := handler.CheckIsThereMoreThan5Reservations(reservations)
-	isHostDistinguished := hostRating.Rating > 4.7 &&
-		isThereLessThan5PercentCanceledReservations &&
-		isThereMoreThan50DaysOfReservations &&
-		isThereMoreThan5Reservations
-	
+	isHostDistinguished := false
+	if !math.IsNaN(hostRating.Rating) {
+		isThereLessThan5PercentCanceledReservations := checker.CheckIsThereLessThan5PercentCanceledReservations(reservations)
+		fmt.Println(isThereLessThan5PercentCanceledReservations)
+		isThereMoreThan50DaysOfReservations := checker.CheckIsThereMoreThan50DaysOfReservations(reservations)
+		fmt.Println(isThereMoreThan50DaysOfReservations)
+		isThereMoreThan5ReservationsInPast := checker.CheckIsThereMoreThan5ReservationsInPast(reservations)
+		fmt.Println(isThereMoreThan5ReservationsInPast)
+		fmt.Println(hostRating.Rating > 4.7)
+		isHostDistinguished = hostRating.Rating > 4.7 &&
+			isThereLessThan5PercentCanceledReservations &&
+			isThereMoreThan50DaysOfReservations &&
+			isThereMoreThan5ReservationsInPast
+	}
+	if hostOldDistinguishedStatus != isHostDistinguished {
+		fmt.Println("usao sam!")
+		authClient.ChangeHostDistinguishedStatus(context.TODO(), &gateway.ChangeHostDistinguishedStatusRequest{Id: id})
+		if isHostDistinguished {
+			_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "distinguished_host", UserId: id, Message: "You are now distinguished host!"})
+		} else {
+			_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "distinguished_host", UserId: id, Message: "You are no longed distinguished host!"})
+		}
+	}
+	return &isHostDistinguished, nil
 }
 
-func (handler *CheckIsHostDistinguishedHandler) CheckIsThereLessThan5PercentCanceledReservations(reservations []ReservationWithCancellation) bool {
+func (checker *HostDistinguishedChecker) CheckIsThereLessThan5PercentCanceledReservations(reservations []ReservationWithCancellation) bool {
 	canceledReservations := make([]ReservationWithCancellation, 0)
-
 	for _, reservation := range reservations {
 		if reservation.Status == 3 {
 			canceledReservations = append(canceledReservations, reservation)
@@ -61,10 +82,10 @@ func (handler *CheckIsHostDistinguishedHandler) CheckIsThereLessThan5PercentCanc
 	}
 	numberOfCanceledReservations := float64(len(canceledReservations))
 	numberOfReservations := float64(len(reservations))
-	return numberOfCanceledReservations/numberOfReservations*100 < 5
+	return ((numberOfCanceledReservations / numberOfReservations) * 100) < 5
 }
 
-func (handler *CheckIsHostDistinguishedHandler) CheckIsThereMoreThan50DaysOfReservations(reservations []ReservationWithCancellation) bool {
+func (checker *HostDistinguishedChecker) CheckIsThereMoreThan50DaysOfReservations(reservations []ReservationWithCancellation) bool {
 	totalDays := 0
 
 	for _, reservation := range reservations {
@@ -75,31 +96,41 @@ func (handler *CheckIsHostDistinguishedHandler) CheckIsThereMoreThan50DaysOfRese
 	return totalDays > 50
 }
 
-func (handler *CheckIsHostDistinguishedHandler) CheckIsThereMoreThan5Reservations(reservations []ReservationWithCancellation) bool {
-	return len(reservations) > 5
+func (checker *HostDistinguishedChecker) CheckIsThereMoreThan5ReservationsInPast(reservations []ReservationWithCancellation) bool {
+	now := time.Now().UTC()
+	pastReservations := make([]ReservationWithCancellation, 0)
+	for _, reservation := range reservations {
+		startDateInPast := reservation.StartDate.Before(now)
+		endDateInPast := reservation.EndDate.Before(now)
+		if startDateInPast && endDateInPast {
+			pastReservations = append(pastReservations, reservation)
+		}
+	}
+
+	return len(pastReservations) > 5
 }
 
-func (handler *CheckIsHostDistinguishedHandler) FindAllReservationsByOwner(id string) []ReservationWithCancellation {
-	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
+func (checker *HostDistinguishedChecker) FindAllReservationsByOwner(id string) ([]ReservationWithCancellation, error) {
+	accommodationClient := services.NewAccommodationClient(checker.accommodationClientAddress)
 	accommodations, e := accommodationClient.FindAllAccommodationIdsByOwnerId(context.TODO(), &gateway.FindAllAccommodationIdsByOwnerIdRequest{OwnerId: id})
 	if e != nil {
-		return []ReservationWithCancellation{}
+		return []ReservationWithCancellation{}, e
 	}
-	reservationClient := services.NewReservationClient(handler.reservationClientAddress)
+	reservationClient := services.NewReservationClient(checker.reservationClientAddress)
 	var reservationsWithAccommodation []ReservationWithCancellation
 	for _, accommId := range accommodations.Ids {
 		accommodation, e := accommodationClient.FindById(context.TODO(), &gateway.FindAccommodationByIdRequest{Id: accommId})
 		if e != nil {
-			return []ReservationWithCancellation{}
+			return []ReservationWithCancellation{}, e
 		}
 		reservations, e := reservationClient.FindAllByAccommodationId(context.TODO(), &gateway.FindAllReservationsByAccommodationIdRequest{AccommodationId: accommId})
 		if e != nil {
-			return []ReservationWithCancellation{}
+			return []ReservationWithCancellation{}, e
 		}
 		for _, reservation := range reservations.Reservations {
 			numberOfCancellation, e := reservationClient.FindNumberOfBuyersCancellations(context.TODO(), &gateway.NumberOfCancellationRequest{BuyerId: reservation.BuyerId})
 			if e != nil {
-				return []ReservationWithCancellation{}
+				return []ReservationWithCancellation{}, e
 			}
 			reservationsWithAccommodation = append(reservationsWithAccommodation, ReservationWithCancellation{
 				Id:                   reservation.Id,
@@ -113,5 +144,5 @@ func (handler *CheckIsHostDistinguishedHandler) FindAllReservationsByOwner(id st
 			})
 		}
 	}
-	return reservationsWithAccommodation
+	return reservationsWithAccommodation, nil
 }

@@ -59,5 +59,7 @@ func (handler *UpdateHostRatingHandler) UpdateHostRate(w http.ResponseWriter, r 
 		shared.BadRequest(w, err.Error())
 		return
 	}
+	hostDistinguishedChecker := NewIsHostDistinguishedFunc(handler.notificationClientAddress, handler.authClientAddress, handler.ratingClientAddress, handler.reservationClientAddress, handler.accommodationClientAddress)
+	hostDistinguishedChecker.CheckIsHostDistinguishedFunc(body.Id)
 	shared.Ok(&w, res)
 }

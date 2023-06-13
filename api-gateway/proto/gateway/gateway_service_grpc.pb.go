@@ -19,15 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AuthService_SignIn_FullMethodName                     = "/AuthService/SignIn"
-	AuthService_Register_FullMethodName                   = "/AuthService/Register"
-	AuthService_UpdatePersonalInfo_FullMethodName         = "/AuthService/UpdatePersonalInfo"
-	AuthService_DeleteProfile_FullMethodName              = "/AuthService/DeleteProfile"
-	AuthService_GetUser_FullMethodName                    = "/AuthService/GetUser"
-	AuthService_FindById_FullMethodName                   = "/AuthService/FindById"
-	AuthService_ChangePassword_FullMethodName             = "/AuthService/ChangePassword"
-	AuthService_GetHostRatingWithGuestInfo_FullMethodName = "/AuthService/GetHostRatingWithGuestInfo"
-	AuthService_ProfileDeletion_FullMethodName            = "/AuthService/ProfileDeletion"
+	AuthService_SignIn_FullMethodName                        = "/AuthService/SignIn"
+	AuthService_Register_FullMethodName                      = "/AuthService/Register"
+	AuthService_UpdatePersonalInfo_FullMethodName            = "/AuthService/UpdatePersonalInfo"
+	AuthService_ChangeHostDistinguishedStatus_FullMethodName = "/AuthService/ChangeHostDistinguishedStatus"
+	AuthService_DeleteProfile_FullMethodName                 = "/AuthService/DeleteProfile"
+	AuthService_GetUser_FullMethodName                       = "/AuthService/GetUser"
+	AuthService_FindById_FullMethodName                      = "/AuthService/FindById"
+	AuthService_ChangePassword_FullMethodName                = "/AuthService/ChangePassword"
+	AuthService_GetHostRatingWithGuestInfo_FullMethodName    = "/AuthService/GetHostRatingWithGuestInfo"
+	AuthService_ProfileDeletion_FullMethodName               = "/AuthService/ProfileDeletion"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -37,6 +38,7 @@ type AuthServiceClient interface {
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInResponse, error)
 	Register(ctx context.Context, in *RegistrationRequest, opts ...grpc.CallOption) (*RegistrationResponse, error)
 	UpdatePersonalInfo(ctx context.Context, in *UpdatePersonalInfoRequest, opts ...grpc.CallOption) (*UpdatePersonalInfoResponse, error)
+	ChangeHostDistinguishedStatus(ctx context.Context, in *ChangeHostDistinguishedStatusRequest, opts ...grpc.CallOption) (*ChangeHostDistinguishedStatusResponse, error)
 	DeleteProfile(ctx context.Context, in *DeleteProfileRequest, opts ...grpc.CallOption) (*DeleteProfileResponse, error)
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	FindById(ctx context.Context, in *FindUserByIdRequest, opts ...grpc.CallOption) (*FindUserByIdResponse, error)
@@ -74,6 +76,15 @@ func (c *authServiceClient) Register(ctx context.Context, in *RegistrationReques
 func (c *authServiceClient) UpdatePersonalInfo(ctx context.Context, in *UpdatePersonalInfoRequest, opts ...grpc.CallOption) (*UpdatePersonalInfoResponse, error) {
 	out := new(UpdatePersonalInfoResponse)
 	err := c.cc.Invoke(ctx, AuthService_UpdatePersonalInfo_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) ChangeHostDistinguishedStatus(ctx context.Context, in *ChangeHostDistinguishedStatusRequest, opts ...grpc.CallOption) (*ChangeHostDistinguishedStatusResponse, error) {
+	out := new(ChangeHostDistinguishedStatusResponse)
+	err := c.cc.Invoke(ctx, AuthService_ChangeHostDistinguishedStatus_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -141,6 +152,7 @@ type AuthServiceServer interface {
 	SignIn(context.Context, *SignInRequest) (*SignInResponse, error)
 	Register(context.Context, *RegistrationRequest) (*RegistrationResponse, error)
 	UpdatePersonalInfo(context.Context, *UpdatePersonalInfoRequest) (*UpdatePersonalInfoResponse, error)
+	ChangeHostDistinguishedStatus(context.Context, *ChangeHostDistinguishedStatusRequest) (*ChangeHostDistinguishedStatusResponse, error)
 	DeleteProfile(context.Context, *DeleteProfileRequest) (*DeleteProfileResponse, error)
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	FindById(context.Context, *FindUserByIdRequest) (*FindUserByIdResponse, error)
@@ -162,6 +174,9 @@ func (UnimplementedAuthServiceServer) Register(context.Context, *RegistrationReq
 }
 func (UnimplementedAuthServiceServer) UpdatePersonalInfo(context.Context, *UpdatePersonalInfoRequest) (*UpdatePersonalInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePersonalInfo not implemented")
+}
+func (UnimplementedAuthServiceServer) ChangeHostDistinguishedStatus(context.Context, *ChangeHostDistinguishedStatusRequest) (*ChangeHostDistinguishedStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeHostDistinguishedStatus not implemented")
 }
 func (UnimplementedAuthServiceServer) DeleteProfile(context.Context, *DeleteProfileRequest) (*DeleteProfileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProfile not implemented")
@@ -244,6 +259,24 @@ func _AuthService_UpdatePersonalInfo_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).UpdatePersonalInfo(ctx, req.(*UpdatePersonalInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_ChangeHostDistinguishedStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeHostDistinguishedStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).ChangeHostDistinguishedStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_ChangeHostDistinguishedStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).ChangeHostDistinguishedStatus(ctx, req.(*ChangeHostDistinguishedStatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -374,6 +407,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdatePersonalInfo",
 			Handler:    _AuthService_UpdatePersonalInfo_Handler,
+		},
+		{
+			MethodName: "ChangeHostDistinguishedStatus",
+			Handler:    _AuthService_ChangeHostDistinguishedStatus_Handler,
 		},
 		{
 			MethodName: "DeleteProfile",

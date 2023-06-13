@@ -20,7 +20,7 @@ service AuthService {
           };
     }
     rpc UpdatePersonalInfo(UpdatePersonalInfoRequest) returns (UpdatePersonalInfoResponse) {}
-
+    rpc ChangeHostDistinguishedStatus(ChangeHostDistinguishedStatusRequest) returns (ChangeHostDistinguishedStatusResponse) {}
     rpc DeleteProfile(DeleteProfileRequest) returns (DeleteProfileResponse) {
         option (google.api.http) = {
             delete: "/api/auth/{id}"
@@ -112,8 +112,13 @@ message UpdatePricingRequest {
     string id = 2;
     repeated Pricing pricing = 3;
 }
+
 message GetAverageHostRatingRequest {
     string HostId = 1;
+}
+
+message ChangeHostDistinguishedStatusRequest {
+    string id = 1;
 }
 message RegistrationRequest {
     string name = 1;
@@ -215,6 +220,10 @@ message DeleteProfileResponse {
     bool deleted = 1;
 }
 
+message ChangeHostDistinguishedStatusResponse {
+
+}
+
 message GetUserResponse {
     string id = 12;
     string name = 1;
@@ -228,6 +237,7 @@ message GetUserResponse {
     string country = 9;
     string role = 10;
     string username = 11;
+    bool distinguished = 13;
 }
 
 message FindUserByIdResponse {
@@ -242,6 +252,7 @@ message FindUserByIdResponse {
     string zipcode = 9;
     string country = 10;
     int64 status = 11;
+    bool distinguished = 12;
 }
 
 message ChangePasswordResponse {

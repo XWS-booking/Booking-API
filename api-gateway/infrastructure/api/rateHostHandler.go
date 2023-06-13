@@ -24,14 +24,16 @@ type RateHostHandler struct {
 	reservationClientAddress   string
 	accommodationClientAddress string
 	notificationClientAddress  string
+	authClientAddress          string
 }
 
-func NewRateHostHandler(ratingClientAddress string, reservationClientAddress string, accommodationClientAddress string, notificationClientAddress string) Handler {
+func NewRateHostHandler(authClientAddress string, ratingClientAddress string, reservationClientAddress string, accommodationClientAddress string, notificationClientAddress string) Handler {
 	return &RateHostHandler{
 		ratingClientAddress:        ratingClientAddress,
 		reservationClientAddress:   reservationClientAddress,
 		accommodationClientAddress: accommodationClientAddress,
 		notificationClientAddress:  notificationClientAddress,
+		authClientAddress:          authClientAddress,
 	}
 }
 
@@ -83,5 +85,7 @@ func (handler *RateHostHandler) RateHost(w http.ResponseWriter, r *http.Request,
 		shared.BadRequest(w, err.Error())
 		return
 	}
+	hostDistinguishedChecker := NewIsHostDistinguishedFunc(handler.notificationClientAddress, handler.authClientAddress, handler.ratingClientAddress, handler.reservationClientAddress, handler.accommodationClientAddress)
+	hostDistinguishedChecker.CheckIsHostDistinguishedFunc(body.HostId)
 	shared.Ok(&w, res3)
 }

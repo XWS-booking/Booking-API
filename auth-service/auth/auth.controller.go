@@ -88,18 +88,19 @@ func (authController *AuthController) GetUser(ctx context.Context, req *GetUserR
 	}
 
 	response := &GetUserResponse{
-		Id:           user.Id.Hex(),
-		Email:        user.Email,
-		Role:         strconv.Itoa(int(user.Role)),
-		Name:         user.Name,
-		Surname:      user.Surname,
-		Password:     user.Password,
-		Street:       user.Street,
-		StreetNumber: user.StreetNumber,
-		City:         user.City,
-		ZipCode:      user.ZipCode,
-		Country:      user.Country,
-		Username:     user.Username,
+		Id:            user.Id.Hex(),
+		Email:         user.Email,
+		Role:          strconv.Itoa(int(user.Role)),
+		Name:          user.Name,
+		Surname:       user.Surname,
+		Password:      user.Password,
+		Street:        user.Street,
+		StreetNumber:  user.StreetNumber,
+		City:          user.City,
+		ZipCode:       user.ZipCode,
+		Country:       user.Country,
+		Username:      user.Username,
+		Distinguished: user.Distinguished,
 	}
 
 	return response, nil
@@ -146,6 +147,20 @@ func (authController *AuthController) DeleteProfile(ctx context.Context, req *De
 	return &DeleteProfileResponse{Deleted: true}, nil
 }
 
+func (authController *AuthController) ChangeHostDistinguishedStatus(ctx context.Context, req *ChangeHostDistinguishedStatusRequest) (*ChangeHostDistinguishedStatusResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "changeHostDistinguishedStatus")
+	defer func() { span.End() }()
+	id, err := primitive.ObjectIDFromHex(req.GetId())
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+	e := authController.AuthService.ChangeHostDistinguishedStatus(id)
+	if e != nil {
+		return &ChangeHostDistinguishedStatusResponse{}, status.Error(codes.Internal, e.Message)
+	}
+	return &ChangeHostDistinguishedStatusResponse{}, nil
+}
+
 func (authController *AuthController) FindById(ctx context.Context, req *FindUserByIdRequest) (*FindUserByIdResponse, error) {
 	_, span := Tp.Tracer(ServiceName).Start(ctx, "findById")
 	defer func() { span.End() }()
@@ -159,16 +174,17 @@ func (authController *AuthController) FindById(ctx context.Context, req *FindUse
 	}
 
 	response := &FindUserByIdResponse{
-		Id:           user.Id.Hex(),
-		Name:         user.Name,
-		Surname:      user.Surname,
-		Email:        user.Email,
-		Role:         int32(user.Role),
-		Street:       user.Street,
-		StreetNumber: user.StreetNumber,
-		Zipcode:      user.ZipCode,
-		City:         user.City,
-		Country:      user.Country,
+		Id:            user.Id.Hex(),
+		Name:          user.Name,
+		Surname:       user.Surname,
+		Email:         user.Email,
+		Role:          int32(user.Role),
+		Street:        user.Street,
+		StreetNumber:  user.StreetNumber,
+		Zipcode:       user.ZipCode,
+		City:          user.City,
+		Country:       user.Country,
+		Distinguished: user.Distinguished,
 	}
 	return response, nil
 }
