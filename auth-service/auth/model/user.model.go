@@ -12,6 +12,14 @@ const (
 	NOT_AUTHENTICATED UserRole = 2
 )
 
+type DeleteStatus int64
+
+const (
+	PENDING DeleteStatus = 0
+	DELETED DeleteStatus = 1
+	ACTIVE  DeleteStatus = 2
+)
+
 type User struct {
 	Id           primitive.ObjectID `bson:"_id,omitempty" json:"id"`
 	Name         string             `bson:"name" json:"name"`
@@ -25,4 +33,5 @@ type User struct {
 	ZipCode      string             `bson:"zip_code" json:"zipCode"`
 	Country      string             `bson:"country" json:"country"`
 	Username     string             `bson:"username" json:"username"`
+	DeleteStatus DeleteStatus       `bson:"delete_status" json:"deleteStatus"`
 }

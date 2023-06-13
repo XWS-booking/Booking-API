@@ -6,6 +6,7 @@ import (
 	"auth_service/shared"
 	"context"
 	. "context"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -208,4 +209,43 @@ func (authController *AuthController) GetHostRatingWithGuestInfo(ctx Context, re
 		})
 	}
 	return &GetHostRatingWithGuestInfoResponse{Ratings: ratingResponses}, nil
+}
+
+func (authController *AuthController) ProfileDeletion(ctx Context, req *ProfileDeletionRequest) (*ProfileDeletionResponse, error) {
+	fmt.Println("ulazi ", req.Id)
+	user, err := authController.AuthService.InitiateProfileDeletion(shared.StringToObjectId(req.Id))
+	fmt.Println("ceo user", user)
+	if err != nil {
+		fmt.Println("Some kind of error")
+		return nil, status.Error(codes.Aborted, err.Message)
+	}
+
+	mapped := &ProfileDeletionResponse{
+		Id:           user.Id.Hex(),
+		Name:         user.Name,
+		Surname:      user.Surname,
+		Email:        user.Email,
+		Role:         int32(user.Role),
+		Street:       user.Street,
+		StreetNumber: user.StreetNumber,
+		City:         user.City,
+		Country:      user.Country,
+		Zipcode:      user.ZipCode,
+		DeleteStatus: strconv.Itoa(int(user.DeleteStatus)),
+	}
+	fmt.Println("Mapped user", mapped)
+
+	return &ProfileDeletionResponse{
+		Id:           user.Id.Hex(),
+		Name:         user.Name,
+		Surname:      user.Surname,
+		Email:        user.Email,
+		Role:         int32(user.Role),
+		Street:       user.Street,
+		StreetNumber: user.StreetNumber,
+		City:         user.City,
+		Country:      user.Country,
+		Zipcode:      user.ZipCode,
+		DeleteStatus: strconv.Itoa(int(user.DeleteStatus)),
+	}, nil
 }

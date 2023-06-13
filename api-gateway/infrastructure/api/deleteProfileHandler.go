@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"gateway/infrastructure/services"
 	. "gateway/middlewares"
 	. "gateway/model"
@@ -47,7 +48,14 @@ func (handler *DeleteProfileHandler) Delete(w http.ResponseWriter, r *http.Reque
 		canDelete, err = handler.CanDeleteGuestProfile(user.Id)
 	}
 	if user.Role == "1" {
-		canDelete, err = handler.CanDeleteHostProfile(user.Id)
+		user, err := authClient.ProfileDeletion(context.TODO(), &gateway.ProfileDeletionRequest{Id: user.Id})
+		if err != nil {
+			shared.BadRequest(w, err.Error())
+			return
+		}
+		fmt.Println("konacni user", user)
+		shared.Ok(&w, user)
+		return
 	}
 
 	if err != nil {
