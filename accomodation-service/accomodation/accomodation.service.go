@@ -1,6 +1,7 @@
 package accomodation
 
 import (
+	"accomodation_service/accomodation/dtos"
 	"accomodation_service/accomodation/model"
 	shared "accomodation_service/shared"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -16,6 +17,17 @@ func (accomodationService *AccomodationService) FindAll(city string, guests int3
 		return accomodations, shared.AccommodationsNotFound()
 	}
 	return accomodations, nil
+}
+
+func (accomodationService *AccomodationService) SearchAndFilter(params dtos.SearchDto) (dtos.SearchResultDto, *shared.Error) {
+	accomodations, err := accomodationService.AccomodationRepository.SearchAndFilter(params)
+	if err != nil {
+		return dtos.SearchResultDto{}, shared.AccommodationsNotFound()
+	}
+	totalCount := accomodationService.AccomodationRepository.CountTotalForSearchAndFilter(params)
+
+	return dtos.SearchResultDto{Data: accomodations, TotalCount: totalCount}, nil
+
 }
 
 func (accomodationService *AccomodationService) FindAllByOwnerId(id primitive.ObjectID) ([]model.Accomodation, *shared.Error) {
