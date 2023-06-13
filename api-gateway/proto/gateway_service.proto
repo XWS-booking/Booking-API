@@ -415,6 +415,7 @@ message FindAllReservationsByAccommodationIdResponse{
 
 message DeleteReservationResponse{
     string message = 1;
+    string AccommodationId = 2;
 }
 
 message FindAllReservedAccommodationsResponse {
@@ -584,7 +585,9 @@ message HostRatingItem {
 }
 
 
-message DeleteHostRatingResponse {}
+message DeleteHostRatingResponse {
+    string hostId = 1;
+}
 
 message UpdatedHostRatingItem {
     string Id = 1;

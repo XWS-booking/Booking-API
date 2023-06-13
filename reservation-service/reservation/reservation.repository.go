@@ -36,14 +36,19 @@ func (reservationRepository *ReservationRepository) Create(reservation Reservati
 	return res.InsertedID.(primitive.ObjectID), nil
 }
 
-func (reservationRepository *ReservationRepository) Delete(id primitive.ObjectID) error {
+func (reservationRepository *ReservationRepository) Delete(id primitive.ObjectID) (*primitive.ObjectID, error) {
 	collection := reservationRepository.getCollection("reservations")
 	filter := bson.M{"_id": id}
+	var reservation Reservation
+	e := collection.FindOne(context.TODO(), filter).Decode(&reservation)
+	if e != nil {
+		return nil, e
+	}
 	_, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &reservation.AccommodationId, nil
 }
 
 func (reservationRepository *ReservationRepository) FindAllReservedAccommodations(startDate time.Time, endDate time.Time) ([]string, error) {

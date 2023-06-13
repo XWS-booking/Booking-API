@@ -110,7 +110,9 @@ message DeleteHostRatingRequest {
   string Id = 1;
 }
 
-message DeleteHostRatingResponse {}
+message DeleteHostRatingResponse {
+  string hostId = 1;
+}
 
 message GetHostRatingsRequest {
   string HostId = 1;

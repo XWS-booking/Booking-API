@@ -109,14 +109,19 @@ func (ratingRepository *RatingRepository) UpdateHostRating(rating HostRating) (H
 	return rating, nil
 }
 
-func (ratingRepository *RatingRepository) DeleteHostRating(id primitive.ObjectID) error {
+func (ratingRepository *RatingRepository) DeleteHostRating(id primitive.ObjectID) (*primitive.ObjectID, error) {
 	collection := ratingRepository.getCollection("host_ratings")
 	filter := bson.M{"_id": id}
+	var rating HostRating
+	e := collection.FindOne(context.TODO(), filter).Decode(&rating)
+	if e != nil {
+		return nil, e
+	}
 	_, err := collection.DeleteOne(context.TODO(), filter)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return &rating.HostId, nil
 }
 
 func (ratingRepository *RatingRepository) GetHostRatings(hostId primitive.ObjectID) ([]HostRating, error) {

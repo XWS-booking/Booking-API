@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 	"gateway/infrastructure/services"
 	. "gateway/model"
 	"gateway/model/mapper"
@@ -50,19 +49,14 @@ func (checker *HostDistinguishedChecker) CheckIsHostDistinguishedFunc(id string)
 	isHostDistinguished := false
 	if !math.IsNaN(hostRating.Rating) {
 		isThereLessThan5PercentCanceledReservations := checker.CheckIsThereLessThan5PercentCanceledReservations(reservations)
-		fmt.Println(isThereLessThan5PercentCanceledReservations)
 		isThereMoreThan50DaysOfReservations := checker.CheckIsThereMoreThan50DaysOfReservations(reservations)
-		fmt.Println(isThereMoreThan50DaysOfReservations)
 		isThereMoreThan5ReservationsInPast := checker.CheckIsThereMoreThan5ReservationsInPast(reservations)
-		fmt.Println(isThereMoreThan5ReservationsInPast)
-		fmt.Println(hostRating.Rating > 4.7)
 		isHostDistinguished = hostRating.Rating > 4.7 &&
 			isThereLessThan5PercentCanceledReservations &&
 			isThereMoreThan50DaysOfReservations &&
 			isThereMoreThan5ReservationsInPast
 	}
 	if hostOldDistinguishedStatus != isHostDistinguished {
-		fmt.Println("usao sam!")
 		authClient.ChangeHostDistinguishedStatus(context.TODO(), &gateway.ChangeHostDistinguishedStatusRequest{Id: id})
 		if isHostDistinguished {
 			_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "distinguished_host", UserId: id, Message: "You are now distinguished host!"})

@@ -14,6 +14,6 @@ type IRatingRepository interface {
 	CreateHostRating(hostRating HostRating) (primitive.ObjectID, error)
 	UpdateHostRating(hostRating HostRating) (HostRating, error)
 	FindHostRatingById(id primitive.ObjectID) (HostRating, error)
-	DeleteHostRating(id primitive.ObjectID) error
+	DeleteHostRating(id primitive.ObjectID) (*primitive.ObjectID, error)
 	GetHostRatings(hostId primitive.ObjectID) ([]HostRating, error)
 }

@@ -45,11 +45,12 @@ func (reservationController *ReservationController) Delete(ctx Context, req *Res
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
-	e := reservationController.ReservationService.Delete(reservationId)
+	accomId, e := reservationController.ReservationService.Delete(reservationId)
 	if e != nil {
 		return nil, status.Error(codes.Internal, e.Message)
 	}
-	return &DeleteReservationResponse{Message: "success"}, nil
+	accomIdReal := *accomId
+	return &DeleteReservationResponse{Message: "success", AccommodationId: accomIdReal.Hex()}, nil
 }
 
 func (reservationController *ReservationController) Confirm(ctx Context, req *ReservationId) (*ReservationResponse, error) {
