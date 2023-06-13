@@ -100,12 +100,12 @@ func (ratingService *RatingService) UpdateHostRating(rating HostRating) (HostRat
 	return res, nil
 }
 
-func (ratingService *RatingService) DeleteHostRating(id string) error {
-	err := ratingService.RatingRepository.DeleteHostRating(shared.StringToObjectId(id))
+func (ratingService *RatingService) DeleteHostRating(id string) (*primitive.ObjectID, error) {
+	hostId, err := ratingService.RatingRepository.DeleteHostRating(shared.StringToObjectId(id))
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return hostId, nil
 }
 
 func (ratingService *RatingService) GetHostRatings(id string) ([]HostRating, error) {

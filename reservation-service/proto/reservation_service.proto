@@ -21,7 +21,6 @@ service ReservationService {
   rpc CheckIfGuestHasReservationInAccommodations(CheckIfGuestHasReservationInAccommodationsRequest) returns (CheckIfGuestHasReservationInAccommodationsResponse){}
 }
 
-
 message CreateReservationRequest {
   string buyerId = 1;
   string accommodationId = 2;
@@ -71,6 +70,7 @@ message ReservationId{
 
 message DeleteReservationResponse{
   string message = 1;
+  string AccommodationId = 2;
 }
 
 message ConfirmReservationResponse{

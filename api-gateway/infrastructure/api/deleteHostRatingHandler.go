@@ -16,12 +16,20 @@ type DeleteRateHostDto struct {
 }
 
 type DeleteHostRatingHandler struct {
-	ratingClientAddress string
+	ratingClientAddress        string
+	accommodationClientAddress string
+	authClientAddress          string
+	reservationClientAddress   string
+	notificationClientAddress  string
 }
 
-func NewDeleteHostRatingHandler(ratingClientAddress string) Handler {
+func NewDeleteHostRatingHandler(notificationClientAddress, accommodationClientAddress, authClientAddress, reservationClientAddress, ratingClientAddress string) Handler {
 	return &DeleteHostRatingHandler{
-		ratingClientAddress: ratingClientAddress,
+		ratingClientAddress:        ratingClientAddress,
+		accommodationClientAddress: accommodationClientAddress,
+		authClientAddress:          authClientAddress,
+		reservationClientAddress:   reservationClientAddress,
+		notificationClientAddress:  notificationClientAddress,
 	}
 }
 
@@ -41,6 +49,7 @@ func (handler *DeleteHostRatingHandler) DeleteHostRate(w http.ResponseWriter, r 
 		shared.BadRequest(w, err.Error())
 		return
 	}
-
+	hostDistinguishedChecker := NewIsHostDistinguishedFunc(handler.notificationClientAddress, handler.authClientAddress, handler.ratingClientAddress, handler.reservationClientAddress, handler.accommodationClientAddress)
+	hostDistinguishedChecker.CheckIsHostDistinguishedFunc(res.HostId)
 	shared.Ok(&w, res)
 }

@@ -20,16 +20,16 @@ func (reservationService *ReservationService) Create(reservation Reservation) pr
 	return created
 }
 
-func (reservationService *ReservationService) Delete(id primitive.ObjectID) *shared.Error {
+func (reservationService *ReservationService) Delete(id primitive.ObjectID) (*primitive.ObjectID, *shared.Error) {
 	_, e := reservationService.ReservationRepository.FindById(id)
 	if e != nil {
-		return shared.ReservationNotFound()
+		return nil, shared.ReservationNotFound()
 	}
-	error := reservationService.ReservationRepository.Delete(id)
+	accomId, error := reservationService.ReservationRepository.Delete(id)
 	if error != nil {
-		return shared.ReservationNotDeleted()
+		return nil, shared.ReservationNotDeleted()
 	}
-	return nil
+	return accomId, nil
 }
 
 func (reservationService ReservationService) FindAllReservedAccommodations(startDate time.Time, endDate time.Time) ([]string, *shared.Error) {

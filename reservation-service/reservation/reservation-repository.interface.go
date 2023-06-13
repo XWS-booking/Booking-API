@@ -8,7 +8,7 @@ import (
 
 type IReservationRepository interface {
 	Create(reservation Reservation) (primitive.ObjectID, error)
-	Delete(id primitive.ObjectID) error
+	Delete(id primitive.ObjectID) (*primitive.ObjectID, error)
 	FindById(id primitive.ObjectID) (Reservation, error)
 	FindAllReservedAccommodations(startDate time.Time, endDate time.Time) ([]string, error)
 	CheckActiveReservationsForGuest(id primitive.ObjectID) (bool, error)

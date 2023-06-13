@@ -30,14 +30,16 @@ type CreateReservationHandler struct {
 	accommodationClientAddress string
 	authClientAddress          string
 	notificationClientAddress  string
+	ratingClientAddress        string
 }
 
-func NewCreateReservationHandler(reservationClientAddress, authClientAddress, accommodationClientAddress, notificationClientAddress string) Handler {
+func NewCreateReservationHandler(ratingClientAddress, reservationClientAddress, authClientAddress, accommodationClientAddress, notificationClientAddress string) Handler {
 	return &CreateReservationHandler{
 		reservationClientAddress:   reservationClientAddress,
 		accommodationClientAddress: accommodationClientAddress,
 		authClientAddress:          authClientAddress,
 		notificationClientAddress:  notificationClientAddress,
+		ratingClientAddress:        ratingClientAddress,
 	}
 }
 
@@ -96,6 +98,12 @@ func (handler *CreateReservationHandler) Create(w http.ResponseWriter, r *http.R
 		}
 	}
 	_, err = notificationClient.SendNotification(context.TODO(), &gateway.SendNotificationRequest{NotificationType: "guest_created_reservation_request", UserId: accommodation.OwnerId, Message: "You have a new reservation in accommodation '" + accommodation.Name + "'"})
+	if err != nil {
+		shared.BadRequest(w, err.Error())
+		return
+	}
+	hostDistinguishedChecker := NewIsHostDistinguishedFunc(handler.notificationClientAddress, handler.authClientAddress, handler.ratingClientAddress, handler.reservationClientAddress, handler.accommodationClientAddress)
+	_, err = hostDistinguishedChecker.CheckIsHostDistinguishedFunc(accommodation.OwnerId)
 	if err != nil {
 		shared.BadRequest(w, err.Error())
 		return

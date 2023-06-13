@@ -174,13 +174,13 @@ func (ratingController *RatingController) DeleteHostRating(ctx Context, req *Del
 		return nil, status.Error(codes.Aborted, "Something wrong with data")
 	}
 
-	err := ratingController.RatingService.DeleteHostRating(req.Id)
+	hostId, err := ratingController.RatingService.DeleteHostRating(req.Id)
 	if err != nil {
 		HttpError(err, span, http.StatusInternalServerError)
 		return nil, status.Error(http.StatusInternalServerError, err.Error())
 	}
-
-	return &DeleteHostRatingResponse{}, nil
+	hostIdReal := *hostId
+	return &DeleteHostRatingResponse{HostId: hostIdReal.Hex()}, nil
 }
 
 func (ratingController *RatingController) GetHostRatings(ctx Context, req *GetHostRatingsRequest) (*GetHostRatingsResponse, error) {
@@ -210,5 +210,23 @@ func (ratingController *RatingController) GetHostRatings(ctx Context, req *GetHo
 	}
 
 	return &GetHostRatingsResponse{Ratings: ratingResponses, AverageRate: float64(averageRate)}, nil
+
+}
+
+func (ratingController *RatingController) GetAverageHostRating(ctx Context, req *GetAverageHostRatingRequest) (*GetAverageHostRatingResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "getHostAverageRating")
+	defer func() { span.End() }()
+	if req == nil {
+		return nil, status.Error(codes.Aborted, "Something wrong with data")
+	}
+
+	ratings, err := ratingController.RatingService.GetHostRatings(req.HostId)
+	averageRating := ratingController.RatingService.CalculateHostAverageRate(ratings)
+
+	if err != nil {
+		return &GetAverageHostRatingResponse{Rating: 0}, status.Error(codes.Aborted, err.Error())
+	}
+
+	return &GetAverageHostRatingResponse{Rating: float64(averageRating)}, nil
 
 }

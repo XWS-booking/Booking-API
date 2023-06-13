@@ -25,7 +25,7 @@ func (authService *AuthService) Register(user User) (User, *Error) {
 		return User{}, RegistrationFailed()
 	}
 	user.Password = hashedPassword
-
+	user.Distinguished = false
 	id, err := authService.UserRepository.Create(user)
 	if err != nil {
 		return User{}, RegistrationFailed()
@@ -93,6 +93,19 @@ func (authService *AuthService) ChangePassword(id string, oldPassword string, ne
 	}
 	user.Password = hashedPass
 	_, err = authService.UserRepository.UpdatePersonalInfo(user)
+	if err != nil {
+		return PersonalInfoUpdateFailed()
+	}
+	return nil
+}
+
+func (authService *AuthService) ChangeHostDistinguishedStatus(id primitive.ObjectID) *Error {
+	user, e := authService.FindById(id)
+	if e != nil {
+		return e
+	}
+	user.Distinguished = !user.Distinguished
+	_, err := authService.UserRepository.UpdatePersonalInfo(user)
 	if err != nil {
 		return PersonalInfoUpdateFailed()
 	}

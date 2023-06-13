@@ -13,6 +13,7 @@ service AuthService {
     rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
     rpc GetHostRatingWithGuestInfo(GetHostRatingWithGuestInfoRequest) returns (GetHostRatingWithGuestInfoResponse) {}
     rpc ProfileDeletion(ProfileDeletionRequest) returns (ProfileDeletionResponse) {}
+    rpc ChangeHostDistinguishedStatus(ChangeHostDistinguishedStatusRequest) returns (ChangeHostDistinguishedStatusResponse) {}
 }
 
 //Requests
@@ -48,6 +49,9 @@ message UpdatePersonalInfoRequest {
 }
 message GetUserRequest {
     string token = 1;
+}
+message ChangeHostDistinguishedStatusRequest {
+    string id = 1;
 }
 
 message DeleteProfileRequest {
@@ -112,6 +116,7 @@ message GetUserResponse {
     string country = 9;
     string role = 10;
     string username = 11;
+    bool distinguished = 13;
 }
 
 message FindUserByIdResponse {
@@ -126,9 +131,14 @@ message FindUserByIdResponse {
     string zipcode = 9;
     string country = 10;
     int64 status = 11;
+    bool distinguished = 12;
 }
 
 message ChangePasswordResponse {
+
+}
+
+message ChangeHostDistinguishedStatusResponse {
 
 }
 

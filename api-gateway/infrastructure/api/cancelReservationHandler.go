@@ -22,13 +22,17 @@ type CancelReservationHandler struct {
 	reservationClientAddress   string
 	accommodationClientAddress string
 	notificationClientAddress  string
+	authClientAddress          string
+	ratingClientAddress        string
 }
 
-func NewCancelReservationHandler(reservationClientAddress, accommodationClientAddress, notificationClientAddress string) Handler {
+func NewCancelReservationHandler(ratingClientAddress, authClientAddress, reservationClientAddress, accommodationClientAddress, notificationClientAddress string) Handler {
 	return &CancelReservationHandler{
 		reservationClientAddress:   reservationClientAddress,
 		accommodationClientAddress: accommodationClientAddress,
 		notificationClientAddress:  notificationClientAddress,
+		authClientAddress:          authClientAddress,
+		ratingClientAddress:        ratingClientAddress,
 	}
 }
 
@@ -65,5 +69,7 @@ func (handler *CancelReservationHandler) Cancel(w http.ResponseWriter, r *http.R
 		shared.BadRequest(w, err.Error())
 		return
 	}
+	hostDistinguishedChecker := NewIsHostDistinguishedFunc(handler.notificationClientAddress, handler.authClientAddress, handler.ratingClientAddress, handler.reservationClientAddress, handler.accommodationClientAddress)
+	hostDistinguishedChecker.CheckIsHostDistinguishedFunc(accommodation.OwnerId)
 	shared.Ok(&w, res)
 }
