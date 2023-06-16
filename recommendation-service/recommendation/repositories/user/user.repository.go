@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"log"
 	"recommendation_service/recommendation/model"
@@ -37,21 +38,22 @@ func (userRepository *UserRepository) Delete(user model.User) error {
 
 func (userRepository *UserRepository) GetRecommended(user model.User) ([]model.Accommodation, error) {
 	ctx := context.TODO()
-	query := "MATCH (p1:User {_id:$id})-[r1:RATING]->(:Accommodation)<-[r2:RATING]-(p2:User) " +
+	fmt.Println(user.Id)
+	query := "MATCH (p1:User{_id:$id})-[r1:RATES]->(:Accommodation)<-[r2:RATES]-(p2:User) " +
 		"WHERE p1 <> p2 and abs(r1.value - r2.value) in [0, 1] " +
 		"WITH p2 " +
-		"MATCH (p2)-[r:RATING]->(a2:Accommodation) " +
+		"MATCH (p2)-[r:RATES]->(a2:Accommodation) " +
 		"WHERE  r.value >= 3 " +
 		"WITH DISTINCT a2 " +
-		"OPTIONAL MATCH (a2)<-[r:RATING]-() " +
-		"WHERE r.value < 3 and r.createdAt < datetime().epochSeconds() - (90 * 24 * 60 * 60) " +
+		"OPTIONAL MATCH (a2)<-[r:RATES]-() " +
+		"WHERE r.value < 3 and r.createdAt >  date() - duration({months:3}) " +
 		"WITH a2, count(r) AS lowRatingCount " +
 		"MATCH (a2) " +
 		"WHERE lowRatingCount = 0 " +
 		"WITH a2 " +
-		"MATCH (a2)<-[r:RATING]-(:User) " +
+		"MATCH (a2)<-[r:RATES]-(:User) " +
 		"WITH a2, avg(r.value) as avgRating " +
-		"RETURN a2 " +
+		"RETURN a2._id " +
 		"ORDER BY avgRating DESC " +
 		"LIMIT 10"
 	params := map[string]interface{}{"id": user.Id}
@@ -62,19 +64,19 @@ func (userRepository *UserRepository) GetRecommended(user model.User) ([]model.A
 		results := make([]model.Accommodation, 0)
 		if err != nil {
 			log.Fatal(err)
-			return []model.Accommodation{}, err
+			return results, err
 		}
 
 		for result.Next(ctx) {
 			record := result.Record()
-			id, err := record.Get("id")
-			if err {
-				break
-			}
-			results = append(results, model.Accommodation{Id: id.(string)})
+			_id := record.Values[0].(string)
+			fmt.Println(_id)
+			results = append(results, model.Accommodation{Id: _id})
 		}
 		return results, nil
 	})
+
+	fmt.Println(result, err)
 
 	return result.([]model.Accommodation), err
 
