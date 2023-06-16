@@ -125,7 +125,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	findNotificationPreferencesByUserId.Init(gwmux)
 	updateNotificationPreferencesHandler := api.NewUpdateNotificationPreferencesHandler(notificationEndpoint)
 	updateNotificationPreferencesHandler.Init(gwmux)
-	getRecommendedAccommodationsHandler := api.NewRecommendedAccommodationsHandler(accommodationEndpoint, recommendationEndpoint)
+	getRecommendedAccommodationsHandler := api.NewRecommendedAccommodationsHandler(accommodationEndpoint, recommendationEndpoint, authEndpoint, ratingEndpoint)
 	getRecommendedAccommodationsHandler.Init(gwmux)
 }
 
