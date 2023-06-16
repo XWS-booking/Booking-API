@@ -29,6 +29,7 @@ const (
 	AuthService_GetHostRatingWithGuestInfo_FullMethodName    = "/AuthService/GetHostRatingWithGuestInfo"
 	AuthService_ProfileDeletion_FullMethodName               = "/AuthService/ProfileDeletion"
 	AuthService_ChangeHostDistinguishedStatus_FullMethodName = "/AuthService/ChangeHostDistinguishedStatus"
+	AuthService_GetFeaturedHosts_FullMethodName              = "/AuthService/GetFeaturedHosts"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -45,6 +46,7 @@ type AuthServiceClient interface {
 	GetHostRatingWithGuestInfo(ctx context.Context, in *GetHostRatingWithGuestInfoRequest, opts ...grpc.CallOption) (*GetHostRatingWithGuestInfoResponse, error)
 	ProfileDeletion(ctx context.Context, in *ProfileDeletionRequest, opts ...grpc.CallOption) (*ProfileDeletionResponse, error)
 	ChangeHostDistinguishedStatus(ctx context.Context, in *ChangeHostDistinguishedStatusRequest, opts ...grpc.CallOption) (*ChangeHostDistinguishedStatusResponse, error)
+	GetFeaturedHosts(ctx context.Context, in *GetFeaturedHostsRequest, opts ...grpc.CallOption) (*GetFeaturedHostsResponse, error)
 }
 
 type authServiceClient struct {
@@ -145,6 +147,15 @@ func (c *authServiceClient) ChangeHostDistinguishedStatus(ctx context.Context, i
 	return out, nil
 }
 
+func (c *authServiceClient) GetFeaturedHosts(ctx context.Context, in *GetFeaturedHostsRequest, opts ...grpc.CallOption) (*GetFeaturedHostsResponse, error) {
+	out := new(GetFeaturedHostsResponse)
+	err := c.cc.Invoke(ctx, AuthService_GetFeaturedHosts_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility
@@ -159,6 +170,7 @@ type AuthServiceServer interface {
 	GetHostRatingWithGuestInfo(context.Context, *GetHostRatingWithGuestInfoRequest) (*GetHostRatingWithGuestInfoResponse, error)
 	ProfileDeletion(context.Context, *ProfileDeletionRequest) (*ProfileDeletionResponse, error)
 	ChangeHostDistinguishedStatus(context.Context, *ChangeHostDistinguishedStatusRequest) (*ChangeHostDistinguishedStatusResponse, error)
+	GetFeaturedHosts(context.Context, *GetFeaturedHostsRequest) (*GetFeaturedHostsResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -195,6 +207,9 @@ func (UnimplementedAuthServiceServer) ProfileDeletion(context.Context, *ProfileD
 }
 func (UnimplementedAuthServiceServer) ChangeHostDistinguishedStatus(context.Context, *ChangeHostDistinguishedStatusRequest) (*ChangeHostDistinguishedStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChangeHostDistinguishedStatus not implemented")
+}
+func (UnimplementedAuthServiceServer) GetFeaturedHosts(context.Context, *GetFeaturedHostsRequest) (*GetFeaturedHostsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFeaturedHosts not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -389,6 +404,24 @@ func _AuthService_ChangeHostDistinguishedStatus_Handler(srv interface{}, ctx con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_GetFeaturedHosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFeaturedHostsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GetFeaturedHosts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_GetFeaturedHosts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GetFeaturedHosts(ctx, req.(*GetFeaturedHostsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -435,6 +468,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ChangeHostDistinguishedStatus",
 			Handler:    _AuthService_ChangeHostDistinguishedStatus_Handler,
+		},
+		{
+			MethodName: "GetFeaturedHosts",
+			Handler:    _AuthService_GetFeaturedHosts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

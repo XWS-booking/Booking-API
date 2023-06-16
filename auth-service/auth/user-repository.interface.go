@@ -12,4 +12,5 @@ type IUserRepository interface {
 	FindByEmail(email string) (User, error)
 	UpdatePersonalInfo(user User) (User, error)
 	Delete(id primitive.ObjectID) error
+	GetFeaturedHosts() ([]User, error)
 }

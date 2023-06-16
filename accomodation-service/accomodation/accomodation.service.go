@@ -22,10 +22,9 @@ func (accomodationService *AccomodationService) FindAll(city string, guests int3
 func (accomodationService *AccomodationService) SearchAndFilter(params dtos.SearchDto) (dtos.SearchResultDto, *shared.Error) {
 	accomodations, err := accomodationService.AccomodationRepository.SearchAndFilter(params)
 	if err != nil {
-		return dtos.SearchResultDto{}, shared.AccommodationsNotFound()
+		return dtos.SearchResultDto{Data: []model.Accomodation{}, TotalCount: 0}, nil
 	}
 	totalCount := accomodationService.AccomodationRepository.CountTotalForSearchAndFilter(params)
-
 	return dtos.SearchResultDto{Data: accomodations, TotalCount: totalCount}, nil
 
 }

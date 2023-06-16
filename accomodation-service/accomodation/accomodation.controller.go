@@ -212,6 +212,16 @@ func (accomodationController *AccomodationController) GetBookingPrice(ctx Contex
 
 func (accomodationController *AccomodationController) SearchAndFilter(ctx Context, req *SearchAndFilterRequest) (*SearchAndFilterResponse, error) {
 
+	featuredHostIdsMapped := make([]primitive.ObjectID, 0)
+	for _, hostId := range req.FeaturedHostIds {
+		featuredHostIdsMapped = append(featuredHostIdsMapped, shared.StringToObjectId(hostId))
+	}
+
+	includingIdsMapped := make([]primitive.ObjectID, 0)
+	for _, includingId := range req.IncludingIds {
+		includingIdsMapped = append(includingIdsMapped, shared.StringToObjectId(includingId))
+	}
+
 	params := dtos.SearchDto{
 		Limit:   req.Limit,
 		Page:    req.Page,
@@ -221,8 +231,9 @@ func (accomodationController *AccomodationController) SearchAndFilter(ctx Contex
 			From: float64(req.Price.From),
 			To:   float64(req.Price.To),
 		},
-		IncludingIds: req.IncludingIds,
-		City:         req.City,
+		IncludingIds:    includingIdsMapped,
+		City:            req.City,
+		FeaturedHostIds: featuredHostIdsMapped,
 	}
 
 	results, err := accomodationController.AccomodationService.SearchAndFilter(params)

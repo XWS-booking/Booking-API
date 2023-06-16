@@ -69,6 +69,11 @@ func (handler *SearchAccommodationHandler) Search(w http.ResponseWriter, r *http
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	featuredHostResp, err := authClient.GetFeaturedHosts(context.TODO(), &gateway.GetFeaturedHostsRequest{})
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	request := &gateway.SearchAndFilterRequest{
 		City:         city,
@@ -80,11 +85,16 @@ func (handler *SearchAccommodationHandler) Search(w http.ResponseWriter, r *http
 			From: float32(filterParams.Price.From),
 			To:   float32(filterParams.Price.To),
 		},
-		Filters: filterParams.Additions,
+		FeaturedHostIds: featuredHostResp.Hosts,
+		Filters:         filterParams.Additions,
 	}
 	filtered, err := accommodationClient.SearchAndFilter(context.TODO(), request)
 
 	data := make([]model.Accommodation, 0)
+	if data == nil {
+		shared.BadRequest(w, "Something wrong with filtering data")
+		return
+	}
 
 	for _, single := range filtered.Data {
 		owner, err := authClient.FindById(context.TODO(), &gateway.FindUserByIdRequest{Id: single.OwnerId})

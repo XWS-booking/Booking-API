@@ -38,6 +38,7 @@ service AuthService {
     rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
     rpc GetHostRatingWithGuestInfo(GetHostRatingWithGuestInfoRequest) returns (GetHostRatingWithGuestInfoResponse) {}
     rpc ProfileDeletion(ProfileDeletionRequest) returns (ProfileDeletionResponse) {}
+    rpc GetFeaturedHosts(GetFeaturedHostsRequest) returns (GetFeaturedHostsResponse) {}
 }
 
 service AccomodationService {
@@ -208,6 +209,7 @@ message SearchAndFilterRequest {
     repeated string filters = 5;
     PriceRange price = 6;
     repeated string includingIds = 7;
+    repeated string featuredHostIds = 8;
 }
 
 message RecommendationRequest {
@@ -217,6 +219,8 @@ message RecommendationRequest {
 message PopulateRecommendedRequest {
     repeated string ids = 1;
 }
+
+message GetFeaturedHostsRequest {}
 
 
 //Responses
@@ -702,4 +706,8 @@ message RecommendationResponse {
 
 message PopulateRecommendedResponse {
     repeated AccomodationResponse accommodations = 1;
+}
+
+message GetFeaturedHostsResponse {
+    repeated string hosts = 1;
 }

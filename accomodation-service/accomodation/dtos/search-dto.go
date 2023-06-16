@@ -1,6 +1,9 @@
 package dtos
 
-import "accomodation_service/accomodation/model"
+import (
+	"accomodation_service/accomodation/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type PriceRange struct {
 	From float64
@@ -8,13 +11,14 @@ type PriceRange struct {
 }
 
 type SearchDto struct {
-	IncludingIds []string
-	City         string
-	Guests       int32
-	Filters      []string
-	Price        PriceRange
-	Page         int32
-	Limit        int32
+	IncludingIds    []primitive.ObjectID
+	City            string
+	Guests          int32
+	Filters         []string
+	Price           PriceRange
+	Page            int32
+	Limit           int32
+	FeaturedHostIds []primitive.ObjectID
 }
 
 type SearchResultDto struct {

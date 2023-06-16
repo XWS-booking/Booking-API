@@ -14,6 +14,7 @@ service AuthService {
     rpc GetHostRatingWithGuestInfo(GetHostRatingWithGuestInfoRequest) returns (GetHostRatingWithGuestInfoResponse) {}
     rpc ProfileDeletion(ProfileDeletionRequest) returns (ProfileDeletionResponse) {}
     rpc ChangeHostDistinguishedStatus(ChangeHostDistinguishedStatusRequest) returns (ChangeHostDistinguishedStatusResponse) {}
+    rpc GetFeaturedHosts(GetFeaturedHostsRequest) returns (GetFeaturedHostsResponse) {}
 }
 
 //Requests
@@ -71,6 +72,8 @@ message ChangePasswordRequest {
 message ProfileDeletionRequest {
     string id = 1;
 }
+
+message GetFeaturedHostsRequest {}
 
 //Responses
 message RegistrationResponse {
@@ -180,4 +183,8 @@ message ProfileDeletionResponse {
     string zipcode = 9;
     string country = 10;
     string deleteStatus = 11;
+}
+
+message GetFeaturedHostsResponse {
+    repeated string hosts = 1;
 }
