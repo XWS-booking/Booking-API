@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"gateway/infrastructure/api"
 	"gateway/proto/gateway"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -49,7 +48,7 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	reservationEndpoint := os.Getenv("RESERVATION_SERVICE_ADDRESS")
 	ratingEndpoint := os.Getenv("RATING_SERVICE_ADDRESS")
 	notificationEndpoint := os.Getenv("NOTIFICATION_SERVICE_ADDRESS")
-	fmt.Println(notificationEndpoint)
+	recommendationEndpoint := os.Getenv("RECOMMENDATION_SERVICE_ADDRESS")
 	err := gateway.RegisterAuthServiceHandlerFromEndpoint(context.TODO(), gwmux, authEndpoint, opts)
 	if err != nil {
 		panic(err)
@@ -126,6 +125,8 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	findNotificationPreferencesByUserId.Init(gwmux)
 	updateNotificationPreferencesHandler := api.NewUpdateNotificationPreferencesHandler(notificationEndpoint)
 	updateNotificationPreferencesHandler.Init(gwmux)
+	getRecommendedAccommodationsHandler := api.NewRecommendedAccommodationsHandler(accommodationEndpoint, recommendationEndpoint)
+	getRecommendedAccommodationsHandler.Init(gwmux)
 }
 
 func initCors(gwmux *runtime.ServeMux) http.Handler {

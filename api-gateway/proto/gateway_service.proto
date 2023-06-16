@@ -53,6 +53,7 @@ service AccomodationService {
     rpc GetBookingPrice(GetBookingPriceRequest) returns (GetBookingPriceResponse) {}
     rpc UpdatePricing(UpdatePricingRequest) returns (UpdatePricingResponse) {}
     rpc SearchAndFilter(SearchAndFilterRequest) returns (SearchAndFilterResponse) {}
+    rpc PopulateRecommended(PopulateRecommendedRequest) returns (PopulateRecommendedResponse) {}
 }
 
 service ReservationService {
@@ -94,6 +95,10 @@ service RatingService {
     rpc GetAverageHostRating(GetAverageHostRatingRequest) returns (GetAverageHostRatingResponse) {}
 }
 
+service RecommendationService {
+    rpc GetRecommendedAccommodations(RecommendationRequest) returns (RecommendationResponse) {}
+}
+
 service NotificationService {
     rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse) {
         option (google.api.http) = {
@@ -105,6 +110,8 @@ service NotificationService {
     rpc UpdateNotificationPreferences(CreateNotificationPreferencesRequest) returns (CreateNotificationPreferencesResponse) {}
     rpc FindById(FindNotificationPreferencesByIdRequest) returns (FindNotificationPreferencesByIdResponse) {}
 }
+
+
 
 
 //Requests
@@ -202,6 +209,15 @@ message SearchAndFilterRequest {
     PriceRange price = 6;
     repeated string includingIds = 7;
 }
+
+message RecommendationRequest {
+    string userId = 1;
+}
+
+message PopulateRecommendedRequest {
+    repeated string ids = 1;
+}
+
 
 //Responses
 message RegistrationResponse {
@@ -678,4 +694,12 @@ message FindNotificationPreferencesByIdResponse {
 message SearchAndFilterResponse {
     repeated AccomodationResponse data = 1;
     int32 totalCount = 2;
+}
+
+message RecommendationResponse {
+    repeated string accommodations = 1;
+}
+
+message PopulateRecommendedResponse {
+    repeated AccomodationResponse accommodations = 1;
 }

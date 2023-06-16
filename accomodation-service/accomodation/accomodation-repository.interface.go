@@ -15,4 +15,5 @@ type IAccomodationRepository interface {
 	UpdatePricing(accomodation Accomodation) error
 	SearchAndFilter(params dtos.SearchDto) ([]Accomodation, error)
 	CountTotalForSearchAndFilter(params dtos.SearchDto) int32
+	FindAllByIds(ids []primitive.ObjectID) ([]Accomodation, error)
 }

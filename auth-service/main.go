@@ -4,6 +4,7 @@ import (
 	. "auth_service/auth"
 	"auth_service/auth/handlers"
 	"auth_service/auth/saga-config"
+	"auth_service/auth/watchers"
 	"auth_service/common/messaging"
 	"auth_service/common/messaging/nats"
 	. "auth_service/database"
@@ -21,6 +22,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 )
 
@@ -75,6 +77,9 @@ func main() {
 	replyPublisher := initPublisher(os.Getenv("DELETE_HOST_REPLY_SUBJECT"))
 	commandSubscriber := initSubscriber(os.Getenv("DELETE_HOST_COMMAND_SUBJECT"), QueueGroup)
 
+	userEventPublisher := initPublisher("USER_EVENT")
+	watcher := watchers.UserEventWatcher{DB: db, UserRepository: userRepository, Publisher: userEventPublisher}
+
 	o := initOrchestator(commandPublisher, replySubscriber)
 	authService := &AuthService{UserRepository: userRepository, DeleteHostOrchestrator: o}
 	initDeleteHostProfileHandler(authService, replyPublisher, commandSubscriber)
@@ -82,6 +87,16 @@ func main() {
 	authController := CreateAuthController(authService)
 	authGrpc.RegisterAuthServiceServer(grpcServer, authController)
 	fmt.Println("main sub i pub", commandSubscriber, replyPublisher)
+
+	wg := &sync.WaitGroup{}
+	ctx, cancel := context.WithCancel(context.Background())
+
+	// Start the change stream listener in a goroutine
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		watcher.StartWatching(ctx)
+	}()
 
 	go func() {
 		if err := grpcServer.Serve(listener); err != nil {
@@ -95,7 +110,9 @@ func main() {
 	<-stopCh
 
 	grpcServer.Stop()
+	cancel()
 }
+
 func CreateServerLogger() grpc.UnaryServerInterceptor {
 	logger := logrus.New()
 	logger.SetLevel(logrus.InfoLevel)

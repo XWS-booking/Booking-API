@@ -4,6 +4,7 @@ import (
 	. "accomodation_service/accomodation"
 	"accomodation_service/accomodation/handlers"
 	"accomodation_service/accomodation/services/storage"
+	"accomodation_service/accomodation/watchers"
 	"accomodation_service/common/messaging"
 	"accomodation_service/common/messaging/nats"
 	. "accomodation_service/database"
@@ -21,6 +22,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 )
 
@@ -78,7 +80,24 @@ func main() {
 	accomodationGrpc.RegisterAccomodationServiceServer(grpcServer, accomodationController)
 	commandSubscriber := initSubscriber(os.Getenv("DELETE_HOST_COMMAND_SUBJECT"), QueueGroup)
 	replyPublisher := initPublisher(os.Getenv("DELETE_HOST_REPLY_SUBJECT"))
+
+	accommodationEventPublisher := initPublisher("ACCOMMODATION_EVENT")
+	watcher := watchers.AccommodationEventWatcher{
+		DB:                      db,
+		AccommodationRepository: accomodationRepository,
+		Publisher:               accommodationEventPublisher,
+	}
 	initDeleteHostProfileHandler(accomodationService, replyPublisher, commandSubscriber)
+
+	wg := &sync.WaitGroup{}
+	ctx, cancel := context.WithCancel(context.Background())
+
+	// Start the change stream listener in a goroutine
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		watcher.StartWatching(ctx)
+	}()
 
 	go func() {
 		if err := grpcServer.Serve(listener); err != nil {
@@ -90,8 +109,9 @@ func main() {
 	signal.Notify(stopCh, syscall.SIGTERM)
 
 	<-stopCh
-
+	cancel()
 	grpcServer.Stop()
+
 }
 func CreateServerLogger() grpc.UnaryServerInterceptor {
 	logger := logrus.New()

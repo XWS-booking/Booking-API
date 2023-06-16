@@ -18,9 +18,13 @@ import (
 	"os"
 	"os/signal"
 	. "rating_service/database"
+	"rating_service/messaging"
+	"rating_service/messaging/nats"
 	"rating_service/opentelementry"
 	ratingGrpc "rating_service/proto/rating"
 	. "rating_service/rating"
+	"rating_service/rating/watchers"
+	"sync"
 	"syscall"
 )
 
@@ -70,6 +74,22 @@ func main() {
 		RatingRepository: ratingRepository,
 	}
 	ratingController := NewRatingController(ratingService)
+	ratingEventPublisher := initPublisher("RATING_EVENT")
+	watcher := watchers.AccommodationRatingEventWatcher{
+		RatingRepository: ratingRepository,
+		Publisher:        ratingEventPublisher,
+		DB:               db,
+	}
+
+	wg := &sync.WaitGroup{}
+	ctx, cancel := context.WithCancel(context.Background())
+	// Start the change stream listener in a goroutine
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		watcher.StartWatching(ctx)
+	}()
+
 	ratingGrpc.RegisterRatingServiceServer(grpcServer, ratingController)
 
 	go func() {
@@ -82,7 +102,7 @@ func main() {
 	signal.Notify(stopCh, syscall.SIGTERM)
 
 	<-stopCh
-
+	cancel()
 	grpcServer.Stop()
 }
 func CreateServerLogger() grpc.UnaryServerInterceptor {
@@ -90,6 +110,16 @@ func CreateServerLogger() grpc.UnaryServerInterceptor {
 	logger.SetLevel(logrus.InfoLevel)
 	entry := logrus.NewEntry(logger)
 	return grpc_logrus.UnaryServerInterceptor(entry, grpc_logrus.WithLevels(grpc_logrus.DefaultCodeToLevel))
+}
+
+func initPublisher(subject string) messaging.Publisher {
+	publisher, err := nats.NewNATSPublisher(
+		os.Getenv("NATS_HOST"), os.Getenv("NATS_PORT"),
+		os.Getenv("NATS_USER"), os.Getenv("NATS_PASS"), subject)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return publisher
 }
 
 func httpErrorBadRequest(err error, span trace.Span, ctx *gin.Context) {
