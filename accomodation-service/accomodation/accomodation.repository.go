@@ -205,3 +205,26 @@ func createSearchAndFilterPipeline(params dtos.SearchDto) bson.A {
 	}
 	return pipeline
 }
+
+func (accommodationRepository *AccomodationRepository) FindAllByIds(ids []primitive.ObjectID) ([]Accomodation, error) {
+	collection := accommodationRepository.getCollection("accomodations")
+	filter := bson.M{"_id": bson.M{"$in": ids}}
+
+	cur, err := collection.Find(context.TODO(), filter)
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]Accomodation, 0)
+	for cur.Next(context.TODO()) {
+		var acc Accomodation
+		err := cur.Decode(&acc)
+		if err != nil {
+			log.Fatal(err)
+			break
+		}
+		result = append(result, acc)
+	}
+	return result, nil
+}

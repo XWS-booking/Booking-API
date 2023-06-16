@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "proto/recommendationGrpc";
+
+
+service RecommendationService {
+  rpc GetRecommendedAccommodations(RecommendationRequest) returns (RecommendationResponse);
+}
+
+message RecommendationRequest {
+  string userId = 1;
+}
+message RecommendationResponse {
+  repeated string accommodations = 1;
+}

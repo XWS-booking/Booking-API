@@ -116,3 +116,15 @@ func MapSearchAndFilterResponse(accomodations []model.Accomodation, count int32)
 		TotalCount: count,
 	}
 }
+
+func MapRecommendedPopulatedResponse(accommodations []model.Accomodation) *proto.PopulateRecommendedResponse {
+	result := make([]*proto.AccomodationResponse, 0)
+
+	for _, acc := range accommodations {
+		result = append(result, NewAccomodationResponse(acc))
+	}
+
+	return &proto.PopulateRecommendedResponse{
+		Accommodations: result,
+	}
+}

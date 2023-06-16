@@ -13,6 +13,7 @@ service AccomodationService {
   rpc GetBookingPrice(GetBookingPriceRequest) returns (GetBookingPriceResponse) {}
   rpc UpdatePricing(UpdatePricingRequest) returns (UpdatePricingResponse) {}
   rpc SearchAndFilter(SearchAndFilterRequest) returns (SearchAndFilterResponse) {}
+  rpc PopulateRecommended(PopulateRecommendedRequest) returns (PopulateRecommendedResponse) {}
 }
 
 
@@ -93,6 +94,10 @@ message SearchAndFilterRequest {
   repeated string includingIds = 7;
 }
 
+message PopulateRecommendedRequest {
+  repeated string ids = 1;
+}
+
 //Response
 message CreateAccomodationResponse {
   string id = 14;
@@ -153,4 +158,8 @@ message UpdatePricingResponse{}
 message SearchAndFilterResponse{
   repeated AccomodationResponse data = 1;
   int32 totalCount = 2;
+}
+
+message PopulateRecommendedResponse{
+  repeated AccomodationResponse accommodations = 1;
 }

@@ -233,3 +233,19 @@ func (accomodationController *AccomodationController) SearchAndFilter(ctx Contex
 
 	return MapSearchAndFilterResponse(results.Data, results.TotalCount), nil
 }
+
+func (accommodationController *AccomodationController) PopulateRecommended(ctx Context, req *PopulateRecommendedRequest) (*PopulateRecommendedResponse, error) {
+
+	idsMapped := make([]primitive.ObjectID, 0)
+
+	for _, id := range req.Ids {
+		idsMapped = append(idsMapped, shared.StringToObjectId(id))
+	}
+
+	result, err := accommodationController.AccomodationService.PopulateRecommended(idsMapped)
+	if err != nil {
+		return nil, status.Error(codes.Aborted, err.Error())
+	}
+
+	return MapRecommendedPopulatedResponse(result), nil
+}

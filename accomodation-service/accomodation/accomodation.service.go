@@ -97,3 +97,8 @@ func (accomodationService *AccomodationService) UpdatePricing(acc model.Accomoda
 	accomodationService.AccomodationRepository.UpdatePricing(accomodation)
 	return nil
 }
+
+func (accommodationService *AccomodationService) PopulateRecommended(ids []primitive.ObjectID) ([]model.Accomodation, error) {
+	accommodations, err := accommodationService.AccomodationRepository.FindAllByIds(ids)
+	return accommodations, err
+}

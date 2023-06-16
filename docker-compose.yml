@@ -63,6 +63,10 @@ services:
       JWT_SECRET: secret
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
     networks:
       - network
       - monitoring
@@ -106,7 +110,26 @@ services:
     networks:
       - network
       - monitoring
-
+  recommendation-service:
+    image: recommendation_service
+    container_name: recommendation_service
+    hostname: recommendation_service
+    build:
+      context: ./recommendation-service/
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      PORT: 9000
+      NEO4J_URI: neo4j+s://85621d27.databases.neo4j.io
+      NEO4J_USERNAME: neo4j
+      NEO4J_PASSWORD: Tg2NvhIWfLZQ5QjgFKSQhKVhZxzZqVDfmF1MD-nRYqk
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+    networks:
+      - network
+      - monitoring
   api_gateway:
     image: api_gateway
     container_name: api_gateway
@@ -121,6 +144,7 @@ services:
       RESERVATION_SERVICE_ADDRESS: reservation_service:9000
       RATING_SERVICE_ADDRESS: rating_service:9000
       NOTIFICATION_SERVICE_ADDRESS: notification_service:9000
+      RECOMMENDATION_SERVICE_ADDRESS: recommendation_service:9000
       JWT_SECRET: secret
       GATEWAY_ADDRESS: 8085
     depends_on:
