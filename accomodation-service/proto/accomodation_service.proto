@@ -92,6 +92,7 @@ message SearchAndFilterRequest {
   repeated string filters = 5;
   PriceRange price = 6;
   repeated string includingIds = 7;
+  repeated string featuredHostIds = 8;
 }
 
 message PopulateRecommendedRequest {

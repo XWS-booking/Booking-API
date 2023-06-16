@@ -140,6 +140,9 @@ func (accommodationRepository *AccomodationRepository) CountTotalForSearchAndFil
 	}
 
 	// Extract the total count
+	if result == nil {
+		return 0
+	}
 	totalCount := result[0]["total_count"].(int32)
 	return totalCount
 }
@@ -190,7 +193,18 @@ func createSearchAndFilterPipeline(params dtos.SearchDto) bson.A {
 	}
 
 	optional := bson.A{}
+	var featuredHostFilter *bson.M
 	for _, f := range params.Filters {
+		if f == "featuredHostOnly" {
+			featuredHostFilter = &bson.M{
+				"$match": bson.M{
+					"owner_id": bson.M{
+						"$in": params.FeaturedHostIds,
+					},
+				},
+			}
+			continue
+		}
 		optionalFilter := bson.M{}
 		optionalFilter[f] = true
 		optional = append(optional, optionalFilter)
@@ -200,9 +214,15 @@ func createSearchAndFilterPipeline(params dtos.SearchDto) bson.A {
 		searchFilters,
 		filters,
 	}
+
 	if len(optional) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"$or": optional}})
 	}
+	if featuredHostFilter != nil && len(params.FeaturedHostIds) > 0 {
+		pipeline = append(pipeline, *featuredHostFilter)
+	}
+
+	fmt.Println(pipeline)
 	return pipeline
 }
 

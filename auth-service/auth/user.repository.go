@@ -75,3 +75,26 @@ func (userRepository *UserRepository) UpdatePersonalInfo(user User) (User, error
 	}
 	return user, nil
 }
+
+func (userRepository *UserRepository) GetFeaturedHosts() ([]User, error) {
+	collection := userRepository.getCollection("users")
+	filter := bson.M{"distinguished": true}
+
+	curr, err := collection.Find(context.TODO(), filter)
+
+	if err != nil {
+		log.Fatal(err)
+		return []User{}, nil
+	}
+	result := make([]User, 0)
+	for curr.Next(context.TODO()) {
+		var user User
+		err := curr.Decode(&user)
+		if err != nil {
+			log.Fatal(err)
+			return []User{}, err
+		}
+		result = append(result, user)
+	}
+	return result, nil
+}

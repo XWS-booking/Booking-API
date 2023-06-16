@@ -265,3 +265,11 @@ func (authController *AuthController) ProfileDeletion(ctx Context, req *ProfileD
 		DeleteStatus: strconv.Itoa(int(user.DeleteStatus)),
 	}, nil
 }
+
+func (authController *AuthController) GetFeaturedHosts(ctx Context, req *GetFeaturedHostsRequest) (*GetFeaturedHostsResponse, error) {
+	hosts := authController.AuthService.GetFeaturedHosts()
+	return &GetFeaturedHostsResponse{
+		Hosts: hosts,
+	}, nil
+
+}

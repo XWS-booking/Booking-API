@@ -199,3 +199,16 @@ func (authService *AuthService) InitiateProfileDeletion(id primitive.ObjectID) (
 	}
 	return user, nil
 }
+
+func (authService *AuthService) GetFeaturedHosts() []string {
+	hosts, err := authService.UserRepository.GetFeaturedHosts()
+	if err != nil {
+		return []string{}
+	}
+	result := make([]string, 0)
+	for _, host := range hosts {
+		result = append(result, host.Id.Hex())
+	}
+	return result
+
+}
