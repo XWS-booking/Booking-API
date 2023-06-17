@@ -228,6 +228,8 @@ func (authController *AuthController) GetHostRatingWithGuestInfo(ctx Context, re
 }
 
 func (authController *AuthController) ProfileDeletion(ctx Context, req *ProfileDeletionRequest) (*ProfileDeletionResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "profileDeletion")
+	defer func() { span.End() }()
 	fmt.Println("ulazi ", req.Id)
 	user, err := authController.AuthService.InitiateProfileDeletion(shared.StringToObjectId(req.Id))
 	fmt.Println("ceo user", user)
@@ -267,6 +269,8 @@ func (authController *AuthController) ProfileDeletion(ctx Context, req *ProfileD
 }
 
 func (authController *AuthController) GetFeaturedHosts(ctx Context, req *GetFeaturedHostsRequest) (*GetFeaturedHostsResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "getFeaturedHosts")
+	defer func() { span.End() }()
 	hosts := authController.AuthService.GetFeaturedHosts()
 	return &GetFeaturedHostsResponse{
 		Hosts: hosts,

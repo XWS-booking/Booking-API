@@ -1,5 +1,10 @@
 version: "3.8"
 
+x-logging: &fluent-bit
+  driver: fluentd
+  options:
+    fluentd-address: ${FLUENT_BIT_ADDRESS}:24224
+
 services:
   accomodation_service:
     image: accomodation_service
@@ -23,6 +28,7 @@ services:
       DELETE_HOST_COMMAND_SUBJECT: ${DELETE_HOST_COMMAND_SUBJECT}
       DELETE_HOST_REPLY_SUBJECT: ${DELETE_HOST_REPLY_SUBJECT}
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+    logging: *fluent-bit
     networks:
       - network
       - monitoring
@@ -46,6 +52,7 @@ services:
       DELETE_HOST_COMMAND_SUBJECT: ${DELETE_HOST_COMMAND_SUBJECT}
       DELETE_HOST_REPLY_SUBJECT: ${DELETE_HOST_REPLY_SUBJECT}
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+    logging: *fluent-bit
     networks:
       - network
       - monitoring
@@ -67,6 +74,7 @@ services:
       NATS_PORT: ${NATS_PORT}
       NATS_USER: ${NATS_USER}
       NATS_PASS: ${NATS_PASS}
+    logging: *fluent-bit
     networks:
       - network
       - monitoring
@@ -90,6 +98,7 @@ services:
       DELETE_HOST_COMMAND_SUBJECT: ${DELETE_HOST_COMMAND_SUBJECT}
       DELETE_HOST_REPLY_SUBJECT: ${DELETE_HOST_REPLY_SUBJECT}
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+    logging: *fluent-bit
     networks:
       - network
       - monitoring
@@ -107,6 +116,7 @@ services:
       JWT_SECRET: secret
       DATABASE_CONNECTION_STRING: mongodb+srv://xws:lozinka123@cluster0.yqfgbck.mongodb.net/?retryWrites=true&w=majority
       JAEGER_ENDPOINT: http://jaeger:14268/api/traces
+    logging: *fluent-bit
     networks:
       - network
       - monitoring
@@ -127,6 +137,7 @@ services:
       NATS_PORT: ${NATS_PORT}
       NATS_USER: ${NATS_USER}
       NATS_PASS: ${NATS_PASS}
+    logging: *fluent-bit
     networks:
       - network
       - monitoring
@@ -147,6 +158,7 @@ services:
       RECOMMENDATION_SERVICE_ADDRESS: recommendation_service:9000
       JWT_SECRET: secret
       GATEWAY_ADDRESS: 8085
+    logging: *fluent-bit
     depends_on:
       - auth_service
     networks:

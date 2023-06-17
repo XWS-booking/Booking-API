@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"recommendation_service/messaging"
+	. "recommendation_service/opentelementry"
 	. "recommendation_service/proto/recommendation"
 	"recommendation_service/recommendation/model"
 	"recommendation_service/recommendation/services"
@@ -86,6 +87,8 @@ func (recommendationController *RecommendationController) RatingEventHandler(mes
 }
 
 func (recommendationController *RecommendationController) GetRecommendedAccommodations(ctx Context, req *RecommendationRequest) (*RecommendationResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "getRecommendedAccommodations")
+	defer func() { span.End() }()
 	result, err := recommendationController.RecommendationService.GetRecommended(req.UserId)
 	if result == nil {
 		result = []model.Accommodation{}
