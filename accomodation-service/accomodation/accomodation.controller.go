@@ -211,6 +211,8 @@ func (accomodationController *AccomodationController) GetBookingPrice(ctx Contex
 }
 
 func (accomodationController *AccomodationController) SearchAndFilter(ctx Context, req *SearchAndFilterRequest) (*SearchAndFilterResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "searchAndFilter")
+	defer func() { span.End() }()
 
 	featuredHostIdsMapped := make([]primitive.ObjectID, 0)
 	for _, hostId := range req.FeaturedHostIds {
@@ -246,6 +248,8 @@ func (accomodationController *AccomodationController) SearchAndFilter(ctx Contex
 }
 
 func (accommodationController *AccomodationController) PopulateRecommended(ctx Context, req *PopulateRecommendedRequest) (*PopulateRecommendedResponse, error) {
+	_, span := Tp.Tracer(ServiceName).Start(ctx, "populateRecommended")
+	defer func() { span.End() }()
 
 	idsMapped := make([]primitive.ObjectID, 0)
 

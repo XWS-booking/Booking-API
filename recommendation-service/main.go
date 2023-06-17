@@ -6,6 +6,8 @@ import (
 	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
@@ -15,6 +17,7 @@ import (
 	"recommendation_service/database"
 	"recommendation_service/messaging"
 	"recommendation_service/messaging/nats"
+	"recommendation_service/opentelementry"
 	recommendationGrpc "recommendation_service/proto/recommendation"
 	"recommendation_service/recommendation"
 	"recommendation_service/recommendation/repositories/accommodation"
@@ -29,6 +32,20 @@ const (
 )
 
 func main() {
+	// OpenTelemetry
+	var err error
+	opentelementry.Tp, err = opentelementry.InitTracer()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		if err := opentelementry.Tp.Shutdown(context.Background()); err != nil {
+			log.Printf("Error shutting down tracer provider: %v", err)
+		}
+	}()
+	otel.SetTracerProvider(opentelementry.Tp)
+	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+
 	listener, err := net.Listen("tcp", ":"+os.Getenv("PORT"))
 	log.Println("Server started")
 	if err != nil {
