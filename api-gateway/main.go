@@ -3,8 +3,11 @@ package main
 import (
 	"context"
 	"gateway/infrastructure/api"
+	metrics "gateway/metrics"
 	"gateway/proto/gateway"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -16,9 +19,12 @@ import (
 )
 
 func main() {
-
+	reg := prometheus.NewRegistry()
+	metHttp := metrics.NewMetricsHttp(reg)
+	metHttpSuccess := metrics.NewMetricsHttpSuccess(reg)
+	metHttpError := metrics.NewMetricsHttpError(reg)
 	gwmux := runtime.NewServeMux()
-	initHandlers(gwmux)
+	initHandlers(gwmux, metHttp, metHttpSuccess, metHttpError)
 	handler := initCors(gwmux)
 	gwServer := &http.Server{
 		Addr:    ":" + os.Getenv("GATEWAY_ADDRESS"),
@@ -31,6 +37,12 @@ func main() {
 		}
 	}()
 
+	promHandler := promhttp.HandlerFor(reg, promhttp.HandlerOpts{})
+	http.Handle("/metrics", promHandler)
+	go func() {
+		http.ListenAndServe(":8086", nil)
+	}()
+
 	stopCh := make(chan os.Signal)
 	signal.Notify(stopCh, syscall.SIGTERM)
 
@@ -41,7 +53,7 @@ func main() {
 	}
 }
 
-func initHandlers(gwmux *runtime.ServeMux) {
+func initHandlers(gwmux *runtime.ServeMux, metHttp, metHttpSuccess, metHttpError *metrics.MetricsHttp) {
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 	authEndpoint := os.Getenv("AUTH_SERVICE_ADDRESS")
 	accommodationEndpoint := os.Getenv("ACCOMODATION_SERVICE_ADDRESS")
@@ -71,61 +83,61 @@ func initHandlers(gwmux *runtime.ServeMux) {
 	}
 
 	//init custom handlers
-	searchAccommodationsHandler := api.NewSearchAccommodationHandler(authEndpoint, accommodationEndpoint, reservationEndpoint, ratingEndpoint)
+	searchAccommodationsHandler := api.NewSearchAccommodationHandler(metHttp, metHttpSuccess, metHttpError, authEndpoint, accommodationEndpoint, reservationEndpoint, ratingEndpoint)
 	searchAccommodationsHandler.Init(gwmux)
-	deleteProfileHandler := api.NewDeleteProfileHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
+	deleteProfileHandler := api.NewDeleteProfileHandler(metHttp, metHttpSuccess, metHttpError, authEndpoint, accommodationEndpoint, reservationEndpoint)
 	deleteProfileHandler.Init(gwmux)
-	createAccommodationHandler := api.NewCreateAccomodationHandler(accommodationEndpoint, authEndpoint)
+	createAccommodationHandler := api.NewCreateAccomodationHandler(metHttp, metHttpSuccess, metHttpError, accommodationEndpoint, authEndpoint)
 	createAccommodationHandler.Init(gwmux)
-	cancelReservationHandler := api.NewCancelReservationHandler(ratingEndpoint, authEndpoint, reservationEndpoint, accommodationEndpoint, notificationEndpoint)
+	cancelReservationHandler := api.NewCancelReservationHandler(metHttp, metHttpSuccess, metHttpError, ratingEndpoint, authEndpoint, reservationEndpoint, accommodationEndpoint, notificationEndpoint)
 	cancelReservationHandler.Init(gwmux)
-	createReservationHandler := api.NewCreateReservationHandler(ratingEndpoint, reservationEndpoint, authEndpoint, accommodationEndpoint, notificationEndpoint)
+	createReservationHandler := api.NewCreateReservationHandler(metHttp, metHttpSuccess, metHttpError, ratingEndpoint, reservationEndpoint, authEndpoint, accommodationEndpoint, notificationEndpoint)
 	createReservationHandler.Init(gwmux)
-	confirmReservationHandler := api.NewConfirmReservationHandler(reservationEndpoint, notificationEndpoint)
+	confirmReservationHandler := api.NewConfirmReservationHandler(metHttp, metHttpSuccess, metHttpError, reservationEndpoint, notificationEndpoint)
 	confirmReservationHandler.Init(gwmux)
-	rejectReservationHandler := api.NewRejectReservationHandler(reservationEndpoint, notificationEndpoint)
+	rejectReservationHandler := api.NewRejectReservationHandler(metHttp, metHttpSuccess, metHttpError, reservationEndpoint, notificationEndpoint)
 	rejectReservationHandler.Init(gwmux)
-	findAllReservationsByOwnerIdHandler := api.NewFindAllReservationsByOwnerIdHandler(accommodationEndpoint, reservationEndpoint)
+	findAllReservationsByOwnerIdHandler := api.NewFindAllReservationsByOwnerIdHandler(metHttp, metHttpSuccess, metHttpError, accommodationEndpoint, reservationEndpoint)
 	findAllReservationsByOwnerIdHandler.Init(gwmux)
-	findAllReservationsByBuyerIdHandler := api.NewFindAllReservationsByBuyerIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint, ratingEndpoint)
+	findAllReservationsByBuyerIdHandler := api.NewFindAllReservationsByBuyerIdHandler(metHttp, metHttpSuccess, metHttpError, authEndpoint, accommodationEndpoint, reservationEndpoint, ratingEndpoint)
 	findAllReservationsByBuyerIdHandler.Init(gwmux)
-	updatePersonalInfoHandler := api.NewUpdatePersonalInfoHandler(authEndpoint)
+	updatePersonalInfoHandler := api.NewUpdatePersonalInfoHandler(metHttp, metHttpSuccess, metHttpError, authEndpoint)
 	updatePersonalInfoHandler.Init(gwmux)
-	changePasswordHandler := api.NewChangePasswordHandler(authEndpoint)
+	changePasswordHandler := api.NewChangePasswordHandler(metHttp, metHttpSuccess, metHttpError, authEndpoint)
 	changePasswordHandler.Init(gwmux)
-	deleteReservationHandler := api.NewDeleteReservationHandler(notificationEndpoint, accommodationEndpoint, authEndpoint, reservationEndpoint, ratingEndpoint)
+	deleteReservationHandler := api.NewDeleteReservationHandler(metHttp, metHttpSuccess, metHttpError, notificationEndpoint, accommodationEndpoint, authEndpoint, reservationEndpoint, ratingEndpoint)
 	deleteReservationHandler.Init(gwmux)
-	isAccommodationAvailableHandler := api.NewIsAccommodationAvailableHandler(reservationEndpoint)
+	isAccommodationAvailableHandler := api.NewIsAccommodationAvailableHandler(metHttp, metHttpSuccess, metHttpError, reservationEndpoint)
 	isAccommodationAvailableHandler.Init(gwmux)
-	updatePricingHandler := api.NewUpdatePricingHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
+	updatePricingHandler := api.NewUpdatePricingHandler(metHttp, metHttpSuccess, metHttpError, authEndpoint, accommodationEndpoint, reservationEndpoint)
 	updatePricingHandler.Init(gwmux)
-	findAllReservationsByAccommodationIdHandler := api.NewFindAllReservationsByAccommodationIdHandler(authEndpoint, accommodationEndpoint, reservationEndpoint)
+	findAllReservationsByAccommodationIdHandler := api.NewFindAllReservationsByAccommodationIdHandler(metHttp, metHttpSuccess, metHttpError, authEndpoint, accommodationEndpoint, reservationEndpoint)
 	findAllReservationsByAccommodationIdHandler.Init(gwmux)
-	getBookingPriceHandler := api.NewGetBookingPriceHandler(accommodationEndpoint)
+	getBookingPriceHandler := api.NewGetBookingPriceHandler(metHttp, metHttpSuccess, metHttpError, accommodationEndpoint)
 	getBookingPriceHandler.Init(gwmux)
-	rateAccommodationHandler := api.NewRateAccommodationHandler(ratingEndpoint, reservationEndpoint, notificationEndpoint, accommodationEndpoint)
+	rateAccommodationHandler := api.NewRateAccommodationHandler(metHttp, metHttpSuccess, metHttpError, ratingEndpoint, reservationEndpoint, notificationEndpoint, accommodationEndpoint)
 	rateAccommodationHandler.Init(gwmux)
-	deleteAccommodationRatingHandler := api.NewDeleteAccommodationRatingHandler(ratingEndpoint, reservationEndpoint)
+	deleteAccommodationRatingHandler := api.NewDeleteAccommodationRatingHandler(metHttp, metHttpSuccess, metHttpError, ratingEndpoint, reservationEndpoint)
 	deleteAccommodationRatingHandler.Init(gwmux)
-	updateAccommodationRatingHandler := api.NewUpdateAccommodationRatingHandler(ratingEndpoint, accommodationEndpoint, notificationEndpoint)
+	updateAccommodationRatingHandler := api.NewUpdateAccommodationRatingHandler(metHttp, metHttpSuccess, metHttpError, ratingEndpoint, accommodationEndpoint, notificationEndpoint)
 	updateAccommodationRatingHandler.Init(gwmux)
-	findAllAccommodationRatingsHandler := api.NewFindAllAccommodationRatingsHandler(ratingEndpoint, authEndpoint)
+	findAllAccommodationRatingsHandler := api.NewFindAllAccommodationRatingsHandler(metHttp, metHttpSuccess, metHttpError, ratingEndpoint, authEndpoint)
 	findAllAccommodationRatingsHandler.Init(gwmux)
-	rateHostHandler := api.NewRateHostHandler(authEndpoint, ratingEndpoint, reservationEndpoint, accommodationEndpoint, notificationEndpoint)
+	rateHostHandler := api.NewRateHostHandler(metHttp, metHttpSuccess, metHttpError, authEndpoint, ratingEndpoint, reservationEndpoint, accommodationEndpoint, notificationEndpoint)
 	rateHostHandler.Init(gwmux)
-	updateHostRateHandler := api.NewUpdateHostRatingHandler(accommodationEndpoint, authEndpoint, reservationEndpoint, ratingEndpoint, notificationEndpoint)
+	updateHostRateHandler := api.NewUpdateHostRatingHandler(metHttp, metHttpSuccess, metHttpError, accommodationEndpoint, authEndpoint, reservationEndpoint, ratingEndpoint, notificationEndpoint)
 	updateHostRateHandler.Init(gwmux)
-	deleteHostRatingHandler := api.NewDeleteHostRatingHandler(notificationEndpoint, accommodationEndpoint, authEndpoint, reservationEndpoint, ratingEndpoint)
+	deleteHostRatingHandler := api.NewDeleteHostRatingHandler(metHttp, metHttpSuccess, metHttpError, notificationEndpoint, accommodationEndpoint, authEndpoint, reservationEndpoint, ratingEndpoint)
 	deleteHostRatingHandler.Init(gwmux)
-	getHostRatingsHandler := api.NewGetHostRatingsHandler(ratingEndpoint, authEndpoint)
+	getHostRatingsHandler := api.NewGetHostRatingsHandler(metHttp, metHttpSuccess, metHttpError, ratingEndpoint, authEndpoint)
 	getHostRatingsHandler.Init(gwmux)
-	registerUserHandler := api.NewRegisterUserHandler(authEndpoint, notificationEndpoint)
+	registerUserHandler := api.NewRegisterUserHandler(metHttp, metHttpSuccess, metHttpError, authEndpoint, notificationEndpoint)
 	registerUserHandler.Init(gwmux)
-	findNotificationPreferencesByUserId := api.NewFindNotificationPreferencesByUserHandler(notificationEndpoint)
+	findNotificationPreferencesByUserId := api.NewFindNotificationPreferencesByUserHandler(metHttp, metHttpSuccess, metHttpError, notificationEndpoint)
 	findNotificationPreferencesByUserId.Init(gwmux)
-	updateNotificationPreferencesHandler := api.NewUpdateNotificationPreferencesHandler(notificationEndpoint)
+	updateNotificationPreferencesHandler := api.NewUpdateNotificationPreferencesHandler(metHttp, metHttpSuccess, metHttpError, notificationEndpoint)
 	updateNotificationPreferencesHandler.Init(gwmux)
-	getRecommendedAccommodationsHandler := api.NewRecommendedAccommodationsHandler(accommodationEndpoint, recommendationEndpoint, authEndpoint, ratingEndpoint)
+	getRecommendedAccommodationsHandler := api.NewRecommendedAccommodationsHandler(metHttp, metHttpSuccess, metHttpError, accommodationEndpoint, recommendationEndpoint, authEndpoint, ratingEndpoint)
 	getRecommendedAccommodationsHandler.Init(gwmux)
 }
 

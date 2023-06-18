@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"gateway/infrastructure/services"
+	"gateway/metrics"
 	"gateway/model"
 	"gateway/model/mapper"
 	"gateway/proto/gateway"
@@ -21,6 +22,7 @@ type SearchAccommodationHandler struct {
 	accommodationClientAddress string
 	reservationClientAddress   string
 	ratingClientAddress        string
+	metHttp                    *metrics.MetricsHttp
 }
 type PriceParams struct {
 	From int32 `json:"from"`
@@ -36,12 +38,13 @@ type SearchResult struct {
 	TotalCount int32                 `json:"totalCount"`
 }
 
-func NewSearchAccommodationHandler(authClientAddress, accommodationClientAddress, reservationClientAddress string, ratingClientAddress string) Handler {
+func NewSearchAccommodationHandler(metHttp *metrics.MetricsHttp, authClientAddress, accommodationClientAddress, reservationClientAddress string, ratingClientAddress string) Handler {
 	return &SearchAccommodationHandler{
 		authClientAddress:          authClientAddress,
 		accommodationClientAddress: accommodationClientAddress,
 		reservationClientAddress:   reservationClientAddress,
 		ratingClientAddress:        ratingClientAddress,
+		metHttp:                    metHttp,
 	}
 }
 
@@ -54,6 +57,7 @@ func (handler *SearchAccommodationHandler) Init(mux *runtime.ServeMux) {
 
 func (handler *SearchAccommodationHandler) Search(w http.ResponseWriter, r *http.Request, pathParams map[string]string) {
 	city, guests, startDate, endDate, pageSize, pageNumber, err := handlePathParams(pathParams)
+	handler.metHttp.Inc()
 	accommodationClient := services.NewAccommodationClient(handler.accommodationClientAddress)
 	authClient := services.NewAuthClient(handler.authClientAddress)
 	ratingClient := services.NewRatingClient(handler.ratingClientAddress)

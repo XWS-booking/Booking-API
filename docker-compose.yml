@@ -166,6 +166,7 @@ services:
       - monitoring
     ports:
       - "8085:8085"
+      - "8086:8086"
   nodejs_server:
     build:
       context: ./socket-io-server2/
