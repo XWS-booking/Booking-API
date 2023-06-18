@@ -108,6 +108,10 @@ func MapSearchAndFilterResponse(accomodations []model.Accomodation, count int32)
 			MaxGuests:       acc.MaxGuests,
 			OwnerId:         acc.OwnerId.Hex(),
 			Pricing:         pricingMapped,
+			Pictures:        acc.PictureUrls,
+			Street:          acc.Street,
+			StreetNumber:    acc.StreetNumber,
+			Name:            acc.Name,
 		}
 		mapped = append(mapped, single)
 	}

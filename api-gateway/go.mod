@@ -7,6 +7,7 @@ require (
 	github.com/golang/protobuf v1.5.3
 	github.com/gorilla/context v1.1.1
 	github.com/gorilla/mux v1.8.0
+	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
 	github.com/prometheus/client_golang v1.16.0
 	github.com/rs/cors v1.9.0
