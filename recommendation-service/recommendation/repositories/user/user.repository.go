@@ -46,10 +46,10 @@ func (userRepository *UserRepository) GetRecommended(user model.User) ([]model.A
 		"WHERE  r.value >= 3 " +
 		"WITH DISTINCT a2 " +
 		"OPTIONAL MATCH (a2)<-[r:RATES]-() " +
-		"WHERE r.value < 3 and r.createdAt >  date() - duration({months:3}) " +
+		"WHERE r.value < 3 and date(r.createdAt) >  date() - duration({months:3}) " +
 		"WITH a2, count(r) AS lowRatingCount " +
 		"MATCH (a2) " +
-		"WHERE lowRatingCount = 0 " +
+		"WHERE lowRatingCount < 3 " +
 		"WITH a2 " +
 		"MATCH (a2)<-[r:RATES]-(:User) " +
 		"WITH a2, avg(r.value) as avgRating " +

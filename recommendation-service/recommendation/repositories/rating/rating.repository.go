@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
+	"log"
 	"recommendation_service/recommendation/model"
 )
 
@@ -48,7 +49,7 @@ func (ratingRepository *RatingRepository) Delete(rating model.Rating) error {
 
 func (ratingRepository *RatingRepository) Update(rating model.Rating) error {
 	ctx := context.TODO()
-	query := "MATCH (u:User{id:$userId})-[r:RATES{_id:$id}]->(a:Accommodation{id:$accId}) " +
+	query := "MATCH (u:User{_id:$userId})-[r:RATES{_id:$id}]->(a:Accommodation{_id:$accId}) " +
 		"SET r.value=$value, r.createdAt=$createdAt"
 	params := map[string]interface{}{
 		"id":        rating.Id,
@@ -61,5 +62,7 @@ func (ratingRepository *RatingRepository) Update(rating model.Rating) error {
 	_, err := session.ExecuteWrite(ctx, func(transaction neo4j.ManagedTransaction) (any, error) {
 		return transaction.Run(ctx, query, params)
 	})
+
+	log.Fatal(err)
 	return err
 }
